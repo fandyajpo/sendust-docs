@@ -1,0 +1,238 @@
+---
+import { getCollection } from "astro:content";
+
+/**
+ * The creator and the repository's contributors, read from the GitHub REST API
+ * at build time so nothing here goes stale. Every request is best-effort: a
+ * rate limit, an outage or a missing field leaves the page standing.
+ */
+
+interface Profile {
+  login: string;
+  name?: string | null;
+  avatar_url?: string | null;
+  html_url?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  followers?: number | null;
+  public_repos?: number | null;
+}
+
+interface Contributor {
+  login: string;
+  avatar_url?: string | null;
+  html_url?: string | null;
+  contributions?: number | null;
+  type?: string | null;
+}
+
+const OWNER = "fandyajpo";
+const REPO = "fandyajpo/sendust";
+const HEADERS = {
+  accept: "application/vnd.github+json",
+  "user-agent": "sendust-docs",
+};
+
+async function readJson<T>(url: string): Promise<T | null> {
+  try {
+    const response = await fetch(url, { headers: HEADERS });
+    if (!response.ok) return null;
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+const fallbackProfile: Profile = {
+  login: OWNER,
+  html_url: `https://github.com/${OWNER}`,
+};
+
+const profile = (await readJson<Profile>(`https://api.github.com/users/${OWNER}`)) ?? fallbackProfile;
+
+const contributors =
+  (await readJson<Contributor[]>(`https://api.github.com/repos/${REPO}/contributors?per_page=24`)) ?? [];
+
+// The owner is the first entry; anyone else is a contributor.
+const others = contributors
+  .filter((person) => person.login !== OWNER && !person.login.endsWith("[bot]"))
+  .slice(0, 8);
+
+// Nothing here is load-bearing: if the release tag is missing, skip the link.
+const releases = await getCollection("docs");
+const hasStory = releases.some((entry) => entry.id === "releases/story");
+---
+
+<section class="open" aria-labelledby="open-heading">
+  <p class="eyebrow">Built in the open</p>
+  <h2 id="open-heading">Created and maintained by</h2>
+
+  <div class="owner">
+    {
+      profile.avatar_url ? (
+        <img
+          class="avatar"
+          src={profile.avatar_url}
+          alt=""
+          width="64"
+          height="64"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <span class="avatar avatar-fallback" aria-hidden="true">
+          {profile.login.slice(0, 2).toUpperCase()}
+        </span>
+      )
+    }
+
+    <div class="who">
+      <p class="name">{profile.name ?? "Fandy Ahmad Januar Pratama"}</p>
+      <a class="login" href={profile.html_url ?? `https://github.com/${OWNER}`}>@{profile.login}</a>
+      {profile.bio && <p class="bio">{profile.bio}</p>}
+      <p class="meta">
+        {
+          typeof profile.followers === "number" && (
+            <span>
+              {profile.followers} followers
+            </span>
+          )
+        }
+        {
+          typeof profile.public_repos === "number" && (
+            <span>
+              {profile.public_repos} public repositories
+            </span>
+          )
+        }
+        {profile.location && <span>{profile.location}</span>}
+      </p>
+      <p class="links">
+        <a href={`https://github.com/${OWNER}`}>Profile</a>
+        <a href={`https://github.com/${OWNER}?tab=overview&from=2024-01-01`}>Contributions</a>
+        <a href={`https://github.com/${REPO}`}>sendust</a>
+        <a href="https://www.npmjs.com/package/@sendust/ts">@sendust/ts</a>
+        {hasStory && <a href="releases/story/">The story</a>}
+      </p>
+    </div>
+  </div>
+
+  {
+    others.length > 0 && (
+      <div class="crew">
+        <p class="eyebrow">Contributors</p>
+        <ul>
+          {others.map((person) => (
+            <li>
+              <a href={person.html_url ?? `https://github.com/${person.login}`}>
+                @{person.login}
+                {typeof person.contributions === "number" && (
+                  <span class="count"> · {person.contributions} commits</span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .open {
+    margin-block: 3rem 0;
+    padding-block-start: 2rem;
+    border-top: 1px solid var(--sl-color-hairline);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.5rem;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+
+  h2 {
+    margin-block: 0 1.75rem;
+    font-family: var(--tp-display);
+  }
+
+  .owner {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--sl-color-hairline);
+    object-fit: cover;
+    flex: none;
+  }
+
+  .avatar-fallback {
+    display: grid;
+    place-items: center;
+    background: var(--sl-color-bg-inline-code);
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+
+  .who p {
+    margin: 0 0 0.35rem;
+  }
+
+  .name {
+    font-family: var(--tp-display);
+    font-weight: 600;
+    font-size: var(--sl-text-lg);
+  }
+
+  .login {
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-text-accent);
+  }
+
+  .bio {
+    max-width: 56ch;
+    color: var(--sl-color-gray-3);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin-block-start: 0.75rem !important;
+    font-size: var(--sl-text-sm);
+  }
+
+  .crew ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--sl-font-mono);
+    font-size: var(--sl-text-sm);
+  }
+
+  .count {
+    color: var(--sl-color-gray-3);
+  }
+</style>

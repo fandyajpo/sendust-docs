@@ -261,12 +261,20 @@ const shortCommit = commit ? commit.slice(0, 8) : ref;
 // ---------------------------------------------------------------------------
 
 /** Directories under src/content/docs that only ever hold generated Markdown. */
-const generatedDirs = new Set(["guide", "api", "decisions", "releases"]);
+const generatedDirs = new Set([
+  "guide",
+  "api",
+  "decisions",
+  "releases",
+  "architecture",
+  "performance",
+  "contributing",
+]);
 
 /**
- * New guides are noticed here, but this site is curated: `skip` names the
- * documents that exist upstream and stay out of it. Only the published set
- * carries the frontmatter the sidebar uses.
+ * New guides are noticed here, but this site is curated. Every published guide
+ * is mapped; an unmapped one is still copied, with a warning that it is not in
+ * the sidebar.
  */
 const discovery = [
   {
@@ -274,7 +282,7 @@ const discovery = [
     target: "guide",
     prefix: "",
     group: "Guides",
-    skip: ["docs/guides/maintainer.md"],
+    skip: [],
   },
 ];
 

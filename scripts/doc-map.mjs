@@ -1,12 +1,8 @@
 // The one map this repository owns.
 //
 // Sendust's documentation lives in fandyajpo/sendust/docs and is edited there.
-// This file says only which of those documents the site publishes, where each
-// one lands under src/content/docs/, and how the sidebar presents it.
-//
-// The site is for people using the package: how to send with @sendust/ts, and
-// the story of how it got here. Everything else in that repository is the
-// design and evidence record, and stays in the repository (see "unpublished").
+// This file says which of those documents the site publishes, where each one
+// lands under src/content/docs/, and how the sidebar presents it.
 //
 // scripts/sync-docs.mjs copies the files and injects the frontmatter;
 // astro.config.mjs builds the sidebar from the same data. Adding a document
@@ -24,34 +20,48 @@ export const SITE = {
   base: "/sendust-docs",
 };
 
-// Documents that exist upstream and are deliberately not published here.
-// They are linked from the published pages, and those links point at the
-// source repository at the same ref.
+// Documents that exist upstream and are deliberately not published here: the
+// design and evidence record, which belongs in the repository rather than in a
+// developer-facing library. Links to them become GitHub permalinks at the ref.
 export const unpublished = [
-  "docs/architecture/decisions/ (ADR 0001–0022: the architecture record)",
-  "docs/architecture/public-api.md (the P02 contract baseline)",
-  "docs/architecture/error-model.md (the P02 contract baseline)",
-  "docs/guides/maintainer.md (for people working on Sendust itself)",
-  "docs/releases/1.0.1.md (release engineering; the story covers the releases)",
-  "docs/gates/, phases/, audits/, planning/, qa/, research/, security/, discovery/, engineering/, product/",
+  "docs/architecture/decisions/ (ADR 0001–0022)",
+  "docs/architecture/public-api.md, error-model.md (P02 contract baselines)",
+  "docs/architecture/system-design.md, data-flow.md, approval-matrix.md",
+  "docs/releases/*.md except story.md (release engineering)",
+  "docs/gates/, phases/, audits/, planning/, qa/ (except the benchmark), research/, security/, discovery/, engineering/, product/",
   "docs/README.md",
 ];
 
 // Sidebar groups, in order. A page's `order` is its index inside its group.
 export const groups = [
   {
-    label: "start here",
+    label: "Start here",
     pages: ["guide/quick-start", "guide/lifecycle-limits"],
   },
   {
-    label: "guides",
+    label: "Guides",
     pages: ["guide/addressing-mime-attachments", "guide/errors-security-operations"],
   },
   {
-    label: "the lore",
+    label: "Architecture",
+    pages: ["architecture/overview"],
+  },
+  {
+    label: "Performance",
+    pages: ["performance/benchmark-nodemailer"],
+  },
+  {
+    label: "Contributing",
+    pages: ["contributing/maintainer"],
+  },
+  {
+    label: "The story",
     pages: ["releases/story"],
   },
 ];
+
+// Pages this repository writes itself, so they have no upstream source.
+export const manual = [{ slug: "license", label: "License" }];
 
 // source: the file in the Sendust checkout. Its name must match the slug, so
 // that a route never moves behind the sidebar's back.
@@ -60,29 +70,47 @@ export const groups = [
 export const pages = {
   "guide/quick-start": {
     source: "docs/guides/quick-start.md",
-    label: "quick start",
+    label: "Quick start",
   },
   "guide/lifecycle-limits": {
     source: "docs/guides/lifecycle-limits.md",
-    label: "lifecycle + limits",
+    label: "Lifecycle and limits",
     description:
       "Close, concurrency, timeouts and the hard caps, with the numbers the code and the facade keep in step.",
   },
   "guide/addressing-mime-attachments": {
     source: "docs/guides/addressing-mime-attachments.md",
-    label: "addresses, mime, attachments",
+    label: "Addresses, MIME, attachments",
     description:
       "Address rules, header and MIME shape, attachment caps, and the opt-in filesystem policy.",
   },
   "guide/errors-security-operations": {
     source: "docs/guides/errors-security-operations.md",
-    label: "errors, security, ops",
+    label: "Errors, security, operations",
     description:
       "Results versus errors, the stable error codes, redaction, and what to do during a relay outage.",
   },
+  "architecture/overview": {
+    source: "docs/architecture/overview.md",
+    label: "Architecture overview",
+    description:
+      "The two crates, the Node-API boundary, the runtime-neutral facade, and why each responsibility sits where it does.",
+  },
+  "performance/benchmark-nodemailer": {
+    source: "docs/qa/benchmark-nodemailer.md",
+    label: "Benchmark and method",
+    description:
+      "The recorded relay benchmark, with the harness, configuration and measurement method it was taken with.",
+  },
+  "contributing/maintainer": {
+    source: "docs/guides/maintainer.md",
+    label: "Maintainer guide",
+    description:
+      "Repository layout, commands, the loopback test harness, what CI proves, and the documentation rules.",
+  },
   "releases/story": {
     source: "docs/releases/story.md",
-    label: "the sendust story",
+    label: "The Sendust story",
     description:
       "How Sendust went from an empty folder to 1.0.1, which decisions it reversed on the way, and why.",
   },

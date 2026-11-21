@@ -1,117 +1,140 @@
-/* Sendust docs theme — glass edition.
+/* Sendust — Technical Precision.
  *
- * Glass only reads if there is light behind it, so the page carries a fixed
- * aurora (sand + a cool tint) and every surface is a low-alpha pane over it.
- * Nothing moves layout, and every effect is off under prefers-reduced-motion.
+ * Off-white documentation surface, obsidian hero and code, one electric-lime
+ * accent used sparingly. Thin borders, precise spacing, no blur.
  */
 
 :root {
-  --sl-font:
-    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
-  --sl-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  --sl-line-height: 1.75;
-  --sl-line-height-headings: 1.2;
-  --sl-content-width: 50rem;
-  --sl-sidebar-width: 17.5rem;
-}
+  --tp-obsidian: #101114;
+  --tp-surface: #1b1d22;
+  --tp-lime: #d5ff70;
+  --tp-offwhite: #f4f5f0;
+  --tp-muted: #a3a6ad;
+  --tp-slate: #64748b;
+  --tp-border: #e2e5de;
+  --tp-border-dark: rgb(244 245 240 / 0.12);
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --sl-color-bg: #0a0a0b;
-  --sl-color-bg-nav: #0b0b0d;
-  --sl-color-bg-sidebar: #0b0b0d;
-  --sl-color-bg-inline-code: #191a1c;
-  --sl-color-bg-accent: #d9a05b;
-  --sl-color-text: #e9e5de;
-  --sl-color-text-accent: #ecbd85;
-  --sl-color-text-invert: #0d0a06;
-  --sl-color-white: #f6f3ee;
-  --sl-color-accent-low: #2b1e0f;
-  --sl-color-accent: #d9a05b;
-  --sl-color-accent-high: #f3d8ae;
-  --sl-color-hairline-light: #2a2825;
-  --sl-color-hairline: #1c1b19;
-  --sl-color-hairline-shade: #131211;
+  --sl-font: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sl-line-height: 1.72;
+  --sl-line-height-headings: 1.15;
+  --sl-content-width: 48rem;
+  --sl-sidebar-width: 17rem;
 
-  --sd-glass: rgb(12 12 15 / 0.42);
-  --sd-glass-strong: rgb(18 18 22 / 0.55);
-  --sd-hairline: rgb(255 255 255 / 0.1);
-  --sd-sheen: rgb(255 255 255 / 0.07);
-  --sd-glow: 0 26px 64px -30px rgb(217 160 91 / 0.55);
-  --sd-blur: blur(20px) saturate(160%);
-  --sd-ambient-1: rgb(217 160 91 / 0.34);
-  --sd-ambient-2: rgb(120 140 255 / 0.24);
+  --tp-display: "Poppins", "Geist Sans", sans-serif;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --sl-color-bg: #fbf9f5;
-  --sl-color-bg-nav: #f7f3eb;
-  --sl-color-bg-sidebar: #f7f3eb;
-  --sl-color-bg-inline-code: #f1ece2;
-  --sl-color-bg-accent: #a4701f;
-  --sl-color-text: #24201b;
-  --sl-color-text-accent: #8a5a16;
-  --sl-color-text-invert: #fdfaf3;
-  --sl-color-white: #17130f;
-  --sl-color-accent-low: #f7e8d2;
-  --sl-color-accent: #a4701f;
-  --sl-color-accent-high: #5f3d0f;
-  --sl-color-hairline-light: #e4dccd;
-  --sl-color-hairline: #eee7da;
-  --sl-color-hairline-shade: #f6f1e7;
-
-  --sd-glass: rgb(255 255 255 / 0.55);
-  --sd-glass-strong: rgb(255 255 255 / 0.7);
-  --sd-hairline: rgb(23 19 15 / 0.12);
-  --sd-sheen: rgb(255 255 255 / 0.7);
-  --sd-glow: 0 26px 64px -32px rgb(164 112 31 / 0.45);
-  --sd-blur: blur(20px) saturate(140%);
-  --sd-ambient-1: rgb(217 160 91 / 0.4);
-  --sd-ambient-2: rgb(120 140 255 / 0.26);
+  --sl-color-bg: var(--tp-offwhite);
+  --sl-color-bg-nav: var(--tp-offwhite);
+  --sl-color-bg-sidebar: var(--tp-offwhite);
+  --sl-color-bg-inline-code: #e8ebe2;
+  --sl-color-bg-accent: var(--tp-obsidian);
+  --sl-color-text: var(--tp-obsidian);
+  --sl-color-text-accent: var(--tp-obsidian);
+  --sl-color-text-invert: var(--tp-offwhite);
+  --sl-color-white: var(--tp-obsidian);
+  --sl-color-accent-low: #eef7d6;
+  --sl-color-accent: var(--tp-obsidian);
+  --sl-color-accent-high: var(--tp-obsidian);
+  --sl-color-hairline-light: #ecefe7;
+  --sl-color-hairline: var(--tp-border);
+  --sl-color-hairline-shade: #f0f2ec;
 }
 
-/* The light the glass refracts. It lives in its own fixed layer: WebKit drops
- * background-attachment: fixed on the body, a fixed pseudo-element it honours. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --sl-color-bg: var(--tp-obsidian);
+  --sl-color-bg-nav: var(--tp-obsidian);
+  --sl-color-bg-sidebar: var(--tp-obsidian);
+  --sl-color-bg-inline-code: var(--tp-surface);
+  --sl-color-bg-accent: var(--tp-lime);
+  --sl-color-text: var(--tp-offwhite);
+  --sl-color-text-accent: var(--tp-lime);
+  --sl-color-text-invert: var(--tp-obsidian);
+  --sl-color-white: var(--tp-offwhite);
+  --sl-color-gray-1: #e9ebe4;
+  --sl-color-gray-2: #c9ccc4;
+  --sl-color-gray-3: var(--tp-muted);
+  --sl-color-gray-4: #767a82;
+  --sl-color-gray-5: #2c2f36;
+  --sl-color-gray-6: var(--tp-surface);
+  --sl-color-black: var(--tp-obsidian);
+  --sl-color-accent-low: #23281a;
+  --sl-color-accent: var(--tp-lime);
+  --sl-color-accent-high: #eaffb8;
+  --sl-color-hairline-light: #2c2f36;
+  --sl-color-hairline: #22252b;
+  --sl-color-hairline-shade: #191b20;
+}
+
 body {
-  background-color: var(--sl-color-bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(120vw 95vh at 6% -12%, var(--sd-ambient-1), transparent 72%),
-    radial-gradient(95vw 85vh at 104% 4%, var(--sd-ambient-2), transparent 72%),
-    radial-gradient(110vw 75vh at 35% 112%, var(--sd-ambient-2), transparent 74%),
-    linear-gradient(180deg, var(--sd-sheen), transparent 30rem);
-  background-repeat: no-repeat;
+/* ---------------------------------------------------------------------------
+ * Type
+ * ------------------------------------------------------------------------- */
+
+:is(h1, h2, h3, h4) {
+  font-family: var(--tp-display);
+  letter-spacing: -0.02em;
+}
+
+.sl-markdown-content :is(p, li, dd) {
+  line-height: var(--sl-line-height);
+}
+
+.sl-markdown-content h2 {
+  margin-block-start: 2.75rem;
+  padding-block-start: 1.5rem;
+  border-top: 1px solid var(--sl-color-hairline);
+}
+
+.sl-markdown-content :not(pre) > code {
+  font-family: var(--sl-font-mono);
+  font-size: 0.86em;
+  letter-spacing: -0.01em;
+}
+
+.sl-markdown-content table {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  font-size: var(--sl-text-sm);
+}
+
+.sl-markdown-content :is(th, td) {
+  padding-block: 0.6rem;
+}
+
+.sl-markdown-content th {
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+.sl-markdown-content a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
 
 /* ---------------------------------------------------------------------------
- * Glass surfaces
+ * Chrome: hairlines, no blur
  * ------------------------------------------------------------------------- */
 
 header.header {
-  background-color: var(--sd-glass);
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
-  border-bottom: 1px solid var(--sd-hairline);
-  box-shadow:
-    inset 0 1px 0 var(--sd-sheen),
-    0 14px 30px -22px rgb(0 0 0 / 0.9);
+  background-color: var(--sl-color-bg);
+  border-bottom: 1px solid var(--sl-color-hairline);
 }
 
 .sidebar-pane {
-  background-color: var(--sd-glass);
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
-  border-inline-end: 1px solid var(--sd-hairline);
+  background-color: var(--sl-color-bg);
+  border-inline-end: 1px solid var(--sl-color-hairline);
 }
 
 #starlight__sidebar,
@@ -119,261 +142,285 @@ header.header {
   background-color: transparent;
 }
 
-.card,
-.sl-link-card,
-.pagination-links a {
-  background:
-    linear-gradient(160deg, var(--sd-sheen), transparent 55%),
-    var(--sd-glass);
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
-  border: 1px solid var(--sd-hairline);
-  box-shadow:
-    inset 0 1px 0 var(--sd-sheen),
-    0 18px 44px -30px rgb(0 0 0 / 0.85);
+.site-title {
+  font-family: var(--tp-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-.card {
-  border-radius: 1rem;
+.sidebar-content a {
+  border-radius: 4px;
+  border-inline-start: 2px solid transparent;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
 }
 
-.pagination-links a {
-  border-radius: 0.9rem;
+.sidebar-content a:hover {
+  background-color: var(--sl-color-hairline-shade);
 }
 
-.card:hover,
-.pagination-links a:hover {
-  border-color: rgb(217 160 91 / 0.55);
-  box-shadow:
-    inset 0 1px 0 var(--sd-sheen),
-    var(--sd-glow);
-  transform: translateY(-2px);
+.sidebar-content a[aria-current="page"] {
+  border-inline-start-color: var(--tp-lime);
+  background-color: transparent;
+  color: var(--sl-color-text-accent);
+  font-weight: 500;
 }
 
-/* Code blocks: let the ambient light through the code background too, so the
-   block belongs to the glass instead of sitting on it as an opaque slab. */
-.expressive-code {
-  --ec-codeBg: rgb(18 18 22 / 0.6);
+:root[data-theme="light"] .sidebar-content a[aria-current="page"] {
+  border-inline-start-color: var(--tp-obsidian);
 }
 
-:root[data-theme="light"] .expressive-code {
-  --ec-codeBg: rgb(255 255 255 / 0.7);
-}
-
-.expressive-code .frame {
-  border: 1px solid var(--sd-hairline);
-  border-radius: 0.85rem;
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
-  box-shadow: inset 0 1px 0 var(--sd-sheen);
-  overflow: hidden;
-}
-
-.expressive-code figcaption {
-  color: var(--sl-color-gray-2);
-}
-
-/* Search dialog. */
-#starlight__search .dialog-frame,
-#starlight__search dialog {
-  background-color: var(--sd-glass-strong);
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
-  border: 1px solid var(--sd-hairline);
-  border-radius: 1rem;
-}
-
-.sl-markdown-content :not(pre) > code {
-  border: 1px solid var(--sd-hairline);
-}
-
-/* ---------------------------------------------------------------------------
- * Type and details
- * ------------------------------------------------------------------------- */
-
-.sl-markdown-content :is(p, li, dd) {
-  line-height: var(--sl-line-height);
-}
-
-:is(h1, h2, h3, h4) {
-  letter-spacing: -0.015em;
-}
-
-.sl-markdown-content table {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.sl-markdown-content :is(th, td) {
-  padding-block: 0.55rem;
-}
-
-.sl-markdown-content th {
-  letter-spacing: 0.01em;
-}
-
-.sl-markdown-content a {
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-}
-
-.hero h1 {
-  letter-spacing: -0.03em;
-}
-
-/* Pull the pills up to the hero instead of leaving them floating, and hold the
-   hero to the same measure as the content below it. */
-.hero {
-  max-width: 58rem;
-  margin-inline: auto;
-  padding-block-end: 1.5rem;
-}
-
-/* Landing page: one measure for prose, a wider one for the card grids. */
-.sd-landing {
-  max-width: 58rem;
-  margin-inline: auto;
-}
-
-.sd-landing > p {
-  max-width: 44rem;
-}
-
-.sd-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-block: 0 2.5rem;
-}
-
-.sd-badge {
-  padding: 0.3rem 0.75rem;
-  border: 1px solid var(--sd-hairline);
-  border-radius: 999px;
-  background: var(--sd-glass);
-  -webkit-backdrop-filter: var(--sd-blur);
-  backdrop-filter: var(--sd-blur);
+.sidebar-content summary {
   font-family: var(--sl-font-mono);
   font-size: var(--sl-text-xs);
-  letter-spacing: 0.02em;
-  color: var(--sl-color-text);
-  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
 }
 
-/* An odd last card takes the full row instead of leaving a hole beside it. */
-.sl-markdown-content .card-grid > :last-child:nth-child(odd) {
-  grid-column: 1 / -1;
+.right-sidebar {
+  border-inline-start: 1px solid var(--sl-color-hairline);
 }
 
-/* One focus ring, in the site's accent. */
-:focus-visible {
-  outline-color: var(--sl-color-accent);
+#starlight__on-this-page a {
+  font-size: var(--sl-text-sm);
+  border-inline-start: 1px solid var(--sl-color-hairline);
+  padding-inline-start: 0.75rem;
+  margin-inline-start: -1px;
 }
 
-/* The active page is a tint, not a slab. */
-.sidebar-content a[aria-current="page"] {
-  background-color: rgb(217 160 91 / 0.1);
-  box-shadow: inset 0 0 0 1px rgb(217 160 91 / 0.4);
+#starlight__on-this-page a[aria-current="true"] {
+  border-inline-start-color: var(--tp-lime);
   color: var(--sl-color-text-accent);
 }
 
-/* Splash pages: centre the panel so the hero and the content share an edge. */
-.content-panel:has(.hero) {
-  max-width: 76rem;
-  margin-inline: auto;
+/* ---------------------------------------------------------------------------
+ * Hero: an obsidian band above a light documentation surface
+ * ------------------------------------------------------------------------- */
+
+.hero {
+  box-sizing: border-box;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  padding-block: clamp(3rem, 8vmin, 6.5rem) clamp(2.5rem, 6vmin, 4.5rem);
+  background: var(--tp-obsidian);
+  border-bottom: 1px solid var(--tp-border-dark);
+  color: var(--tp-offwhite);
 }
 
-/* One pagination card, sized like a card instead of stretched across the page. */
-.pagination-links {
-  display: flex;
-  justify-content: flex-end;
+.hero h1 {
+  font-family: var(--tp-display);
+  font-weight: 600;
+  font-size: clamp(2.25rem, 4.6vw, 3.6rem);
+  line-height: 1.06;
+  max-width: 22ch;
+  color: var(--tp-offwhite);
 }
 
-.pagination-links > a {
-  flex: 0 1 24rem;
-  background: var(--sd-glass);
+.hero .tagline {
+  max-width: 56ch;
+  margin-block-start: 1.25rem;
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  color: var(--tp-muted);
+}
+
+/* The rotating word in the headline. */
+.tp-rotor {
+  position: relative;
+  display: inline-block;
+  color: var(--tp-lime);
+  min-width: 6.5ch;
+  vertical-align: bottom;
+}
+
+.tp-rotor > span {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  opacity: 0;
+  animation: tp-rotate 12s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+.tp-rotor > span:nth-child(1) {
+  position: relative;
+  animation-delay: 0s;
+}
+.tp-rotor > span:nth-child(2) {
+  animation-delay: 3s;
+}
+.tp-rotor > span:nth-child(3) {
+  animation-delay: 6s;
+}
+.tp-rotor > span:nth-child(4) {
+  animation-delay: 9s;
+}
+
+@keyframes tp-rotate {
+  0%,
+  22% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  25%,
+  97% {
+    opacity: 0;
+    transform: translate3d(0, -0.18em, 0);
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.tp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------------------------
- * Motion
+ * Blocks
  * ------------------------------------------------------------------------- */
 
-/* Transform only: content is never transparent, so a render that never runs
-   the animation still shows the page. */
-@keyframes sendust-rise {
+.card,
+.sl-link-card {
+  background: var(--sl-color-bg);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.card:hover,
+.sl-link-card:hover {
+  border-color: var(--sl-color-gray-4);
+}
+
+.card .title,
+.sl-link-card .title {
+  font-family: var(--tp-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.pagination-links a {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 8px;
+  background: var(--sl-color-bg);
+  box-shadow: none;
+}
+
+/* Callouts: a left rule, not a pastel box. */
+.starlight-aside {
+  border: 1px solid var(--sl-color-hairline);
+  border-inline-start-width: 2px;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Code: obsidian in both themes. */
+.expressive-code .frame {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.expressive-code figcaption {
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.02em;
+}
+
+#starlight__search .dialog-frame,
+#starlight__search dialog {
+  background: var(--sl-color-bg);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tp-lime);
+  outline-offset: 2px;
+}
+
+:root[data-theme="light"] :focus-visible {
+  outline-color: var(--tp-obsidian);
+}
+
+/* ---------------------------------------------------------------------------
+ * Landing-page pieces
+ * ------------------------------------------------------------------------- */
+
+.tp-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1.75rem 2.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tp-facts li {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 4px;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+
+.tp-landing {
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.tp-landing > p {
+  max-width: 62ch;
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion: entrance only, transform and opacity, never layout
+ * ------------------------------------------------------------------------- */
+
+@keyframes tp-rise {
   from {
-    transform: translate3d(0, 8px, 0);
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
   }
   to {
+    opacity: 1;
     transform: translate3d(0, 0, 0);
   }
 }
 
-/* No fill mode: if the animation never runs, the content is simply visible. */
-.sl-markdown-content {
-  animation: sendust-rise 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+@supports (animation-timeline: view()) {
+  .sl-markdown-content > h2 {
+    animation: tp-rise both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 26%;
+  }
 }
-
-::view-transition-old(root) {
-  animation-duration: 120ms;
-}
-
-::view-transition-new(root) {
-  animation-duration: 200ms;
-}
-
-a,
-button,
-summary {
-  transition:
-    color 140ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease,
-    text-decoration-color 140ms ease;
-}
-
-.sidebar-content a {
-  border-radius: 0.4rem;
-  transition:
-    color 140ms ease,
-    background-color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.card,
-.sl-link-card,
-.pagination-links a {
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
-}
-
-/* ---------------------------------------------------------------------------
- * Reduced motion: every effect above, off.
- * ------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    animation: none !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 
-  .sl-markdown-content {
-    animation: none !important;
+  .tp-rotor > span {
+    opacity: 0;
   }
 
-  .card:hover,
-  .pagination-links a:hover {
-    transform: none;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.01ms !important;
+  .tp-rotor > span:nth-child(1) {
+    opacity: 1;
   }
 }

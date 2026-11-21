@@ -22,7 +22,14 @@ Starlight content collection.
 | --- | --- | --- |
 | `docs/guides/quick-start.md`, `lifecycle-limits.md` | `src/content/docs/guide/` | Start here |
 | `docs/guides/addressing-mime-attachments.md`, `errors-security-operations.md` | `src/content/docs/guide/` | Guides |
+| `docs/architecture/overview.md` | `src/content/docs/architecture/` | Architecture |
+| `docs/qa/benchmark-nodemailer.md` | `src/content/docs/performance/` | Performance |
+| `docs/guides/maintainer.md` | `src/content/docs/contributing/` | Contributing |
 | `docs/releases/story.md` | `src/content/docs/releases/` | The story |
+
+`src/content/docs/license.md` is authored here (it links the repository's two
+license files and states the published `MIT OR Apache-2.0`), and is listed in the
+map under `manual`.
 
 It does five things, in this order.
 
@@ -106,21 +113,24 @@ published — `api/`, `decisions/` — is deleted on the next sync.
 
 ## Theme and motion
 
-Glass morphism over a dark base: near-black with two ambient gradients behind
-it, and every surface — header, sidebar, cards, code frames, pagination, the
-search dialog — translucent with `backdrop-filter: blur(18px) saturate(150%)`,
-a hairline border and an inset sheen. One sand accent, tabular numbers in
-tables, generous line-height. Both palettes are defined, so the theme toggle
-still works, but a first visit lands on dark.
+Technical Precision: an off-white reading surface (`#F4F5F0`) with obsidian ink,
+an obsidian hero band and obsidian code blocks, one electric-lime accent
+(`#D5FF70`) used only for interaction and active state, 1px hairlines instead of
+shadows, and no blur anywhere.
 
-The voice is casual on the pages this repository writes — the landing page, the
-sidebar labels, the footer — and strictly verbatim on everything the sync
-copies: the guides say what Sendust's own docs say, word for word.
+Type is three families, self-hosted from `public/fonts/` as woff2 with
+`font-display: swap`: Poppins 500/600/700 for headings and the hero, Geist Sans
+400/500 for prose and interface, Geist Mono 400/500 for code, tables and
+identifiers. No third-party font requests, no font JavaScript.
 
-Motion is quiet and never layout: Astro's `ClientRouter` for client-side
-navigation, a 200 ms fade-and-rise when the page content mounts, 120–200 ms
-hovers, and a 2 px lift on cards. Nothing runs longer than 250 ms, and every
-effect is switched off under `prefers-reduced-motion: reduce`.
+Motion is entrance-only: a rotating word in the hero headline (CSS keyframes,
+12 s cycle), a transform-and-opacity rise on section headings as they scroll in
+(`animation-timeline: view()`, where supported), and 140 ms hover transitions.
+Nothing animates layout, and everything stops under
+`prefers-reduced-motion: reduce` — the headline then shows its first word.
+
+The voice on authored pages is editorial and plain; everything the sync copies
+stays verbatim.
 
 ## Deployment
 
@@ -159,8 +169,16 @@ either with `DOCS_BASE` and `DOCS_SITE`.
 ## Dependencies
 
 `astro` and `@astrojs/starlight` — nothing else. Search is Starlight's built-in
-Pagefind, MDX support comes with Starlight (it registers `@astrojs/mdx` itself),
-and there is no analytics, no tracking script and no web font.
+Pagefind, MDX comes with Starlight (it registers `@astrojs/mdx` itself), code
+blocks are Expressive Code (bundled by Starlight: copy, line numbers, titles,
+tabs, highlighting), and there is no analytics, no tracking script and no
+animation library. The three typefaces are self-hosted woff2 files, not a
+package or a CDN.
+
+`src/components/BuiltInTheOpen.astro` reads the creator's GitHub profile and the
+repository's contributors from the public REST API **at build time**, with no
+token; a rate limit or an outage falls back to the profile link rather than
+breaking the page.
 
 Pins: Node `22.23.5` (`.nvmrc`) and npm `12.2.2`, matching the Sendust
 repository's toolchain baseline. Astro stays on the 5 line (`^5.18.2`);
