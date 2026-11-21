@@ -1,54 +1,39 @@
 /* Self-hosted type, no third-party requests.
- * Manrope for display, Geist Sans for interface and prose, Geist Mono for code.
- * swap so text paints immediately in the fallback and swaps when the file lands.
+ * Poppins carries the whole site — display, interface, prose, tables.
+ * Geist Mono stays for code, identifiers and configuration values, because
+ * Poppins has no monospaced cut and columns of digits need one.
  */
 
 @font-face {
-  font-family: "Manrope";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/fonts/manrope-500.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Manrope";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/fonts/manrope-600.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Manrope";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/fonts/manrope-700.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Manrope";
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/fonts/manrope-800.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Geist Sans";
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/geist-sans-400.woff2") format("woff2");
+  src: url("/fonts/poppins-400.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: "Geist Sans";
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("/fonts/geist-sans-500.woff2") format("woff2");
+  src: url("/fonts/poppins-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/poppins-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/poppins-700.woff2") format("woff2");
 }
 
 @font-face {
