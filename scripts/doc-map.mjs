@@ -72,7 +72,9 @@ export const nav = [
 ];
 
 // Pages this repository writes itself, so they have no upstream source.
-export const manual = [{ slug: "license", label: "License" }];
+export const manual = [
+  { slug: "license", label: "License", summary: "MIT or Apache-2.0, your choice." },
+];
 
 // source: the file in the Sendust checkout. Its name must match the slug, so
 // that a route never moves behind the sidebar's back.
@@ -82,6 +84,8 @@ export const pages = {
   "guide/quick-start": {
     source: "docs/guides/quick-start.md",
     label: "Quick start",
+    // Its first paragraph is a Status line, so the nav gets its own words.
+    summary: "Install, send one message, read the result.",
   },
   "guide/lifecycle-limits": {
     source: "docs/guides/lifecycle-limits.md",

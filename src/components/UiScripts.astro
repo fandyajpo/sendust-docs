@@ -36,6 +36,8 @@
   function closeDrawer(): void {
     const drawer = doc.getElementById("sx-drawer");
     if (!drawer?.hasAttribute("data-open")) return;
+    // A select left open inside the drawer would keep its chevron flipped.
+    closeSelects();
     drawer.removeAttribute("data-open");
     root.style.overflow = "";
     doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "false");

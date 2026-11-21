@@ -33,7 +33,9 @@ function link(slug: string): NavLink {
   return {
     label: page?.label ?? manualPage?.label ?? slug,
     href: href(slug),
-    description: page?.description,
+    // A page's own first paragraph is the better description; the map's
+    // `summary` covers the pages that open straight into metadata.
+    description: page?.description ?? page?.summary ?? manualPage?.summary,
   };
 }
 

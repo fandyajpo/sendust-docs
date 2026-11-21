@@ -446,25 +446,18 @@ header.header::after {
   background-size: 160px 160px;
 }
 
-/* The page colour eating into the water: the meniscus. Two layers, speeds out
-   of step, and both ends masked so the water fades into the panel's corners
-   instead of being cut by them. */
+/* The page colour eating into the water: the meniscus.
+   No mask here — fading a light shape over obsidian turns it grey, which read
+   as a wedge cut into the panel's corners. The water simply reaches both edges,
+   where the panel is already page colour, so nothing has to fade. */
 .sx-liquid__wave,
 .sx-hero__wave {
   position: absolute;
   inset-inline: 0;
   z-index: 1;
-  block-size: clamp(30px, 4.4vw, 58px);
+  block-size: clamp(30px, 4.4vw, 56px);
   overflow: hidden;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0,
-    #000 7%,
-    #000 93%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
 }
 
 .sx-liquid__wave--top {
@@ -492,10 +485,15 @@ header.header::after {
   fill: var(--sl-color-bg);
 }
 
+/* The crest riding with the wave: a haze of light on the water, on its own
+   slow loop and out of phase with the water beneath it, so the two crests
+   separate and rejoin instead of stacking. */
 .sx-wave-back {
-  block-size: 72%;
-  opacity: 0.5;
-  animation: sx-wave-shift 38s linear infinite reverse;
+  animation: sx-wave-shift 40s linear -9s infinite reverse;
+}
+
+.sx-wave-back path {
+  fill: rgb(244 245 240 / 0.1);
 }
 
 .sx-wave-front {
@@ -1134,6 +1132,9 @@ header.header::after {
 .sl-markdown-content .sx-landing {
   max-width: 64rem;
   margin-inline: auto;
+  /* The splash template pads its column heavily; the hero is the top of this
+     page, so it is pulled up rather than floating under the header. */
+  margin-block-start: -3.5rem;
 }
 
 .sl-markdown-content .sx-landing > p {
@@ -1151,6 +1152,9 @@ header.header::after {
  * ------------------------------------------------------------------------- */
 
 .header.sx-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 4;
   display: block;
   padding: 0;
   block-size: var(--sl-nav-height, 3.5rem);
@@ -1255,7 +1259,7 @@ starlight-menu-button,
 .sx-nav__item[data-open] .sx-nav__trigger {
   color: var(--sl-color-text);
   border-color: var(--sx-hair-strong);
-  background: var(--sx-surface);
+  background: var(--sl-color-hairline-shade);
 }
 
 .sx-nav__chevron {
@@ -1409,7 +1413,7 @@ starlight-menu-button,
 .sx-select[data-open] .sx-select__trigger {
   color: var(--sl-color-text);
   border-color: var(--sx-hair-strong);
-  background: var(--sx-surface);
+  background: var(--sl-color-hairline-shade);
 }
 
 .sx-select__chevron {
@@ -1722,6 +1726,19 @@ starlight-menu-button,
   background: var(--sx-surface);
   box-shadow: var(--sx-shadow);
   animation: sx-panel-in 180ms var(--sx-ease) both;
+}
+
+/* On a screen with room, the dialog sits in the middle rather than hugging
+   the top; on a short one it stays near the top and scrolls internally. */
+@media (min-height: 44rem) {
+  .sx-search[data-open] {
+    align-content: center;
+  }
+
+  .sx-search__panel {
+    align-self: center;
+    margin-block: 0;
+  }
 }
 
 .sx-search__status {
