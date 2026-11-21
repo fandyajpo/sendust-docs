@@ -1033,9 +1033,13 @@ header.header::after {
 
 /* Starlight reserves the mobile table-of-contents height above the content on
    every page. The landing has no such control, so it gives that space back
-   instead of floating the hero under the header. */
+   instead of leaving an empty band under the header. */
 body:has(.sx-landing) {
   --sl-mobile-toc-height: 0px;
+}
+
+body:has(.sx-landing) #starlight__mobile-toc {
+  display: none;
 }
 
 @media (max-width: 700px) {
@@ -2154,12 +2158,39 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
 }
 
 /* Tables keep their columns on a phone and scroll sideways, instead of
-   squeezing every cell to one word per line. */
+   squeezing every cell to one word per line. The minimum width is what makes
+   the sideways scroll happen at all: a block-level table would otherwise shrink
+   to the container and wrap anyway. */
 @media (max-width: 50rem) {
   .sl-markdown-content table {
     display: block;
+    min-inline-size: 40rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
+  }
+}
+
+/* An inline code chip is one token, not a paragraph: it does not split across
+   a line break into two chips. */
+.sl-markdown-content :not(pre) > code {
+  white-space: nowrap;
+}
+
+/* Tabs: the selected label is the one in ink, the rest stay quiet. All four
+   reading as the accent made the choice hard to see. */
+.sl-markdown-content [role="tablist"] [role="tab"] {
+  color: var(--cvx-muted);
+}
+
+.sl-markdown-content [role="tablist"] [role="tab"][aria-selected="true"] {
+  color: var(--sl-color-text);
+}
+
+/* The floating mascot would cover body text on a phone, and the mobile layout
+   has no corner to give it. The drawer carries the brand there. */
+@media (max-width: 640px) {
+  .sx-moth--float {
+    display: none;
   }
 }
 
