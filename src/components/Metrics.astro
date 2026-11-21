@@ -1,0 +1,28 @@
+---
+/**
+ * The metrics band: a few hard facts in display type, the way infrastructure
+ * companies open a page. Values come from the synced documentation, never from
+ * marketing: any number here must exist in docs/ of the pinned Sendust tag.
+ */
+interface Metric {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  items: Metric[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="sx-metrics" aria-label="Sendust in numbers">
+  {
+    items.map((item) => (
+      <li class="sx-metrics__item">
+        <span class="sx-metrics__value">{item.value}</span>
+        <span class="sx-metrics__label">{item.label}</span>
+      </li>
+    ))
+  }
+</ul>

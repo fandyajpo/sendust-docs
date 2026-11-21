@@ -11,6 +11,14 @@ import Cards from "../../components/Cards.astro";
 import FactList from "../../components/FactList.astro";
 import LandingHero from "../../components/LandingHero.astro";
 import LiquidBand from "../../components/LiquidBand.astro";
+import Metrics from "../../components/Metrics.astro";
+
+export const metrics = [
+  { value: "5", label: "native targets, one install" },
+  { value: "32", label: "maximum concurrent sends" },
+  { value: "120 s", label: "bounded total send budget" },
+  { value: "100", label: "recipients per message" },
+];
 
 export const facts = [
   "v1.0.1",
@@ -96,12 +104,12 @@ export const reads = [
 
 <LandingHero />
 
-<FactList items={facts} label="Release facts" />
+<Metrics items={metrics} />
 
 ## Install
 
-Pick your package manager. The package ships the native addon as a per-platform
-optional dependency, so there is no Rust toolchain and no build step on your side.
+Two commands, and the native addon comes with the package — no Rust toolchain,
+no build step, no postinstall download on your side.
 
 <Tabs>
   <TabItem label="npm">
@@ -158,5 +166,14 @@ the [quick start](guide/quick-start/).
 <Cards cards={reads} columns={3} />
 
 <BuiltInTheOpen />
+
+<div class="sx-cta">
+  <p class="sx-cta__eyebrow">Start here</p>
+  <p class="sx-cta__line">Send your first message in about five minutes.</p>
+  <p class="sx-cta__actions">
+    <a class="sx-btn sx-btn--primary" href="guide/quick-start/">Quick start</a>
+    <a class="sx-btn sx-btn--ghost" href="architecture/overview/">Read the architecture</a>
+  </p>
+</div>
 
 </div>
