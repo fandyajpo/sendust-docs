@@ -2256,3 +2256,102 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
   transform-origin: 0 50%;
   pointer-events: none;
 }
+
+
+/* ---------------------------------------------------------------------------
+ * Overlay and palette corrections
+ * ------------------------------------------------------------------------- */
+
+/* The fixed header sits at z-index 10, so both overlays were drawn *under* it:
+   the bar covered the drawer's own title and close button, and painted over the
+   top of the search dialog. The overlays belong above the chrome. */
+.sx-drawer {
+  z-index: 30;
+}
+
+.sx-search {
+  z-index: 40;
+}
+
+/* Short viewports (landscape phones): 10vh can be less than the bar, which put
+   the dialog's top edge inside the header. */
+.sx-search__panel {
+  margin-block-start: max(calc(var(--sl-nav-height) + 0.75rem), clamp(2rem, 10vh, 8rem));
+}
+
+/* Light palette: warm greys that belong to the paper. The light block never
+   defined the grey scale, so every label borrowed Starlight's cool blue-grey
+   against a warm surface — the drawer labels and the mobile "On this page" bar
+   were the most obvious. */
+:root[data-theme="light"] {
+  --sl-color-gray-1: #1b1d1a;
+  --sl-color-gray-2: #33372f;
+  --sl-color-gray-3: #5a5f58;
+  --sl-color-gray-4: #83887f;
+  --sl-color-gray-5: #c7cbc1;
+  --sl-color-gray-6: #e4e7dd;
+  --sl-color-gray-7: #f4f5f0;
+}
+
+/* A selected option has to look selected: the old highlight was a 1.06:1 wash
+   against a white panel, leaving only a 10px tick to carry the state. */
+.sx-select__option[aria-selected="true"] {
+  background-color: color-mix(in srgb, var(--sx-glow) 16%, transparent);
+  box-shadow: inset 2px 0 0 var(--sx-glow);
+}
+
+/* Search matches: the highlight was ~1.1:1 and effectively invisible. */
+.sx-search__result-excerpt mark {
+  background-color: color-mix(in srgb, var(--sx-glow) 34%, transparent);
+  color: inherit;
+}
+
+/* Tables keep their columns on a phone and scroll sideways, instead of
+   squeezing every cell to one word per line. */
+@media (max-width: 50rem) {
+  .sl-markdown-content table {
+    display: block;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/* overflow:hidden on html/body does not hold scroll on iOS; the scrim absorbs
+   the gesture instead of handing it to the page behind. */
+.sx-drawer__scrim,
+.sx-search__scrim {
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+
+/* The search dialog had no visible way out on a phone: only the scrim or
+   Escape. The button carries data-search-close, which the shared handler
+   already listens for, so it closes like the scrim does. */
+.sx-search__panel {
+  position: relative;
+}
+
+.sx-search__close {
+  position: absolute;
+  inset-block-start: 0.65rem;
+  inset-inline-end: 0.65rem;
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  border: 1px solid var(--sx-border);
+  border-radius: 999px;
+  background: var(--sx-surface);
+  color: var(--sl-color-gray-3);
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease;
+}
+
+.sx-search__close:hover {
+  color: var(--sl-color-text);
+  border-color: var(--sl-color-gray-4);
+}
