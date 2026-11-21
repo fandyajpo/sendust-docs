@@ -103,8 +103,8 @@ Authored: `src/content/docs/index.mdx` (the landing page), `src/content/docs/lic
 `src/styles/fonts.css` and `src/styles/sendust.css`, `src/content.config.ts`
 (Starlight's `docs` collection, with extension-less ids so the sidebar slugs in the
 config resolve), `src/components/` (`BuiltInTheOpen`, `LandingHero`, `LiquidBand`,
-`Cards`, `Glyph`, `MothMark`, `SignalMoth`, `SiteTitle`, `FactList`, `Head`,
-`Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
+`Cards`, `Glyph`, `MothMark`, `SignalMoth`, `SiteTitle`, `PageTitle`, `FactList`,
+`Head`, `Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
 `scripts/fetch-sendust.mjs`, `astro.config.mjs`, this README, the workflow.
 
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
@@ -138,8 +138,10 @@ so nothing on a liquid layer repaints.
 
 **The components**: `Cards` (data-driven link cards with a pixel glyph and a pool
 of light on hover), `Glyph` (ten pixel icons on a 16-unit grid), `LiquidBand`,
-`LandingHero`, `FactList`, `SiteTitle`. A group with a single page in the map is
-still a plain sidebar link — a collapsible menu around one item is noise.
+`LandingHero`, `FactList`, `SiteTitle`. `PageTitle` drops Starlight's page title
+where the splash hero already supplies the `<h1>` — one page, one `<h1>`. A group
+with a single page in the map is still a plain sidebar link — a collapsible menu
+around one item is noise.
 
 ## Theme and motion
 
