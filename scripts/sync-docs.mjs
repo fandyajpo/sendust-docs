@@ -188,7 +188,15 @@ const checkout = resolveCheckout();
  * and that ref has to be the one being published.
  */
 function pinnedSource() {
-  const head = tryGit(checkout, ["rev-parse", "--verify", "HEAD"], "");
+  // On a host that builds from git, `.sendust/` sits inside this repository and
+  // `git -C` would answer for *this* repository instead of the fetched tree.
+  // Only a directory that owns its own .git counts as a checkout.
+  const ownsGit = existsSync(path.join(checkout, ".git"));
+  const head = ownsGit ? tryGit(checkout, ["rev-parse", "--verify", "HEAD"], "") : "";
+
+  if (ownsGit && !head) {
+    fail(`${checkout} has a .git but no readable HEAD, so ${ref} cannot be verified.`);
+  }
 
   if (!head) {
     const markerFile = path.join(checkout, "source.json");
