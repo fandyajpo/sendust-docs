@@ -1,0 +1,24 @@
+---
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+/** A grid of link cards fed by data, so a page never repeats the markup. */
+interface LinkEntry {
+  title: string;
+  href: string;
+  description?: string;
+}
+
+interface Props {
+  links: LinkEntry[];
+}
+
+const { links } = Astro.props;
+---
+
+<CardGrid>
+  {
+    links.map((link) => (
+      <LinkCard title={link.title} href={link.href} description={link.description} />
+    ))
+  }
+</CardGrid>

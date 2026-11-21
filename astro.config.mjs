@@ -4,18 +4,22 @@ import { defineConfig } from "astro/config";
 import { REPOSITORY, SITE, groups, manual, pages } from "./scripts/doc-map.mjs";
 
 // The sidebar is built from the same map the sync script reads, so a page's
-// label, group and order are declared exactly once.
-const sidebar = groups.map((group) => ({
-  label: group.label,
-  items: group.pages.map((slug) => ({ label: pages[slug].label, slug })),
-}));
+// label, group and order are declared exactly once. A group with a single page
+// is rendered as a plain link: a collapsible menu around one item is noise.
+const sidebar = groups.flatMap((group) =>
+  group.pages.length === 1
+    ? [{ label: pages[group.pages[0]].label, slug: group.pages[0] }]
+    : [
+        {
+          label: group.label,
+          items: group.pages.map((slug) => ({ label: pages[slug].label, slug })),
+        },
+      ],
+);
 
 // Pages this repository writes itself.
-if (manual.length > 0) {
-  sidebar.push({
-    label: "Legal",
-    items: manual.map((page) => ({ label: page.label, slug: page.slug })),
-  });
+for (const page of manual) {
+  sidebar.push({ label: page.label, slug: page.slug });
 }
 
 // GitHub Pages serves this repository under SITE.base; Vercel serves it at the

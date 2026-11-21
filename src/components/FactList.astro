@@ -1,0 +1,13 @@
+---
+/** A row of small technical facts: versions, targets, one-line guarantees. */
+interface Props {
+  items: string[];
+  label?: string;
+}
+
+const { items, label = "At a glance" } = Astro.props;
+---
+
+<ul class="tp-facts" aria-label={label}>
+  {items.map((item) => <li>{item}</li>)}
+</ul>

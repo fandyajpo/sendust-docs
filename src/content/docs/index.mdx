@@ -15,19 +15,56 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid, LinkCard, TabItem, Tabs } from "@astrojs/starlight/components";
+import { TabItem, Tabs } from "@astrojs/starlight/components";
 
 import BuiltInTheOpen from "../../components/BuiltInTheOpen.astro";
+import FactList from "../../components/FactList.astro";
+import LinkGrid from "../../components/LinkGrid.astro";
+
+export const facts = [
+  "v1.0.1",
+  "Rust core",
+  "Node 22.23.5 · Bun 1.4.4 · Deno 2.9.8",
+  "5 native targets",
+  "1 transport per process",
+];
+
+export const reads = [
+  {
+    title: "Quick start",
+    href: "guide/quick-start/",
+    description: "One send, and what each outcome means.",
+  },
+  {
+    title: "Architecture",
+    href: "architecture/overview/",
+    description: "Two crates, one binding, a runtime-neutral facade.",
+  },
+  {
+    title: "Performance",
+    href: "performance/benchmark-nodemailer/",
+    description: "The relay benchmark, with its method and configuration.",
+  },
+  {
+    title: "Errors, security, operations",
+    href: "guide/errors-security-operations/",
+    description: "Stable codes, redaction, relay outages.",
+  },
+  {
+    title: "The Sendust story",
+    href: "releases/story/",
+    description: "Empty folder to 1.0.1, reversals included.",
+  },
+  {
+    title: "License",
+    href: "license/",
+    description: "MIT or Apache-2.0, your choice.",
+  },
+];
 
 <div class="tp-landing">
 
-<ul class="tp-facts">
-  <li>v1.0.1</li>
-  <li>Rust core</li>
-  <li>Node 22.23.5 · Bun 1.4.4 · Deno 2.9.8</li>
-  <li>5 native targets</li>
-  <li>1 transport per process</li>
-</ul>
+<FactList items={facts} />
 
 ## Install
 
@@ -57,8 +94,18 @@ optional dependency, so there is no Rust toolchain and no build step on your sid
   </TabItem>
 </Tabs>
 
-Deno resolves the same package through npm compatibility; its required flags are
-in the [quick start](guide/quick-start/).
+## At a glance
+
+| Runtime | Version the project pins | Notes |
+| --- | --- | --- |
+| Node.js | `>=22.23.5` | — |
+| Bun | `1.4.4` | — |
+| Deno | `2.9.8` | `--allow-ffi --allow-read`, plus `--allow-net` if your code opens sockets |
+| Native targets | five | `linux-x64-gnu`, `linux-arm64-gnu`, `macos-arm64`, `macos-x64`, `windows-x64` |
+
+Anything outside those targets fails closed at `createTransport` with
+`CONFIG_NATIVE_UNAVAILABLE`, naming the package you would need. The detail lives in
+the [quick start](guide/quick-start/).
 
 ## Why Rust
 
@@ -69,54 +116,32 @@ covers the two crates, the runtime-neutral facade, and where each responsibility
 
 ## What the engine does for you
 
-<CardGrid>
-  <Card title="Queue and pool">
-    Concurrent `send()` calls are accepted and scheduled: up to `delivery.maxConcurrent`
-    at once over at most `delivery.maxConnections` native sessions, one SMTP
-    transaction per session. The queue is bounded, so a full queue is
-    `LIMIT_QUEUE_FULL` rather than unbounded memory.
-  </Card>
-  <Card title="Sessions stay warm">
-    A definitive outcome resets the session and keeps it — up to
-    `delivery.maxMessagesPerSession` messages or `delivery.sessionIdleMs` of idleness.
-    An error or an `unknown` disposition drops it, so reuse can never duplicate a send.
-  </Card>
-  <Card title="Acceptance, not delivery">
-    `accepted` means the relay took responsibility. There is no `delivered`,
-    `opened` or `bounced` status, and the library never retries `unknown` on its own.
-  </Card>
-</CardGrid>
+<LinkGrid
+  links={[
+    {
+      title: "Queue and pool",
+      description:
+        "Concurrent send() calls are scheduled: up to delivery.maxConcurrent at once over at most delivery.maxConnections sessions, one SMTP transaction per session. A full queue is LIMIT_QUEUE_FULL, not unbounded memory.",
+      href: "guide/lifecycle-limits/",
+    },
+    {
+      title: "Sessions stay warm",
+      description:
+        "A definitive outcome resets the session and keeps it, up to delivery.maxMessagesPerSession messages or delivery.sessionIdleMs idle. An error or an unknown disposition drops it.",
+      href: "guide/lifecycle-limits/",
+    },
+    {
+      title: "Acceptance, not delivery",
+      description:
+        "accepted means the relay took responsibility. There is no delivered, opened or bounced status, and the library never retries unknown on its own.",
+      href: "guide/errors-security-operations/",
+    },
+  ]}
+/>
 
 ## Start reading
 
-<CardGrid>
-  <LinkCard
-    title="Quick start"
-    href="guide/quick-start/"
-    description="One send, and what each outcome means."
-  />
-  <LinkCard
-    title="Architecture"
-    href="architecture/overview/"
-    description="Two crates, one binding, a runtime-neutral facade."
-  />
-  <LinkCard
-    title="Performance"
-    href="performance/benchmark-nodemailer/"
-    description="The relay benchmark, with its method and configuration."
-  />
-  <LinkCard
-    title="Errors, security, operations"
-    href="guide/errors-security-operations/"
-    description="Stable codes, redaction, relay outages."
-  />
-  <LinkCard
-    title="The Sendust story"
-    href="releases/story/"
-    description="Empty folder to 1.0.1, reversals included."
-  />
-  <LinkCard title="License" href="license/" description="MIT or Apache-2.0, your choice." />
-</CardGrid>
+<LinkGrid links={reads} />
 
 <BuiltInTheOpen />
 

@@ -99,12 +99,12 @@ check that checkout out at that ref).
 
 ## What is authored here, what is generated
 
-Authored: `src/content/docs/index.mdx` (the landing page), `src/styles/sendust.css`,
-`src/content.config.ts` (Starlight's `docs` collection, with extension-less ids so
-the sidebar slugs in the config resolve), `src/components/Head.astro` (the router
-and the dark default), `src/components/Footer.astro` (the provenance line),
-`scripts/doc-map.mjs`, `scripts/sync-docs.mjs`, `astro.config.mjs`, this README,
-the workflow.
+Authored: `src/content/docs/index.mdx` (the landing page), `src/content/docs/license.md`,
+`src/styles/fonts.css` and `src/styles/sendust.css`, `src/content.config.ts`
+(Starlight's `docs` collection, with extension-less ids so the sidebar slugs in the
+config resolve), `src/components/` (`BuiltInTheOpen`, `LinkGrid`, `FactList`,
+`Head`, `Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
+`scripts/fetch-sendust.mjs`, `astro.config.mjs`, this README, the workflow.
 
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
 `releases/`, and `src/synced-docs.json` (the ref, commit and time the pages were
@@ -119,9 +119,16 @@ an obsidian hero band and obsidian code blocks, one electric-lime accent
 shadows, and no blur anywhere.
 
 Type is three families, self-hosted from `public/fonts/` as woff2 with
-`font-display: swap`: Poppins 500/600/700 for headings and the hero, Geist Sans
+`font-display: swap`: Manrope 500/600/700/800 for display and headings, Geist Sans
 400/500 for prose and interface, Geist Mono 400/500 for code, tables and
 identifiers. No third-party font requests, no font JavaScript.
+
+Micro-interactions are transform, opacity and colour only: link underlines that
+saturate on hover, cards that lift 2px with a lime edge sliding in, a nav item that
+nudges 2px, table rows that tint, a lime rule that sweeps under the rotating hero
+word, and cards that arrive in order as they scroll in. A group with a single page
+in the map is rendered as a plain sidebar link — a collapsible menu around one item
+is noise.
 
 Motion is entrance-only: a rotating word in the hero headline (CSS keyframes,
 12 s cycle), a transform-and-opacity rise on section headings as they scroll in
