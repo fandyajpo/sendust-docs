@@ -137,8 +137,11 @@ summary {
     background-color 160ms ease;
 }
 
+/* Starlight paints the current page as a filled bar, so its text has to be
+   inked for that bar rather than tinted with the accent. */
 .sidebar-content a[aria-current="page"] {
-  color: var(--sl-color-text-accent);
+  background-color: var(--sl-color-accent);
+  color: var(--sl-color-text-invert);
 }
 
 .card {

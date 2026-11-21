@@ -335,9 +335,29 @@ for (const rule of discovery) {
 // ---------------------------------------------------------------------------
 
 const anchorCache = new Map();
+
+/** Headings a page really renders: its H1 becomes the page title, not a heading. */
+function stripFirstHeading(markdown) {
+  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
+  let fenced = false;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (FENCE.test(line)) {
+      fenced = !fenced;
+      continue;
+    }
+    if (fenced) continue;
+    if (/^\s{0,3}#\s/.test(line)) {
+      lines.splice(index, 1);
+      break;
+    }
+  }
+  return lines.join("\n");
+}
+
 function anchorsFor(absolute) {
   if (!anchorCache.has(absolute)) {
-    anchorCache.set(absolute, headingSlugs(readFileSync(absolute, "utf8")));
+    anchorCache.set(absolute, headingSlugs(stripFirstHeading(readFileSync(absolute, "utf8"))));
   }
   return anchorCache.get(absolute);
 }
@@ -404,8 +424,16 @@ function parseDocument(markdown, entry) {
   const plain = plainText(description);
   if (!title) title = entry.label || path.posix.basename(entry.slug);
 
+  // Starlight renders the frontmatter title as the page heading, so the
+  // document's own H1 must not appear a second time in the body.
+  const rendered = lines.slice();
+  if (titleAt !== -1) {
+    rendered.splice(titleAt, 1);
+    if (rendered[titleAt] === "") rendered.splice(titleAt, 1);
+  }
+
   return {
-    body,
+    body: rendered.join("\n"),
     title,
     description: truncate(plain || entry.description || title, 158),
     usedFallback: plain === "",
