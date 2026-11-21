@@ -2803,3 +2803,85 @@ header.header {
 [data-motion-progress] {
   background: var(--cvx-accent);
 }
+
+
+/* ---------------------------------------------------------------------------
+ * The two panels that still carried the old identity
+ *
+ * The hero and the statement band were obsidian slabs with a dark, rounded,
+ * inset-box look; the brief for this design is a light canvas with the mesh on
+ * it. Their earlier rules win on specificity, so these few properties are
+ * stated with weight rather than fought selector by selector.
+ * ------------------------------------------------------------------------- */
+
+.sx-hero,
+.sx-landing .sx-hero {
+  background-color: var(--cvx-canvas) !important;
+  background-image: var(--cvx-mesh) !important;
+  background-repeat: no-repeat !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--cvx-line) !important;
+  border-radius: 0 !important;
+  margin-inline: calc(50% - 50vw) !important;
+  padding-inline: max(1.5rem, calc(50vw - 34rem)) !important;
+  padding-block: clamp(4rem, 9vmin, 7rem) clamp(3rem, 6vmin, 5rem) !important;
+  box-shadow: none !important;
+}
+
+/* Inside a light hero the primary control is ink on paper. */
+.sx-hero .sx-btn--primary {
+  background: var(--cvx-ink) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+:root[data-theme="dark"] .sx-hero .sx-btn--primary {
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+}
+
+.sx-hero .sx-btn--ghost {
+  background: transparent !important;
+  color: var(--sl-color-text) !important;
+  border-color: var(--cvx-line) !important;
+}
+
+/* The rotating word takes the accent, and its underline stops being lime. */
+.sx-hero .sx-rotor {
+  color: var(--cvx-accent) !important;
+}
+
+.sx-rotor::after,
+.sx-hero .sx-rotor::after {
+  background: var(--cvx-accent) !important;
+}
+
+/* The statement band: a hairline panel, not a black plate. */
+.sx-liquid,
+.sx-landing .sx-liquid {
+  background: var(--cvx-panel) !important;
+  background-image: none !important;
+  border: 1px solid var(--cvx-line) !important;
+  border-radius: var(--cvx-radius) !important;
+  box-shadow: none !important;
+  color: var(--sl-color-text) !important;
+}
+
+.sx-liquid .sx-statement,
+.sx-liquid .sx-statement__note {
+  color: var(--sl-color-text) !important;
+}
+
+.sx-liquid .sx-statement__note {
+  color: var(--cvx-muted) !important;
+}
+
+.sx-liquid .sx-statement em {
+  color: var(--cvx-accent) !important;
+}
+
+/* The floating mascot was dark-on-dark; give it a light ground so it reads. */
+:root[data-theme="dark"] .sx-moth--float,
+:root[data-theme="dark"] [class*="sx-moth"] {
+  filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.35));
+}
