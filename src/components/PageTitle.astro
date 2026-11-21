@@ -1,0 +1,15 @@
+---
+import Default from "@astrojs/starlight/components/PageTitle.astro";
+
+/**
+ * The splash template draws its own hero, so Starlight's page title is skipped
+ * there: two <h1>s on one page is one too many, and on a phone it pushed the
+ * hero 330px down. Everywhere else the default title is untouched.
+ *
+ * The check is deliberately fail-safe: if the route data is not there, the
+ * default renders and the page keeps its title.
+ */
+const isSplash = Astro.locals.starlightRoute?.entry?.data?.template === "splash";
+---
+
+{!isSplash && <Default />}

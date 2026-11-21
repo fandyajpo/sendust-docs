@@ -201,7 +201,7 @@ header.header::after {
 .sx-brand__mark {
   display: grid;
   place-items: center;
-  color: currentColor;
+  color: var(--sl-color-text);
   transition:
     transform 240ms var(--sx-ease),
     color 180ms ease;
@@ -373,6 +373,14 @@ header.header::after {
   padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.25rem);
 }
 
+/* In the dark palette the page and the water are close in value, so the panel
+   needs an edge of its own and a touch more lift. */
+:root[data-theme="dark"] .sl-markdown-content .sx-liquid,
+:root[data-theme="dark"] .sl-markdown-content .sx-hero {
+  --sx-liquid-bg: #171a20;
+  box-shadow: inset 0 0 0 1px rgb(244 245 240 / 0.07);
+}
+
 .sx-liquid__pools,
 .sx-hero__pools {
   position: absolute;
@@ -495,7 +503,7 @@ header.header::after {
 
 .sx-eyebrow {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   margin: 0;
   font-family: var(--sl-font-mono);
@@ -506,8 +514,10 @@ header.header::after {
 }
 
 .sx-eyebrow__dot {
+  flex: none;
   inline-size: 5px;
   block-size: 5px;
+  margin-block-start: 0.44em;
   background: var(--sx-lime);
   animation: sx-pulse-dot 3.4s var(--sx-ease) infinite;
 }

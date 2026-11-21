@@ -45,6 +45,8 @@ export default defineConfig({
         Head: "./src/components/Head.astro",
         // The pixel moth and the wordmark in the header.
         SiteTitle: "./src/components/SiteTitle.astro",
+        // No page title where the splash hero already supplies the <h1>.
+        PageTitle: "./src/components/PageTitle.astro",
         // States, on every page, which Sendust ref it was rendered from, and
         // carries the floating signal moth.
         Footer: "./src/components/Footer.astro",
