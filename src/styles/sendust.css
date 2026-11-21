@@ -71,18 +71,26 @@
   --sd-ambient-2: rgb(120 140 255 / 0.26);
 }
 
-/* The light the glass refracts. Fixed, so it sits behind the sticky chrome. */
+/* The light the glass refracts. It lives in its own fixed layer: WebKit drops
+ * background-attachment: fixed on the body, a fixed pseudo-element it honours. */
 body {
   background-color: var(--sl-color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     radial-gradient(120vw 95vh at 6% -12%, var(--sd-ambient-1), transparent 72%),
     radial-gradient(95vw 85vh at 104% 4%, var(--sd-ambient-2), transparent 72%),
     radial-gradient(110vw 75vh at 35% 112%, var(--sd-ambient-2), transparent 74%),
     linear-gradient(180deg, var(--sd-sheen), transparent 30rem);
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 /* ---------------------------------------------------------------------------
@@ -94,7 +102,9 @@ header.header {
   -webkit-backdrop-filter: var(--sd-blur);
   backdrop-filter: var(--sd-blur);
   border-bottom: 1px solid var(--sd-hairline);
-  box-shadow: inset 0 1px 0 var(--sd-sheen);
+  box-shadow:
+    inset 0 1px 0 var(--sd-sheen),
+    0 14px 30px -22px rgb(0 0 0 / 0.9);
 }
 
 .sidebar-pane {
@@ -210,6 +220,7 @@ header.header {
 /* Landing page: one measure for prose, a wider one for the card grids. */
 .sd-landing {
   max-width: 58rem;
+  margin-inline: auto;
 }
 
 .sd-landing > p {
@@ -268,6 +279,7 @@ header.header {
 
 .pagination-links > a {
   flex: 0 1 24rem;
+  background: var(--sd-glass);
 }
 
 /* ---------------------------------------------------------------------------
