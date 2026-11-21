@@ -150,7 +150,16 @@ header.header {
   transform: translateY(-2px);
 }
 
-/* Code blocks: frame only, so the syntax theme keeps its own contrast. */
+/* Code blocks: let the ambient light through the code background too, so the
+   block belongs to the glass instead of sitting on it as an opaque slab. */
+.expressive-code {
+  --ec-codeBg: rgb(18 18 22 / 0.6);
+}
+
+:root[data-theme="light"] .expressive-code {
+  --ec-codeBg: rgb(255 255 255 / 0.7);
+}
+
 .expressive-code .frame {
   border: 1px solid var(--sd-hairline);
   border-radius: 0.85rem;
@@ -212,8 +221,11 @@ header.header {
   letter-spacing: -0.03em;
 }
 
-/* Pull the pills up to the hero instead of leaving them floating. */
+/* Pull the pills up to the hero instead of leaving them floating, and hold the
+   hero to the same measure as the content below it. */
 .hero {
+  max-width: 58rem;
+  margin-inline: auto;
   padding-block-end: 1.5rem;
 }
 
