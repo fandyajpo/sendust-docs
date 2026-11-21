@@ -1,0 +1,16 @@
+---
+import Select from "./Select.astro";
+
+/**
+ * The theme picker: a Select, not a native <select>. `starlight-theme` keeps
+ * its meaning — "dark", "light", and "" for the system — so Starlight's own
+ * head script still applies the stored choice before the first paint.
+ */
+const options = [
+  { value: "dark", label: "Dark", hint: "Default" },
+  { value: "light", label: "Light" },
+  { value: "auto", label: "System" },
+];
+---
+
+<Select name="theme" label="Colour theme" options={options} value="dark" compact />

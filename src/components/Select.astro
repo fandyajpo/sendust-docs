@@ -1,0 +1,53 @@
+---
+import SelectDropdown from "./SelectDropdown.astro";
+
+/**
+ * A custom single-select. The trigger keeps focus and points at the active
+ * option with aria-activedescendant; the panel is SelectDropdown.astro. All of
+ * the behaviour is in UiScripts.astro — one implementation, every instance.
+ */
+interface Option {
+  value: string;
+  label: string;
+  hint?: string;
+}
+
+interface Props {
+  name?: string;
+  label: string;
+  options: Option[];
+  value?: string;
+  compact?: boolean;
+}
+
+const { name, label, options, value = "", compact = false } = Astro.props;
+const uid = `sx-select-${Math.random().toString(36).slice(2, 8)}`;
+const current = options.find((option) => option.value === value) ?? options[0];
+---
+
+<div
+  class:list={["sx-select", compact && "sx-select--compact"]}
+  data-select
+  data-select-name={name}
+  data-value={current?.value ?? ""}
+>
+  <button
+    class="sx-select__trigger"
+    type="button"
+    id={`${uid}-trigger`}
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls={`${uid}-listbox`}
+    data-select-trigger
+  >
+    <span class="sx-select__value" data-select-value>{current?.label ?? ""}</span>
+    <span class="sx-select__chevron" aria-hidden="true">
+      <svg viewBox="0 0 10 10" width="9" height="9" shape-rendering="crispEdges">
+        <path d="M1 3.5 H9 L5 7.5 Z" fill="currentColor"></path>
+      </svg>
+    </span>
+  </button>
+
+  <SelectDropdown id={uid} options={options} selected={current?.value ?? ""} />
+  <span class="sx-visually-hidden" id={`${uid}-label`}>{label}</span>
+</div>

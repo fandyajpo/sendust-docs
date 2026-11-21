@@ -4,8 +4,8 @@
  *
  * The light pools are plain radial gradients — no blur filters to pay for —
  * drifting on transforms only. The waves at the edges are the page colour
- * eating into the water, and the grain is one static tile, so nothing here
- * repaints while it moves.
+ * eating into the water: two layers out of step, both masked at the ends so the
+ * water fades into the corners instead of being cut by them.
  */
 interface Props {
   label?: string;
@@ -26,9 +26,11 @@ const { label, edges = "both" } = Astro.props;
   {
     edges !== "bottom" && edges !== "none" && (
       <span class="sx-liquid__wave sx-liquid__wave--top" aria-hidden="true">
-        <svg viewBox="0 0 400 20" preserveAspectRatio="none">
-          <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z" />
-          <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z" transform="translate(400 0)" />
+        <svg class="sx-wave-back" viewBox="0 0 400 24" preserveAspectRatio="none">
+          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
+        </svg>
+        <svg class="sx-wave-front" viewBox="0 0 400 24" preserveAspectRatio="none">
+          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
         </svg>
       </span>
     )
@@ -39,9 +41,11 @@ const { label, edges = "both" } = Astro.props;
   {
     edges !== "none" && (
       <span class="sx-liquid__wave sx-liquid__wave--bottom" aria-hidden="true">
-        <svg viewBox="0 0 400 20" preserveAspectRatio="none">
-          <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z" />
-          <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z" transform="translate(400 0)" />
+        <svg class="sx-wave-back" viewBox="0 0 400 24" preserveAspectRatio="none">
+          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
+        </svg>
+        <svg class="sx-wave-front" viewBox="0 0 400 24" preserveAspectRatio="none">
+          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
         </svg>
       </span>
     )

@@ -1,0 +1,66 @@
+---
+/**
+ * A custom text input: hairline field, pixel magnifier, clear button, hint and
+ * an error tone. No browser default is left visible.
+ */
+interface Props {
+  id: string;
+  name?: string;
+  label: string;
+  placeholder?: string;
+  type?: "text" | "search" | "email";
+  autocomplete?: string;
+  clearable?: boolean;
+  hint?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  placeholder = "",
+  type = "text",
+  autocomplete = "off",
+  clearable = false,
+  hint,
+} = Astro.props;
+---
+
+<div class="sx-field" data-field>
+  <label class="sx-visually-hidden" for={id}>{label}</label>
+
+  <span class="sx-field__icon" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="15" height="15" shape-rendering="crispEdges">
+      <path
+        d="M6.5 3 H9.5 V4 H11 V5.5 H12 V8.5 H11 V10 H9.5 V11 H6.5 V10 H5 V8.5 H4 V5.5 H5 V4 H6.5 Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"></path>
+      <rect x="10.4" y="9.6" width="1.4" height="1.4" fill="currentColor"></rect>
+      <rect x="11.8" y="11" width="1.4" height="1.4" fill="currentColor"></rect>
+      <rect x="13.2" y="12.4" width="1.4" height="1.4" fill="currentColor"></rect>
+    </svg>
+  </span>
+
+  <input
+    class="sx-input"
+    id={id}
+    name={name}
+    type={type}
+    placeholder={placeholder}
+    autocomplete={autocomplete}
+    spellcheck="false"
+  />
+
+  {
+    clearable && (
+      <button class="sx-field__clear" type="button" data-field-clear aria-label="Clear the field">
+        <svg viewBox="0 0 10 10" width="10" height="10" shape-rendering="crispEdges">
+          <path d="M1 1 H3 L5 3 L7 1 H9 V3 L7 5 L9 7 V9 H7 L5 7 L3 9 H1 V7 L3 5 L1 3 Z" fill="currentColor" />
+        </svg>
+      </button>
+    )
+  }
+
+  {hint && <p class="sx-field__hint">{hint}</p>}
+</div>

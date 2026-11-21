@@ -102,9 +102,11 @@ check that checkout out at that ref).
 Authored: `src/content/docs/index.mdx` (the landing page), `src/content/docs/license.md`,
 `src/styles/fonts.css` and `src/styles/sendust.css`, `src/content.config.ts`
 (Starlight's `docs` collection, with extension-less ids so the sidebar slugs in the
-config resolve), `src/components/` (`BuiltInTheOpen`, `LandingHero`, `LiquidBand`,
-`Cards`, `Glyph`, `MothMark`, `SignalMoth`, `SiteTitle`, `PageTitle`, `FactList`,
-`Head`, `Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
+config resolve), `src/lib/navigation.ts`, `src/components/` (`BuiltInTheOpen`,
+`LandingHero`, `LiquidBand`, `Cards`, `Glyph`, `MothMark`, `SignalMoth`,
+`SiteTitle`, `PageTitle`, `Header`, `Nav`, `NavDrawer`, `Search`, `Select`,
+`SelectDropdown`, `ThemeSelect`, `Input`, `UiScripts`, `FactList`, `Head`,
+`Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
 `scripts/fetch-sendust.mjs`, `astro.config.mjs`, this README, the workflow.
 
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
@@ -131,8 +133,10 @@ re-attached through `astro:page-load`, so a view transition leaves nothing
 behind. It is decoration — `aria-hidden`, never focusable, never announced.
 
 **The water** (`LiquidBand.astro`, and the hero) is the obsidian panel: three
-drifting pools of light, one static grain tile, and a two-copy SVG wave — the
-page colour eating into the water — translated by -50 % on a loop. The pools are
+drifting pools of light, one static grain tile, and the meniscus — the page
+colour eating into the water in two out-of-step SVG layers, each translated by
+-50 % so the pattern never repeats visibly, and both masked at the ends so the
+water fades into the panel's corners instead of being cut by them. The pools are
 plain radial gradients, not blurred elements, and they move on `transform` only,
 so nothing on a liquid layer repaints.
 
@@ -142,6 +146,40 @@ of light on hover), `Glyph` (ten pixel icons on a 16-unit grid), `LiquidBand`,
 where the splash hero already supplies the `<h1>` — one page, one `<h1>`. A group
 with a single page in the map is still a plain sidebar link — a collapsible menu
 around one item is noise.
+
+## Custom controls and navigation
+
+Nothing in the chrome is a browser default. Every control is a component in
+`src/components/`, sharing one behaviour layer (`UiScripts.astro`) that delegates
+from the document and re-resolves its elements on `astro:page-load`, so a view
+transition never orphans a listener:
+
+- **`Input`** — a hairline field with a pixel magnifier, a clear button, a hint
+  slot and a focus ring drawn as a ring, not an outline. It is the search field.
+- **`Select`** and **`SelectDropdown`** — a custom single-select: trigger plus
+  listbox, `aria-expanded` / `aria-activedescendant`, arrow keys, Home/End,
+  Enter/Space, Escape, Tab to leave, click-outside to dismiss, and a
+  `select:change` event. It is the theme picker (`ThemeSelect`), in the header and
+  again in the drawer.
+- **Search** — a trigger that looks like the site's own input, and a dialog with
+  an `Input` that queries the Pagefind index this build produced. Results are
+  rendered here, matches highlighted with a lime `mark`; the excerpt is stripped
+  of every tag except `<mark>`. ⌘K / Ctrl-K opens it. Search stays in the browser.
+- **`Nav`** — the compact desktop navigation: four top-level entries, each a
+  dropdown of pages, opened by click or by hover where a real pointer exists,
+  and walked with the arrow keys.
+- **`NavDrawer`** — the mobile menu: the sidebar's own groups and wording in a
+  drawer, opened from the burger on **every** page, including the landing page,
+  which has no sidebar. Focus moves into it, Tab is trapped, Escape and the
+  scrim close it, and the page behind it does not scroll.
+
+`src/lib/navigation.ts` is the only place that decides what those three menus
+contain: `navGroups()` folds the `nav` export in `scripts/doc-map.mjs` into the
+header dropdowns (anything unmentioned is appended to the last one, so a page can
+never become unreachable), and `sidebarGroups()` mirrors the sidebar for the
+drawer. Panels, the select menu, the search dialog and the drawer all take the
+same three panel tokens — `--sx-surface`, `--sx-border`, `--sx-shadow` — so they
+grade together in both palettes.
 
 ## Theme and motion
 

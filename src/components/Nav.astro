@@ -1,0 +1,47 @@
+---
+import { navGroups } from "../lib/navigation";
+
+/** The compact header navigation: one dropdown per top-level entry. */
+const entries = navGroups();
+---
+
+<nav class="sx-nav" aria-label="Sections">
+  <ul class="sx-nav__list">
+    {
+      entries.map((entry, index) => {
+        const panelId = `sx-nav-panel-${index}`;
+        return (
+          <li class="sx-nav__item" data-menu>
+            <button
+              class="sx-nav__trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls={panelId}
+              data-menu-trigger
+            >
+              {entry.label}
+              <span class="sx-nav__chevron" aria-hidden="true">
+                <svg viewBox="0 0 10 10" width="8" height="8" shape-rendering="crispEdges">
+                  <path d="M1 3.5 H9 L5 7.5 Z" fill="currentColor" />
+                </svg>
+              </span>
+            </button>
+
+            <div class="sx-nav__panel" id={panelId} data-menu-panel>
+              <ul class="sx-nav__links">
+                {entry.links.map((link) => (
+                  <li>
+                    <a href={link.href}>
+                      <span class="sx-nav__label">{link.label}</span>
+                      {link.description && <span class="sx-nav__desc">{link.description}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>

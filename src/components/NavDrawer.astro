@@ -1,0 +1,53 @@
+---
+import { REPOSITORY } from "../../scripts/doc-map.mjs";
+import { sidebarGroups } from "../lib/navigation";
+import ThemeSelect from "./ThemeSelect.astro";
+
+/**
+ * The mobile menu: the sidebar, word for word and in the same order, in a
+ * drawer that works on every page — including the landing page, which has no
+ * sidebar of its own.
+ */
+const sections = sidebarGroups();
+const repo = `https://github.com/${REPOSITORY.owner}/${REPOSITORY.name}`;
+---
+
+<div class="sx-drawer" id="sx-drawer" data-drawer>
+  <div class="sx-drawer__scrim" data-drawer-close aria-hidden="true"></div>
+
+  <aside class="sx-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="sx-drawer-title">
+    <div class="sx-drawer__head">
+      <p class="sx-drawer__title" id="sx-drawer-title">Documentation</p>
+      <button class="sx-drawer__close" type="button" data-drawer-close aria-label="Close the menu">
+        <svg viewBox="0 0 12 12" width="12" height="12" shape-rendering="crispEdges" aria-hidden="true">
+          <path d="M1 1 H3.5 L6 3.5 L8.5 1 H11 V3.5 L8.5 6 L11 8.5 V11 H8.5 L6 8.5 L3.5 11 H1 V8.5 L3.5 6 L1 3.5 Z" fill="currentColor" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sx-drawer__nav" aria-label="Documentation">
+      {
+        sections.map((section) => (
+          <div class="sx-drawer__group">
+            <p class="sx-drawer__label">{section.label}</p>
+            <ul>
+              {section.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="sx-drawer__foot">
+      <ThemeSelect />
+      <div class="sx-drawer__meta">
+        <a href={repo}>GitHub</a>
+        <a href="https://www.npmjs.com/package/@sendust/ts">npm</a>
+      </div>
+    </div>
+  </aside>
+</div>

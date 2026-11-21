@@ -1,0 +1,44 @@
+---
+/**
+ * The options panel of a custom select. Markup only: the behaviour lives in
+ * UiScripts.astro, one implementation for every select on the site.
+ */
+interface Option {
+  value: string;
+  label: string;
+  hint?: string;
+}
+
+interface Props {
+  id: string;
+  options: Option[];
+  selected?: string;
+}
+
+const { id, options, selected = "" } = Astro.props;
+const listboxId = `${id}-listbox`;
+---
+
+<ul class="sx-select__panel" id={listboxId} role="listbox" aria-labelledby={`${id}-trigger`} data-select-panel>
+  {
+    options.map((option, index) => (
+      <li
+        class="sx-select__option"
+        id={`${id}-option-${index}`}
+        role="option"
+        aria-selected={option.value === selected ? "true" : "false"}
+        data-select-option
+        data-value={option.value}
+        data-label={option.label}
+      >
+        <span class="sx-select__label">{option.label}</span>
+        {option.hint && <span class="sx-select__hint">{option.hint}</span>}
+        <span class="sx-select__tick" aria-hidden="true">
+          <svg viewBox="0 0 10 10" width="10" height="10" shape-rendering="crispEdges">
+            <path d="M1 5 H3.5 V7 H5.5 V5 H8.5 V3 L5.5 6 L3.5 4 L1 5 Z" fill="currentColor" />
+          </svg>
+        </span>
+      </li>
+    ))
+  }
+</ul>

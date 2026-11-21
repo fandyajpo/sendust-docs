@@ -60,6 +60,17 @@ export const groups = [
   },
 ];
 
+// The header navigation: compact top-level entries, each collecting whole
+// sidebar groups or single pages. Anything a page adds to `groups` without
+// being mentioned here is appended to the last entry by src/lib/navigation.ts,
+// so a new page is never unreachable from the header.
+export const nav = [
+  { label: "Start", groups: ["Start here"] },
+  { label: "Guides", groups: ["Guides"] },
+  { label: "Reference", groups: ["Architecture", "Performance", "Contributing"] },
+  { label: "More", groups: ["The story"], pages: ["license"] },
+];
+
 // Pages this repository writes itself, so they have no upstream source.
 export const manual = [{ slug: "license", label: "License" }];
 

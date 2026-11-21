@@ -1,0 +1,64 @@
+---
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+
+import Input from "./Input.astro";
+import Nav from "./Nav.astro";
+import NavDrawer from "./NavDrawer.astro";
+import Search from "./Search.astro";
+import SiteTitle from "./SiteTitle.astro";
+import ThemeSelect from "./ThemeSelect.astro";
+import UiScripts from "./UiScripts.astro";
+---
+
+<header class="header sx-header">
+  <div class="sx-header__inner">
+    <div class="sx-header__brand"><SiteTitle /></div>
+
+    <Nav />
+
+    <div class="sx-header__actions">
+      <Search />
+      <div class="sx-header__social"><SocialIcons /></div>
+      <div class="sx-header__theme"><ThemeSelect /></div>
+      <button
+        class="sx-burger"
+        type="button"
+        data-drawer-open
+        aria-controls="sx-drawer"
+        aria-expanded="false"
+        aria-label="Open the documentation menu"
+      >
+        <span class="sx-burger__bar" aria-hidden="true"></span>
+        <span class="sx-burger__bar" aria-hidden="true"></span>
+        <span class="sx-burger__bar" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<NavDrawer />
+
+{/* The search dialog sits outside the header so nothing there can clip it. */}
+<div class="sx-search" data-search-dialog>
+  <div class="sx-search__scrim" data-search-close></div>
+
+  <div class="sx-search__panel" role="dialog" aria-modal="true" aria-labelledby="sx-search-title">
+    <h2 class="sx-visually-hidden" id="sx-search-title">Search the documentation</h2>
+
+    <Input
+      id="sx-search-input"
+      name="q"
+      label="Search the documentation"
+      placeholder="Search the guides, the architecture, the story…"
+      type="search"
+      clearable
+    />
+
+    <p class="sx-search__status" data-search-status role="status" aria-live="polite"></p>
+    <ul class="sx-search__results" data-search-results></ul>
+
+    <p class="sx-search__foot">Pagefind, indexed from this build. Nothing leaves your browser.</p>
+  </div>
+</div>
+
+<UiScripts />

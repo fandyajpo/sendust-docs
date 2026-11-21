@@ -10,7 +10,11 @@ const font = (file: string) => `${import.meta.env.BASE_URL}fonts/${file}`;
     lands on the dark palette and the toggle still works afterwards. */}
 <script is:inline>
   try {
-    if (!localStorage.getItem("starlight-theme")) localStorage.setItem("starlight-theme", "dark");
+    // Only when nothing has been chosen: an empty string is the reader's
+    // "follow the system", and must not be overwritten on the next visit.
+    if (localStorage.getItem("starlight-theme") === null) {
+      localStorage.setItem("starlight-theme", "dark");
+    }
   } catch {}
 </script>
 

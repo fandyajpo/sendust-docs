@@ -1,0 +1,491 @@
+<script>
+  /**
+   * One behaviour layer for the custom controls: the header dropdowns, the
+   * select panels, the mobile drawer and search. Everything is delegated from
+   * the document and re-resolved by hand, so a view transition leaves no
+   * listener or stale node behind.
+   */
+
+  const doc = document;
+  const root = doc.documentElement;
+
+  let pagefind: Promise<Record<string, unknown>> | null = null;
+  let searchTimer = 0;
+
+  /* ------------------------------------------------------------- open state */
+
+  function closeMenus(): void {
+    for (const item of doc.querySelectorAll("[data-menu][data-open]")) {
+      item.removeAttribute("data-open");
+      item.querySelector("[data-menu-trigger]")?.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  function closeSelects(): void {
+    for (const select of doc.querySelectorAll("[data-select][data-open]")) {
+      select.removeAttribute("data-open");
+      const trigger = select.querySelector("[data-select-trigger]");
+      trigger?.setAttribute("aria-expanded", "false");
+      trigger?.removeAttribute("aria-activedescendant");
+      for (const option of select.querySelectorAll("[data-select-option]")) {
+        option.classList.remove("is-active");
+      }
+    }
+  }
+
+  function closeDrawer(): void {
+    const drawer = doc.getElementById("sx-drawer");
+    if (!drawer?.hasAttribute("data-open")) return;
+    drawer.removeAttribute("data-open");
+    root.style.overflow = "";
+    doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "false");
+  }
+
+  function openDrawer(): void {
+    const drawer = doc.getElementById("sx-drawer");
+    if (!drawer) return;
+    closeMenus();
+    closeSelects();
+    drawer.setAttribute("data-open", "");
+    root.style.overflow = "hidden";
+    doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "true");
+    drawer.querySelector<HTMLElement>("[data-drawer-close]")?.focus();
+  }
+
+  function closeSearch(): void {
+    const dialog = doc.querySelector("[data-search-dialog]");
+    if (!dialog?.hasAttribute("data-open")) return;
+    dialog.removeAttribute("data-open");
+    root.style.overflow = "";
+  }
+
+  function closeEverything(): void {
+    closeMenus();
+    closeSelects();
+    closeDrawer();
+    closeSearch();
+  }
+
+  /* ---------------------------------------------------------------- dropdown */
+
+  function openMenu(item: Element): void {
+    closeMenus();
+    closeSelects();
+    item.setAttribute("data-open", "");
+    item.querySelector("[data-menu-trigger]")?.setAttribute("aria-expanded", "true");
+  }
+
+  /* ------------------------------------------------------------------ select */
+
+  function optionsOf(select: Element): HTMLElement[] {
+    return Array.from(select.querySelectorAll<HTMLElement>("[data-select-option]"));
+  }
+
+  function markActive(select: Element, index: number): void {
+    const options = optionsOf(select);
+    options.forEach((option, at) => option.classList.toggle("is-active", at === index));
+    const active = options[index];
+    if (active) {
+      select.querySelector("[data-select-trigger]")?.setAttribute("aria-activedescendant", active.id);
+    }
+  }
+
+  function openSelect(select: Element): void {
+    closeMenus();
+    closeSelects();
+    select.setAttribute("data-open", "");
+    select.querySelector("[data-select-trigger]")?.setAttribute("aria-expanded", "true");
+    const options = optionsOf(select);
+    const current = options.findIndex((option) => option.getAttribute("aria-selected") === "true");
+    markActive(select, current < 0 ? 0 : current);
+  }
+
+  function choose(select: Element, option: Element): void {
+    const value = option.getAttribute("data-value") ?? "";
+    const label = option.getAttribute("data-label") ?? value;
+    select.setAttribute("data-value", value);
+    for (const each of optionsOf(select)) {
+      each.setAttribute("aria-selected", each === option ? "true" : "false");
+    }
+    const valueEl = select.querySelector("[data-select-value]");
+    if (valueEl) valueEl.textContent = label;
+    closeSelects();
+    select.querySelector<HTMLElement>("[data-select-trigger]")?.focus();
+    select.dispatchEvent(
+      new CustomEvent("select:change", { bubbles: true, detail: { value, label } }),
+    );
+  }
+
+  /* ------------------------------------------------------------------- theme */
+
+  function syncThemeSelects(mode: string): void {
+    for (const select of doc.querySelectorAll('[data-select][data-select-name="theme"]')) {
+      const option = select.querySelector(`[data-select-option][data-value="${mode}"]`);
+      if (!option) continue;
+      select.setAttribute("data-value", mode);
+      for (const each of optionsOf(select)) {
+        each.setAttribute("aria-selected", each === option ? "true" : "false");
+      }
+      const valueEl = select.querySelector("[data-select-value]");
+      if (valueEl) valueEl.textContent = option.getAttribute("data-label") ?? mode;
+    }
+  }
+
+  function storedTheme(): string {
+    try {
+      const stored = localStorage.getItem("starlight-theme");
+      if (stored === "" || stored === "auto") return "auto";
+      if (stored === "light" || stored === "dark") return stored;
+    } catch {
+      /* storage can be blocked; dark is the site's default anyway */
+    }
+    return "dark";
+  }
+
+  function applyTheme(mode: string): void {
+    const resolved =
+      mode === "auto"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : mode;
+    root.dataset.theme = resolved;
+    try {
+      // "" is how Starlight records "follow the system".
+      localStorage.setItem("starlight-theme", mode === "auto" ? "" : mode);
+    } catch {
+      /* nothing to persist to */
+    }
+    syncThemeSelects(mode);
+  }
+
+  /* ------------------------------------------------------------------ search */
+
+  function status(text: string, tone: string): void {
+    const el = doc.querySelector("[data-search-status]");
+    if (!el) return;
+    el.textContent = text;
+    el.setAttribute("data-tone", tone);
+  }
+
+  function loadPagefind(): Promise<Record<string, unknown>> {
+    if (!pagefind) {
+      const url = `${import.meta.env.BASE_URL}pagefind/pagefind.js`;
+      pagefind = import(/* @vite-ignore */ url).then((module: Record<string, unknown>) => {
+        const maybe = (module as { default?: Record<string, unknown> }).default;
+        return maybe && typeof maybe.search === "function" ? maybe : module;
+      });
+    }
+    return pagefind;
+  }
+
+  async function runSearch(query: string): Promise<void> {
+    const list = doc.querySelector("[data-search-results]");
+    if (!list) return;
+
+    const q = query.trim();
+    if (q.length < 2) {
+      list.replaceChildren();
+      status(q ? "One more character." : "Search the guides, the architecture, the story.", "");
+      return;
+    }
+
+    status("Searching…", "");
+    try {
+      const pf = (await loadPagefind()) as {
+        search: (term: string) => Promise<{ results?: { data: () => Promise<Record<string, unknown>> }[] }>;
+      };
+      const found = await pf.search(q);
+      const items = await Promise.all((found.results ?? []).slice(0, 8).map((hit) => hit.data()));
+      list.replaceChildren();
+
+      if (items.length === 0) {
+        status(`Nothing matched “${q}”.`, "empty");
+        return;
+      }
+
+      status(`${items.length} result${items.length === 1 ? "" : "s"} for “${q}”`, "");
+
+      for (const item of items) {
+        const li = doc.createElement("li");
+        const link = doc.createElement("a");
+        link.href = String(item.url ?? "#");
+        link.className = "sx-search__result";
+
+        const title = doc.createElement("span");
+        title.className = "sx-search__result-title";
+        const meta = item.meta as { title?: string } | undefined;
+        title.textContent = meta?.title ?? String(item.url ?? "");
+
+        const excerpt = doc.createElement("span");
+        excerpt.className = "sx-search__result-excerpt";
+        // Pagefind marks matches with <mark>; nothing else in the excerpt is
+        // trusted as markup.
+        excerpt.innerHTML = String(item.excerpt ?? "").replace(/<(?!\/?mark\b)[^>]*>/gi, "");
+
+        link.append(title, excerpt);
+        li.append(link);
+        list.append(li);
+      }
+    } catch {
+      status("Search is unavailable here. Every page is in the menu.", "error");
+    }
+  }
+
+  function openSearch(): void {
+    const dialog = doc.querySelector("[data-search-dialog]");
+    if (!dialog) return;
+    closeMenus();
+    closeSelects();
+    closeDrawer();
+    dialog.setAttribute("data-open", "");
+    root.style.overflow = "hidden";
+    const input = dialog.querySelector<HTMLInputElement>("input");
+    input?.focus();
+    if (input && input.value.trim().length > 1) void runSearch(input.value);
+    else status("Search the guides, the architecture, the story.", "");
+  }
+
+  /* ------------------------------------------------------------------- focus */
+
+  function trapFocus(container: Element, event: KeyboardEvent): void {
+    if (event.key !== "Tab") return;
+    const focusables = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((el) => el.offsetParent !== null || el === doc.activeElement);
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = doc.activeElement as HTMLElement | null;
+
+    if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  /* ------------------------------------------------------------------ events */
+
+  function handleClick(event: MouseEvent): void {
+    const target = event.target as Element | null;
+    if (!target) return;
+
+    const menuTrigger = target.closest("[data-menu-trigger]");
+    if (menuTrigger) {
+      const item = menuTrigger.closest("[data-menu]");
+      if (item) {
+        if (item.hasAttribute("data-open")) closeMenus();
+        else openMenu(item);
+      }
+      return;
+    }
+
+    if (target.closest("[data-menu-panel] a")) {
+      closeMenus();
+      return;
+    }
+
+    const selectTrigger = target.closest("[data-select-trigger]");
+    if (selectTrigger) {
+      const select = selectTrigger.closest("[data-select]");
+      if (select) {
+        if (select.hasAttribute("data-open")) closeSelects();
+        else openSelect(select);
+      }
+      return;
+    }
+
+    const option = target.closest("[data-select-option]");
+    if (option) {
+      const select = option.closest("[data-select]");
+      if (select) choose(select, option);
+      return;
+    }
+
+    if (target.closest("[data-drawer-open]")) {
+      openDrawer();
+      return;
+    }
+
+    if (target.closest("[data-drawer-close]") || target.closest(".sx-drawer__nav a")) {
+      closeDrawer();
+      return;
+    }
+
+    if (target.closest("[data-search-open]")) {
+      openSearch();
+      return;
+    }
+
+    if (target.closest("[data-search-close]") || target.closest("[data-search-results] a")) {
+      closeSearch();
+      return;
+    }
+
+    const clear = target.closest("[data-field-clear]");
+    if (clear) {
+      const field = clear.closest("[data-field]");
+      const input = field?.querySelector<HTMLInputElement>("input");
+      if (input) {
+        input.value = "";
+        input.focus();
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      return;
+    }
+
+    if (!target.closest("[data-select], .sx-nav__panel, .sx-search__panel, .sx-drawer__panel")) {
+      closeMenus();
+      closeSelects();
+    }
+  }
+
+  function handleKeydown(event: KeyboardEvent): void {
+    const key = event.key;
+
+    if ((key === "k" || key === "K") && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      openSearch();
+      return;
+    }
+
+    if (key === "Escape") {
+      const search = doc.querySelector("[data-search-dialog][data-open]");
+      if (search) {
+        closeSearch();
+        return;
+      }
+      const drawer = doc.querySelector("[data-drawer][data-open]");
+      if (drawer) {
+        closeDrawer();
+        return;
+      }
+      const select = doc.querySelector("[data-select][data-open]");
+      if (select) {
+        closeSelects();
+        select.querySelector<HTMLElement>("[data-select-trigger]")?.focus();
+        return;
+      }
+      const item = doc.querySelector("[data-menu][data-open]");
+      if (item) {
+        closeMenus();
+        item.querySelector<HTMLElement>("[data-menu-trigger]")?.focus();
+      }
+      return;
+    }
+
+    const openDialog = doc.querySelector("[data-search-dialog][data-open]");
+    if (openDialog) {
+      trapFocus(openDialog, event);
+      return;
+    }
+
+    const openDrawerEl = doc.querySelector("[data-drawer][data-open]");
+    if (openDrawerEl) {
+      trapFocus(openDrawerEl, event);
+      return;
+    }
+
+    const active = doc.querySelector("[data-select][data-open]");
+    if (active) {
+      const options = optionsOf(active);
+      const at = options.findIndex((option) => option.classList.contains("is-active"));
+
+      if (key === "ArrowDown" || key === "ArrowUp") {
+        event.preventDefault();
+        const delta = key === "ArrowDown" ? 1 : -1;
+        const next = (at + delta + options.length) % options.length;
+        markActive(active, next);
+        options[next]?.scrollIntoView({ block: "nearest" });
+        return;
+      }
+
+      if (key === "Home" || key === "End") {
+        event.preventDefault();
+        markActive(active, key === "Home" ? 0 : options.length - 1);
+        return;
+      }
+
+      if ((key === "Enter" || key === " ") && options[at]) {
+        event.preventDefault();
+        choose(active, options[at]);
+        return;
+      }
+
+      if (key === "Tab") closeSelects();
+      return;
+    }
+
+    const openItem = doc.querySelector("[data-menu][data-open]");
+    if (openItem) {
+      const links = Array.from(openItem.querySelectorAll<HTMLElement>("[data-menu-panel] a"));
+      const at = links.indexOf(doc.activeElement as HTMLElement);
+
+      if (key === "ArrowDown") {
+        event.preventDefault();
+        (links[at + 1] ?? links[0])?.focus();
+        return;
+      }
+
+      if (key === "ArrowUp") {
+        event.preventDefault();
+        (links[at - 1] ?? links[links.length - 1])?.focus();
+        return;
+      }
+
+      if (key === "Tab") closeMenus();
+    }
+  }
+
+  function handleInput(event: Event): void {
+    const input = (event.target as Element | null)?.closest("[data-field] input");
+    if (!input) return;
+    window.clearTimeout(searchTimer);
+    searchTimer = window.setTimeout(() => {
+      void runSearch((input as HTMLInputElement).value);
+    }, 140);
+  }
+
+  doc.addEventListener("click", handleClick);
+  doc.addEventListener("keydown", handleKeydown);
+  doc.addEventListener("input", handleInput);
+
+  // Hover opens a dropdown where there is a real pointer; leaving the nav closes it.
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    doc.addEventListener("pointerover", (event) => {
+      const item = (event.target as Element | null)?.closest?.("[data-menu]");
+      if (!item) return;
+      if (item.querySelector("[data-menu-trigger]")?.getAttribute("aria-expanded") === "true") return;
+      openMenu(item);
+    });
+
+    doc.addEventListener("pointerout", (event) => {
+      const item = (event.target as Element | null)?.closest?.("[data-menu]");
+      if (!item) return;
+      const next = event.relatedTarget as Element | null;
+      if (next && (item.contains(next) || next.closest?.(".sx-nav"))) return;
+      closeMenus();
+    });
+  }
+
+  doc.addEventListener("select:change", (event) => {
+    const select = (event.target as Element | null)?.closest?.("[data-select]");
+    if (!select || select.getAttribute("data-select-name") !== "theme") return;
+    const detail = (event as CustomEvent<{ value: string }>).detail;
+    applyTheme(detail.value);
+  });
+
+  doc.addEventListener("astro:page-load", () => {
+    root.style.overflow = "";
+    closeEverything();
+    syncThemeSelects(storedTheme());
+  });
+
+  syncThemeSelects(storedTheme());
+</script>

@@ -43,12 +43,18 @@ export default defineConfig({
       components: {
         // Adds the view-transition router, font preloads and the theme meta.
         Head: "./src/components/Head.astro",
+        // Brand, compact nav with dropdowns, custom search, theme select and
+        // the mobile drawer.
+        Header: "./src/components/Header.astro",
         // The pixel moth and the wordmark in the header.
         SiteTitle: "./src/components/SiteTitle.astro",
+        // A search dialog built here, over this build's Pagefind index.
+        Search: "./src/components/Search.astro",
+        // The theme picker as a custom select, not a native <select>.
+        ThemeSelect: "./src/components/ThemeSelect.astro",
         // No page title where the splash hero already supplies the <h1>.
         PageTitle: "./src/components/PageTitle.astro",
-        // States, on every page, which Sendust ref it was rendered from, and
-        // carries the floating signal moth.
+        // States, on every page, which Sendust ref it was rendered from.
         Footer: "./src/components/Footer.astro",
       },
       sidebar,
