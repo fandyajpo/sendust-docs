@@ -725,9 +725,11 @@ header.header::after {
   gap: 0.55rem;
   block-size: 100%;
   padding: 1.05rem 1.1rem 1.15rem;
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: var(--sx-radius);
-  background: var(--sl-color-bg);
+  /* The card's surface is the <li> in the canvas layer; this anchor only
+     fills it, so the two radii and the two hairlines cannot disagree. */
+  border: 0;
+  border-radius: var(--cvx-radius);
+  background: transparent;
   color: inherit;
   text-decoration: none;
   overflow: hidden;
@@ -754,18 +756,10 @@ header.header::after {
   pointer-events: none;
 }
 
-.sx-card__link:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--sl-color-text) 26%, transparent);
-  box-shadow: 0 16px 30px -26px rgb(14 15 18 / 0.55);
-}
-
+/* The lift, the edge and the shadow belong to the card itself (`.sx-card:hover`
+   in the canvas layer); the anchor only brings up its own wash of light. */
 .sx-card__link:hover::after {
   opacity: 1;
-}
-
-.sx-card__link:active {
-  transform: translateY(0) scale(0.996);
 }
 
 .sx-card__glyph {
@@ -2388,8 +2382,12 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
   --sl-color-bg-nav: var(--cvx-canvas);
   --sl-color-bg-sidebar: var(--cvx-canvas);
   --sl-color-bg-inline-code: #16161a;
+  --sl-color-bg-accent: var(--cvx-accent);
   --sl-color-text: var(--cvx-ink);
   --sl-color-text-accent: var(--cvx-accent);
+  --sl-color-accent-low: #1e1b3d;
+  --sl-color-accent: var(--cvx-accent);
+  --sl-color-accent-high: #b0acff;
   --sl-color-white: #ffffff;
   --sl-color-gray-1: #ededed;
   --sl-color-gray-2: #bdbdbd;
