@@ -522,6 +522,13 @@ header.header::after {
   animation: sx-pulse-dot 3.4s var(--sx-ease) infinite;
 }
 
+/* On a phone the runtime list is what wraps; the version and the core lead. */
+@media (max-width: 520px) {
+  .sx-eyebrow__more {
+    display: none;
+  }
+}
+
 .sx-hero .sx-hero__title {
   margin: 0.9rem 0 0;
   font-family: var(--tp-display);
