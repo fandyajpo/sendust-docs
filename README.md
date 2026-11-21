@@ -133,12 +133,13 @@ re-attached through `astro:page-load`, so a view transition leaves nothing
 behind. It is decoration — `aria-hidden`, never focusable, never announced.
 
 **The water** (`LiquidBand.astro`, and the hero) is the obsidian panel: three
-drifting pools of light, one static grain tile, and the meniscus — the page
-colour eating into the water in two out-of-step SVG layers, each translated by
--50 % so the pattern never repeats visibly, and both masked at the ends so the
-water fades into the panel's corners instead of being cut by them. The pools are
-plain radial gradients, not blurred elements, and they move on `transform` only,
-so nothing on a liquid layer repaints.
+drifting pools of light, one static grain tile, and a bottom edge that is a
+waterline rather than a straight line. The edge is a `mask-image` built from
+`public/wave.svg` (a 240×36 tile, C1-continuous at the seam so repeats are
+invisible), composited over a solid layer — so the curve and the corner radius
+are one shape, with no page-colour band laid on top to line up or clip. The pools
+are plain radial gradients, not blurred elements, and they move on `transform`
+only, so nothing on a liquid layer repaints.
 
 **The components**: `Cards` (data-driven link cards with a pixel glyph and a pool
 of light on hover), `Glyph` (ten pixel icons on a 16-unit grid), `LiquidBand`,
@@ -202,12 +203,19 @@ them, glyphs that darken, facts that take a border, a nav item that nudges 2 px,
 header hairline of signal, the brand mark tilting 6°, and a tap that settles a
 card by one pixel.
 
-Motion is entrance-only: the rotating word in the hero headline with a lime rule
-sweeping under it (12 s cycle), drifting pools and waves (24–42 s), the moth's
-idle (3–7 s), a rise on section headings and cards as they scroll in
-(`animation-timeline: view()`, where supported), and 500 ms of lean on the
-floating moth. Nothing animates layout. Under `prefers-reduced-motion: reduce`
-every animation and transition is off — the headline shows its first word, the
+Motion happens in two places, on purpose. **CSS** owns state changes that need no
+sequencing — the rotating word with its lime sweep (12 s), drifting pools and
+waves (24–42 s), the moth's idle (3–7 s), hover, press, colour. **Motion** owns
+what CSS cannot express: the reading line, driven by `scroll()` + `clamp()`, and
+grouped reveals that arrive in order through `inView()` + `stagger()` +
+`animate()`.
+
+The layer is additive. Items are hidden only under `html[data-motion="on"]`,
+which the module sets after it boots — so a reduced-motion visitor, or anyone
+whose module never loads, sees a complete static page rather than a page waiting
+to animate. It reboots on `astro:page-load` and on a change to the
+reduced-motion preference. Under `prefers-reduced-motion: reduce` every CSS
+animation and transition is off too: the headline shows its first word, the
 water holds still, and the moth is a static drawing.
 
 The voice on authored pages is editorial and plain; everything the sync copies
@@ -249,12 +257,16 @@ either with `DOCS_BASE` and `DOCS_SITE`.
 
 ## Dependencies
 
-`astro` and `@astrojs/starlight` — nothing else. Search is Starlight's built-in
-Pagefind, MDX comes with Starlight (it registers `@astrojs/mdx` itself), code
+`astro`, `@astrojs/starlight` and `motion` — nothing else. Search is Pagefind
+(built in), MDX comes with Starlight (it registers `@astrojs/mdx` itself), code
 blocks are Expressive Code (bundled by Starlight: copy, line numbers, titles,
-tabs, highlighting), and there is no analytics, no tracking script and no
-animation library. The three typefaces are self-hosted woff2 files, not a
-package or a CDN.
+tabs, highlighting), and there is no analytics, no tracking script and no icon or
+UI kit. The three typefaces are self-hosted woff2 files, not a package or a CDN.
+
+`motion` (motion.dev, v14) is the one animation dependency, and it is imported by
+the motion layer in `src/components/UiScripts.astro` only, so the bundle carries
+the calls in use — `scroll`, `inView`, `stagger`, `animate`, `clamp` — not the
+whole library.
 
 `src/components/BuiltInTheOpen.astro` reads the creator's GitHub profile and the
 repository's contributors from the public REST API **at build time**, with no
