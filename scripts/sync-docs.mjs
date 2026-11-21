@@ -575,7 +575,7 @@ for (const entry of entries) {
   const parsed = parseDocument(raw, entry);
   const body = rewriteLinks(parsed.body, entry, problems, tally);
 
-  if (parsed.usedFallback) fallbacks.push(entry.source);
+  if (parsed.usedFallback && !entry.description) fallbacks.push(entry.source);
   if (!entry.mapped) {
     entry.label = truncate(parsed.title.split(" — ").at(-1) ?? parsed.title, 40);
     warn(

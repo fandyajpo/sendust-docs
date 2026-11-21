@@ -61,11 +61,13 @@ a document into `pages` to include it.
 ### `scripts/doc-map.mjs`
 
 The one map this repository owns: which documents are published, their source
-path, their sidebar group, label and order, and an optional description override.
+path, their sidebar group, label and order, an optional description override,
+and the `unpublished` list that records what exists upstream and stays there.
 `astro.config.mjs` builds the sidebar from the same file, so a label is declared
-exactly once. A guide or ADR that appears upstream before the map lists it is
-still copied and reachable by URL, with a warning that it is missing from the
-sidebar; a mapped page that disappears upstream is a hard error.
+exactly once. A new guide that appears upstream before the map lists it is still
+copied and reachable by URL, with a warning that it is missing from the sidebar
+(unless the discovery rule skips it); a mapped page that disappears upstream is
+a hard error.
 
 ## Commands
 
@@ -98,8 +100,9 @@ and the dark default), `src/components/Footer.astro` (the provenance line),
 the workflow.
 
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
-`api/`, `decisions/`, `releases/`, and `src/synced-docs.json` (the ref, commit
-and time the pages were rendered from, which the footer displays).
+`releases/`, and `src/synced-docs.json` (the ref, commit and time the pages were
+rendered from, which the footer displays). A directory that stops being
+published — `api/`, `decisions/` — is deleted on the next sync.
 
 ## Theme and motion
 
