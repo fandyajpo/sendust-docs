@@ -2231,3 +2231,28 @@ starlight-menu-button,
     display: none;
   }
 }
+
+
+/* ---------------------------------------------------------------------------
+ * Motion layer (sendust: only once the module has taken over)
+ * ------------------------------------------------------------------------- */
+
+/* Items are hidden only while the motion layer is live, so a reduced-motion or
+   no-JavaScript visitor always sees a complete page. */
+html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content > h2) {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/* The reading line. */
+[data-motion-progress] {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 90;
+  block-size: 2px;
+  background: var(--sx-glow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}

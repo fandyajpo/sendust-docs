@@ -502,3 +502,92 @@
 
   syncThemeSelects(storedTheme());
 </script>
+
+
+<script>
+  /**
+   * The motion layer, on Motion (motion.dev).
+   *
+   * It is progressive and additive: the page is complete without it. Every
+   * effect is opt-in through `html[data-motion="on"]`, so reduced-motion
+   * visitors, and anyone whose module never loads, see a finished static page
+   * rather than a page waiting to animate in.
+   *
+   * What it drives, and why these primitives and not more:
+   *  - `scroll` + `clamp` for the reading line, which CSS cannot express.
+   *  - `inView` + `stagger` + `animate` for groups that should arrive in order
+   *    as they enter the viewport, which `animation-timeline` only approximates.
+   * Cheap state changes (hover, press, colour) stay in CSS: they need no
+   * sequencing, and putting them in JavaScript would only add handlers.
+   */
+  import { animate, clamp, inView, scroll, stagger } from "motion";
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const root = document.documentElement;
+  const EASE = [0.22, 0.61, 0.36, 1] as const;
+
+  /** Groups revealed on entry: card grids, fact rows, and section headings. */
+  const GROUP_SELECTOR = "[data-motion-group], .card-grid, .sx-facts, .sl-markdown-content > h2";
+
+  let stops: Array<() => void> = [];
+
+  function itemsOf(group: Element): Element[] {
+    if (group.matches("[data-motion-group]")) {
+      return [...group.querySelectorAll<HTMLElement>("[data-motion-item]")];
+    }
+    const children = [...group.children];
+    return children.length > 0 ? children : [group];
+  }
+
+  function boot(): void {
+    for (const stop of stops) stop();
+    stops = [];
+
+    if (prefersReduced.matches) {
+      root.removeAttribute("data-motion");
+      return;
+    }
+
+    root.setAttribute("data-motion", "on");
+
+    // The reading line. Created here so no page carries decorative markup for it.
+    let bar = document.querySelector<HTMLElement>("[data-motion-progress]");
+    if (!bar) {
+      bar = document.createElement("span");
+      bar.dataset.motionProgress = "";
+      bar.setAttribute("aria-hidden", "true");
+      document.body.append(bar);
+    }
+    const paint = (): void => {
+      const max = root.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? clamp(0, 1, window.scrollY / max) : 0;
+      bar.style.transform = `scaleX(${progress.toFixed(4)})`;
+    };
+    paint();
+    stops.push(scroll(paint));
+
+    // Reveals: a group's items rise in order, once each.
+    for (const group of document.querySelectorAll(GROUP_SELECTOR)) {
+      const items = itemsOf(group);
+      if (items.length === 0) continue;
+
+      stops.push(
+        inView(
+          group,
+          () => {
+            animate(
+              items,
+              { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0px)"] },
+              { duration: 0.55, delay: stagger(0.07), ease: EASE },
+            );
+          },
+          { amount: 0.2 },
+        ),
+      );
+    }
+  }
+
+  boot();
+  document.addEventListener("astro:page-load", boot);
+  prefersReduced.addEventListener("change", boot);
+</script>
