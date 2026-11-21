@@ -161,6 +161,7 @@ function resolveCheckout() {
 
   const candidates = [
     path.resolve(projectRoot, "..", "sendust"),
+    path.resolve(projectRoot, ".sendust"),
     path.join(homedir(), "Documents", "Personal", "sendust"),
   ];
   for (const candidate of candidates) {
@@ -168,8 +169,9 @@ function resolveCheckout() {
   }
 
   fail(
-    `no Sendust checkout found. Set SENDUST_PATH to one, or clone ${repoLabel} next to this repository:\n` +
-      `  git clone https://github.com/${repoLabel}.git ${path.resolve(projectRoot, "..", "sendust")}`,
+    `no Sendust checkout found. Set SENDUST_PATH to one, clone ${repoLabel} next to this repository:\n` +
+      `  git clone https://github.com/${repoLabel}.git ${path.resolve(projectRoot, "..", "sendust")}\n` +
+      `  or fetch the pinned tree: npm run fetch:docs`,
   );
 }
 
@@ -179,35 +181,72 @@ const checkout = resolveCheckout();
 // 2. The ref
 // ---------------------------------------------------------------------------
 
-const head = tryGit(checkout, ["rev-parse", "--verify", "HEAD"], "");
-if (!head) {
-  fail(`${checkout} is not a git checkout, so the documentation cannot be pinned to ${ref}.`);
+/**
+ * The tree this site renders, and the commit behind it.
+ * A git checkout has to be at `ref`. A tree fetched by scripts/fetch-sendust.mjs
+ * has no git history, so it carries a source.json naming the ref it came from,
+ * and that ref has to be the one being published.
+ */
+function pinnedSource() {
+  const head = tryGit(checkout, ["rev-parse", "--verify", "HEAD"], "");
+
+  if (!head) {
+    const markerFile = path.join(checkout, "source.json");
+    if (!existsSync(markerFile)) {
+      fail(
+        `${checkout} is neither a git checkout nor a tree fetched by scripts/fetch-sendust.mjs,\n` +
+          `  so the documentation cannot be pinned to ${ref}.\n` +
+          `  Fetch it with: npm run fetch:docs`,
+      );
+    }
+    let marker;
+    try {
+      marker = JSON.parse(readFileSync(markerFile, "utf8"));
+    } catch {
+      fail(`${markerFile} is not readable JSON; re-run: npm run fetch:docs`);
+    }
+    if (marker.repository !== repoLabel) {
+      fail(`${markerFile} records ${marker.repository}, not ${repoLabel}.`);
+    }
+    if (marker.ref !== ref) {
+      fail(
+        `${markerFile} records ${marker.ref}, not ${ref}.\n` +
+          `  Re-fetch it: SENDUST_REF=${ref} npm run fetch:docs`,
+      );
+    }
+    return { commit: typeof marker.commit === "string" ? marker.commit : null };
+  }
+
+  const refCommit = tryGit(checkout, ["rev-parse", "--verify", `${ref}^{commit}`], "");
+  if (!refCommit) {
+    fail(
+      `the Sendust checkout at ${checkout} has no ref "${ref}".\n` +
+        `  Fetch tags first: git -C ${checkout} fetch --tags`,
+    );
+  }
+
+  if (head !== refCommit) {
+    const described = tryGit(checkout, ["describe", "--tags", "--always", "--dirty"], head.slice(0, 8));
+    fail(
+      `the Sendust checkout at ${checkout} is at ${described}, not at ${ref}.\n` +
+        `  This site only publishes documentation from a tagged checkout, so nothing was written.\n` +
+        `  Fix it with: git -C ${checkout} checkout ${ref}\n` +
+        `  Or render another ref: SENDUST_REF=<ref> npm run sync:docs`,
+    );
+  }
+
+  const dirtyDocs = tryGit(checkout, ["status", "--porcelain", "--", "docs"], "");
+  if (dirtyDocs) {
+    warn(
+      `the Sendust checkout has uncommitted changes under docs/; they are published as if they were ${ref}.`,
+    );
+  }
+
+  return { commit: head };
 }
 
-const refCommit = tryGit(checkout, ["rev-parse", "--verify", `${ref}^{commit}`], "");
-if (!refCommit) {
-  fail(
-    `the Sendust checkout at ${checkout} has no ref "${ref}".\n` +
-      `  Fetch tags first: git -C ${checkout} fetch --tags`,
-  );
-}
-
-if (head !== refCommit) {
-  const described = tryGit(checkout, ["describe", "--tags", "--always", "--dirty"], head.slice(0, 8));
-  fail(
-    `the Sendust checkout at ${checkout} is at ${described}, not at ${ref}.\n` +
-      `  This site only publishes documentation from a tagged checkout, so nothing was written.\n` +
-      `  Fix it with: git -C ${checkout} checkout ${ref}\n` +
-      `  Or render another ref: SENDUST_REF=<ref> npm run sync:docs`,
-  );
-}
-
-const dirtyDocs = tryGit(checkout, ["status", "--porcelain", "--", "docs"], "");
-if (dirtyDocs) {
-  warn(
-    `the Sendust checkout has uncommitted changes under docs/; they are published as if they were ${ref}.`,
-  );
-}
+const { commit } = pinnedSource();
+const shortCommit = commit ? commit.slice(0, 8) : ref;
 
 // ---------------------------------------------------------------------------
 // 3. What to copy
@@ -524,7 +563,7 @@ if (problems.length > 0) {
 
 if (checkOnly) {
   console.log(
-    `sync-docs: ${outputs.length} pages from ${repoLabel}@${ref} (${head.slice(0, 8)}) validate; --check wrote nothing.`,
+    `sync-docs: ${outputs.length} pages from ${repoLabel}@${ref} (${shortCommit}) validate; --check wrote nothing.`,
   );
   process.exit(0);
 }
@@ -549,7 +588,7 @@ writeFileSync(
     {
       repository: repoLabel,
       ref,
-      commit: head,
+      commit,
       syncedAt: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
       pages: outputs.length,
     },
@@ -561,7 +600,7 @@ writeFileSync(
 const counts = new Map();
 for (const entry of entries) counts.set(entry.group, (counts.get(entry.group) ?? 0) + 1);
 
-console.log(`sync-docs: ${outputs.length} pages from ${repoLabel}@${ref} (${head.slice(0, 8)})`);
+console.log(`sync-docs: ${outputs.length} pages from ${repoLabel}@${ref} (${shortCommit})`);
 for (const group of groups) {
   console.log(
     `sync-docs:   ${group.label.padEnd(10)} ${String(counts.get(group.label) ?? 0).padStart(3)}`,

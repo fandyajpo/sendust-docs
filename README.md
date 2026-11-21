@@ -74,6 +74,7 @@ npm run preview                 # serve dist/
 npm run dev                     # dev server with hot reload
 
 npm run check:docs              # validate only: no writes, same link checks
+npm run fetch:docs              # download the pinned tag into .sendust/
 SENDUST_REF=v1.1.0 npm run sync:docs
 SENDUST_PATH=~/work/sendust npm run sync:docs
 ```
@@ -123,6 +124,18 @@ page, so they survive the base path without a plugin.
 
 If `package-lock.json` is missing, the workflow generates it before building;
 commit one so the build is reproducible.
+
+### Vercel
+
+`vercel.json` builds with `npm run build:vercel`, which downloads the pinned
+Sendust tag into `.sendust/` before syncing: a Vercel build has no sibling
+repository to read. A tarball of the tag is that ref by construction, the fetch
+records which ref it was in `.sendust/source.json`, and the sync refuses a
+fetched tree whose recorded ref is not `SENDUST_REF`.
+
+Vercel serves the site at the domain root, so `astro.config.mjs` drops `base`
+when `VERCEL` is set and takes the canonical URL from the deployment. Override
+either with `DOCS_BASE` and `DOCS_SITE`.
 
 ## Dependencies
 

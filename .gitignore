@@ -10,5 +10,9 @@ src/content/docs/decisions/
 src/content/docs/releases/
 src/synced-docs.json
 
+# Fetched documentation source, for hosts without a sibling Sendust checkout.
+.sendust/
+.vercel/
+
 .DS_Store
 *.log

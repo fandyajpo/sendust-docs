@@ -10,10 +10,17 @@ const sidebar = groups.map((group) => ({
   items: group.pages.map((slug) => ({ label: pages[slug].label, slug })),
 }));
 
+// GitHub Pages serves this repository under SITE.base; Vercel serves it at the
+// domain root. Both the canonical URL and the base are overridable per host.
+const vercelHost =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() || process.env.VERCEL_URL?.trim();
+const site = process.env.DOCS_SITE?.trim() || (vercelHost ? `https://${vercelHost}` : SITE.url);
+const configuredBase = process.env.DOCS_BASE?.trim() ?? (process.env.VERCEL ? "" : SITE.base);
+const base = configuredBase === "/" ? "" : configuredBase;
+
 export default defineConfig({
-  // GitHub Pages serves this repository at SITE.url + SITE.base.
-  site: SITE.url,
-  base: SITE.base,
+  site,
+  ...(base ? { base } : {}),
   trailingSlash: "always",
   integrations: [
     starlight({
