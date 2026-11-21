@@ -44,6 +44,9 @@ export default defineConfig({
       ],
       pagination: true,
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
+      // A neutral dark for code, so it sits in the palette instead of the
+      // Starlight theme's cool slate.
+      expressiveCode: { themes: ["github-dark", "github-light"] },
       head: [{ tag: "meta", attrs: { name: "color-scheme", content: "dark light" } }],
     }),
   ],
