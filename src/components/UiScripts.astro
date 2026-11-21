@@ -71,6 +71,8 @@
     if (!drawer) return;
     closeMenus();
     closeSelects();
+    // Two modals at once is a bug: the drawer takes over from the search.
+    closeSearch();
     // A drawer left scrolled would reopen somewhere in its middle.
     const panel = drawer.querySelector<HTMLElement>(".sx-drawer__panel");
     if (panel) panel.scrollTop = 0;
