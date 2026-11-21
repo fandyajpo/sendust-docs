@@ -591,3 +591,91 @@
   document.addEventListener("astro:page-load", boot);
   prefersReduced.addEventListener("change", boot);
 </script>
+
+
+<script>
+  /**
+   * Two behaviours the click layer cannot cover.
+   *
+   * 1. The theme is stored in `starlight-theme`, but a client-side navigation
+   *    swapped the page while the picker's markup says "dark", so the choice
+   *    looked like it reset. Re-apply the stored value on every page load; the
+   *    markup is not allowed to win over what the reader chose.
+   * 2. The header dropdowns open on hover, and a pointer that crosses the gap
+   *    between the trigger and the panel stops hovering both. Pointer intent
+   *    with a short close delay keeps the panel up across that gap.
+   */
+
+  const doc = document;
+
+  function storedMode(): string | null {
+    try {
+      const stored = localStorage.getItem("starlight-theme");
+      if (stored === null) return null;
+      return stored === "" || stored === "auto" ? "auto" : stored;
+    } catch {
+      return null;
+    }
+  }
+
+  function applyStoredTheme(): void {
+    const mode = storedMode();
+    if (mode === null) return;
+    const resolved =
+      mode === "auto"
+        ? window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark"
+        : mode;
+    doc.documentElement.dataset.theme = resolved;
+  }
+
+  const closeTimers = new WeakMap<Element, number>();
+
+  function openMenu(item: Element): void {
+    const pending = closeTimers.get(item);
+    if (pending) {
+      window.clearTimeout(pending);
+      closeTimers.delete(item);
+    }
+    item.setAttribute("data-open", "");
+    item.querySelector("[data-menu-trigger]")?.setAttribute("aria-expanded", "true");
+  }
+
+  function scheduleClose(item: Element): void {
+    const pending = closeTimers.get(item);
+    if (pending) window.clearTimeout(pending);
+    closeTimers.set(
+      item,
+      window.setTimeout(() => {
+        item.removeAttribute("data-open");
+        item.querySelector("[data-menu-trigger]")?.setAttribute("aria-expanded", "false");
+      }, 180),
+    );
+  }
+
+  function bindHoverMenus(): void {
+    // Only where a real pointer can hover: on touch, the click layer owns this.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    for (const item of doc.querySelectorAll<HTMLElement>("[data-menu]")) {
+      if (item.dataset.hoverBound === "true") continue;
+      if (!item.querySelector("[data-menu-panel]")) continue;
+      item.dataset.hoverBound = "true";
+      item.addEventListener("pointerenter", () => openMenu(item));
+      item.addEventListener("pointerleave", () => scheduleClose(item));
+      item.addEventListener("focusin", () => openMenu(item));
+      item.addEventListener("focusout", (event) => {
+        if (!item.contains(event.relatedTarget as Node | null)) scheduleClose(item);
+      });
+    }
+  }
+
+  function boot(): void {
+    applyStoredTheme();
+    bindHoverMenus();
+  }
+
+  boot();
+  doc.addEventListener("astro:page-load", boot);
+</script>
