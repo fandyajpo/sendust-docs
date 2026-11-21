@@ -1,11 +1,12 @@
 ---
+import Wave from "./Wave.astro";
+
 /**
  * A liquid panel: obsidian water held in a clipped, rounded frame.
  *
  * The light pools are plain radial gradients — no blur filters to pay for —
- * drifting on transforms only. The waves at the edges are the page colour
- * eating into the water: two layers out of step, both masked at the ends so the
- * water fades into the corners instead of being cut by them.
+ * drifting on transforms only. The edges are the page colour eating into the
+ * water, drawn by Wave.astro.
  */
 interface Props {
   label?: string;
@@ -26,12 +27,7 @@ const { label, edges = "both" } = Astro.props;
   {
     edges !== "bottom" && edges !== "none" && (
       <span class="sx-liquid__wave sx-liquid__wave--top" aria-hidden="true">
-        <svg class="sx-wave-back" viewBox="0 0 400 24" preserveAspectRatio="none">
-          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
-        </svg>
-        <svg class="sx-wave-front" viewBox="0 0 400 24" preserveAspectRatio="none">
-          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
-        </svg>
+        <Wave />
       </span>
     )
   }
@@ -41,12 +37,7 @@ const { label, edges = "both" } = Astro.props;
   {
     edges !== "none" && (
       <span class="sx-liquid__wave sx-liquid__wave--bottom" aria-hidden="true">
-        <svg class="sx-wave-back" viewBox="0 0 400 24" preserveAspectRatio="none">
-          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
-        </svg>
-        <svg class="sx-wave-front" viewBox="0 0 400 24" preserveAspectRatio="none">
-          <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z" />
-        </svg>
+        <Wave />
       </span>
     )
   }

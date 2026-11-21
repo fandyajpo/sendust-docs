@@ -10,7 +10,9 @@ import ThemeSelect from "./ThemeSelect.astro";
 import UiScripts from "./UiScripts.astro";
 ---
 
-<header class="header sx-header">
+{/* Starlight's PageFrame already renders the fixed <header class="header">
+    around this slot, so this is the bar's contents, not another header. */}
+<div class="sx-header">
   <div class="sx-header__inner">
     <div class="sx-header__brand"><SiteTitle /></div>
 
@@ -34,11 +36,12 @@ import UiScripts from "./UiScripts.astro";
       </button>
     </div>
   </div>
-</header>
+</div>
 
 <NavDrawer />
 
-{/* The search dialog sits outside the header so nothing there can clip it. */}
+/* The dialog and the drawer are fixed to the viewport, so the bar's height
+   cannot clip them. */
 <div class="sx-search" data-search-dialog>
   <div class="sx-search__scrim" data-search-close></div>
 

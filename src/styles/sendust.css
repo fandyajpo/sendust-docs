@@ -160,10 +160,13 @@ body {
  * Chrome
  * ------------------------------------------------------------------------- */
 
+/* The fixed bar Starlight's PageFrame renders: its positioning stays, its
+   padding and its header grid go, so our own bar can span it. */
 header.header {
+  display: block;
+  padding: 0;
   background-color: var(--sl-color-bg);
   border-bottom: 1px solid var(--sl-color-hairline);
-  position: relative;
 }
 
 /* A hairline of signal under the header, brightest in the middle. */
@@ -470,18 +473,22 @@ header.header::after {
   inset-block-end: -1px;
 }
 
-.sx-liquid__wave svg,
-.sx-hero__wave svg {
+.sx-wave {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.sx-wave svg {
   position: absolute;
   inset-block-end: 0;
   inset-inline-start: 0;
   display: block;
-  inline-size: 200%;
-  block-size: 100%;
+  width: 200%;
+  height: 100%;
 }
 
-.sx-liquid__wave path,
-.sx-hero__wave path {
+.sx-wave path {
   fill: var(--sl-color-bg);
 }
 
@@ -740,7 +747,7 @@ header.header::after {
   color: color-mix(in srgb, var(--sx-paper) 66%, transparent);
 }
 
-.sx-statement__note a {
+.sl-markdown-content .sx-statement__note a {
   color: var(--sx-paper);
   text-decoration-color: color-mix(in srgb, var(--sx-lime) 60%, transparent);
   transition:
@@ -748,7 +755,7 @@ header.header::after {
     color 140ms ease;
 }
 
-.sx-statement__note a:hover {
+.sl-markdown-content .sx-statement__note a:hover {
   color: var(--sx-lime);
   text-decoration-color: var(--sx-lime);
 }
@@ -1132,9 +1139,20 @@ header.header::after {
 .sl-markdown-content .sx-landing {
   max-width: 64rem;
   margin-inline: auto;
-  /* The splash template pads its column heavily; the hero is the top of this
-     page, so it is pulled up rather than floating under the header. */
-  margin-block-start: -3.5rem;
+}
+
+/* Starlight reserves the mobile table-of-contents height above the content on
+   every page. The landing has no such control, so it gives that space back
+   instead of floating the hero under the header. */
+body:has(.sx-landing) {
+  --sl-mobile-toc-height: 0px;
+}
+
+@media (max-width: 700px) {
+  /* The floating moth sits in this corner: keep it off the last line. */
+  .main-frame {
+    padding-block-end: 4.5rem;
+  }
 }
 
 .sl-markdown-content .sx-landing > p {
@@ -1151,15 +1169,10 @@ header.header::after {
  * Header: brand, compact nav with dropdowns, actions
  * ------------------------------------------------------------------------- */
 
-.header.sx-header {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 4;
+/* The bar's contents. The <header> around it is Starlight's and stays fixed. */
+.sx-header {
   display: block;
-  padding: 0;
-  block-size: var(--sl-nav-height, 3.5rem);
-  background: var(--sl-color-bg);
-  border-bottom: 1px solid var(--sl-color-hairline);
+  block-size: 100%;
 }
 
 .sx-header__inner {

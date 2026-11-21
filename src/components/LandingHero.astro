@@ -1,5 +1,6 @@
 ---
 import SignalMoth from "./SignalMoth.astro";
+import Wave from "./Wave.astro";
 
 /**
  * The landing hero: an obsidian pane of water, the promise in display type, and
@@ -8,7 +9,11 @@ import SignalMoth from "./SignalMoth.astro";
  */
 ---
 
-<section class="sx-hero" aria-labelledby="sx-hero-title">
+<section
+  class="sx-hero"
+  aria-labelledby="sx-hero-title"
+  data-pagefind-meta="title:Sendust documentation"
+>
   <span class="sx-hero__pools" aria-hidden="true">
     <span class="sx-liquid__pool sx-liquid__pool--a"></span>
     <span class="sx-liquid__pool sx-liquid__pool--b"></span>
@@ -64,12 +69,5 @@ import SignalMoth from "./SignalMoth.astro";
     <div class="sx-hero__moth"><SignalMoth variant="perch" /></div>
   </div>
 
-  <span class="sx-hero__wave" aria-hidden="true">
-    <svg class="sx-wave-back" viewBox="0 0 400 24" preserveAspectRatio="none">
-      <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z"></path>
-    </svg>
-    <svg class="sx-wave-front" viewBox="0 0 400 24" preserveAspectRatio="none">
-      <path d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 V 24 H 0 Z"></path>
-    </svg>
-  </span>
+  <span class="sx-hero__wave" aria-hidden="true"><Wave /></span>
 </section>

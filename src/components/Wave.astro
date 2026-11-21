@@ -1,0 +1,22 @@
+---
+/**
+ * The meniscus: the page colour eating into the water, in two layers out of
+ * step. The path repeats every 200 units across a 400-unit half, and the SVG is
+ * twice the width of its container, so a -50% shift lands on an identical
+ * phase — and if a browser ever falls back to a 100%-wide SVG, the second half
+ * is drawn too, so the water still reaches the edge instead of showing a slab.
+ */
+---
+
+<span class="sx-wave" aria-hidden="true">
+  <svg class="sx-wave-back" viewBox="0 0 800 24" preserveAspectRatio="none">
+    <path
+      d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 S 450 21, 500 12 S 550 3, 600 12 S 650 21, 700 12 S 750 3, 800 12 V 24 H 0 Z"
+    ></path>
+  </svg>
+  <svg class="sx-wave-front" viewBox="0 0 800 24" preserveAspectRatio="none">
+    <path
+      d="M0 12 C 50 3, 50 21, 100 12 S 150 3, 200 12 S 250 21, 300 12 S 350 3, 400 12 S 450 21, 500 12 S 550 3, 600 12 S 650 21, 700 12 S 750 3, 800 12 V 24 H 0 Z"
+    ></path>
+  </svg>
+</span>

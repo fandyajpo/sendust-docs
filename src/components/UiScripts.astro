@@ -12,6 +12,14 @@
   let pagefind: Promise<Record<string, unknown>> | null = null;
   let searchTimer = 0;
 
+  /* -------------------------------------------------------------- scrolling */
+
+  function lockScroll(locked: boolean): void {
+    const value = locked ? "hidden" : "";
+    root.style.overflow = value;
+    doc.body.style.overflow = value;
+  }
+
   /* ------------------------------------------------------------- open state */
 
   function closeMenus(): void {
@@ -39,7 +47,7 @@
     // A select left open inside the drawer would keep its chevron flipped.
     closeSelects();
     drawer.removeAttribute("data-open");
-    root.style.overflow = "";
+    lockScroll(false);
     doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "false");
   }
 
@@ -48,8 +56,11 @@
     if (!drawer) return;
     closeMenus();
     closeSelects();
+    // A drawer left scrolled would reopen somewhere in its middle.
+    const panel = drawer.querySelector<HTMLElement>(".sx-drawer__panel");
+    if (panel) panel.scrollTop = 0;
     drawer.setAttribute("data-open", "");
-    root.style.overflow = "hidden";
+    lockScroll(true);
     doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "true");
     drawer.querySelector<HTMLElement>("[data-drawer-close]")?.focus();
   }
@@ -58,7 +69,7 @@
     const dialog = doc.querySelector("[data-search-dialog]");
     if (!dialog?.hasAttribute("data-open")) return;
     dialog.removeAttribute("data-open");
-    root.style.overflow = "";
+    lockScroll(false);
   }
 
   function closeEverything(): void {
@@ -241,7 +252,7 @@
     closeSelects();
     closeDrawer();
     dialog.setAttribute("data-open", "");
-    root.style.overflow = "hidden";
+    lockScroll(true);
     const input = dialog.querySelector<HTMLInputElement>("input");
     input?.focus();
     if (input && input.value.trim().length > 1) void runSearch(input.value);
@@ -484,7 +495,7 @@
   });
 
   doc.addEventListener("astro:page-load", () => {
-    root.style.overflow = "";
+    lockScroll(false);
     closeEverything();
     syncThemeSelects(storedTheme());
   });
