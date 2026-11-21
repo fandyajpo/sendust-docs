@@ -1,0 +1,15 @@
+---
+import Default from "@astrojs/starlight/components/Head.astro";
+import { ClientRouter } from "astro:transitions";
+---
+
+{/* Dark first: Starlight reads this key before it paints, so the first visit
+    lands on the dark palette and the toggle still works afterwards. */}
+<script is:inline>
+  try {
+    if (!localStorage.getItem("starlight-theme")) localStorage.setItem("starlight-theme", "dark");
+  } catch {}
+</script>
+
+<Default />
+<ClientRouter />

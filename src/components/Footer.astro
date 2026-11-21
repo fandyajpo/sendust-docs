@@ -1,0 +1,50 @@
+---
+import Default from "@astrojs/starlight/components/Footer.astro";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+import { REPOSITORY } from "../../scripts/doc-map.mjs";
+
+// Written by scripts/sync-docs.mjs. Build-time only, and optional: the site
+// still renders before the first sync.
+let ref = REPOSITORY.defaultRef;
+try {
+  const provenance = JSON.parse(
+    readFileSync(path.join(process.cwd(), "src", "synced-docs.json"), "utf8"),
+  );
+  if (typeof provenance.ref === "string" && provenance.ref !== "") ref = provenance.ref;
+} catch {
+  ref = REPOSITORY.defaultRef;
+}
+
+const source = `https://github.com/${REPOSITORY.owner}/${REPOSITORY.name}/tree/${ref}/docs`;
+const label = `${REPOSITORY.owner}/${REPOSITORY.name}@${ref}`;
+---
+
+<Default />
+
+<p class="sendust-source">
+  Every page here is rendered from <a href={source}>{label}</a>, the source of truth.
+  Corrections belong there, not in this repository.
+</p>
+
+<style>
+  .sendust-source {
+    margin-top: 2rem;
+    line-height: 1.6;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+  }
+
+  .sendust-source a {
+    color: var(--sl-color-text-accent);
+    text-underline-offset: 0.18em;
+    transition: color 150ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sendust-source a {
+      transition: none;
+    }
+  }
+</style>

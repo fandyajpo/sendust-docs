@@ -1,0 +1,94 @@
+---
+title: Sendust
+description: A Rust SMTP delivery engine with a TypeScript face, for Node.js, Bun, and Deno.
+template: splash
+hero:
+  tagline: It sends through SMTP, reports what the relay said, and never claims a message reached a mailbox.
+  actions:
+    - text: Quick start
+      link: guide/quick-start/
+      icon: right-arrow
+      variant: primary
+    - text: What a result means
+      link: api/error-model/
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+## Install
+
+```sh
+npm install @sendust/ts
+```
+
+One transport per process. `send()` queues what you hand it, the engine keeps the
+sessions the work needs, and `close()` drains the rest. The exact runtime and
+platform requirements are in the [quick start](guide/quick-start/).
+
+<CardGrid>
+  <Card title="Autonomous queue and pool">
+    Concurrent `send()` calls are accepted and scheduled, up to `delivery.maxConcurrent`
+    at once over at most `delivery.maxConnections` native sessions, each running one SMTP
+    transaction at a time. The queue is bounded, so it fails with `LIMIT_QUEUE_FULL`
+    instead of exhausting memory. [Lifecycle and limits](guide/lifecycle-limits/)
+  </Card>
+  <Card title="Sessions reused across messages">
+    After a definitive outcome the session is reset and kept, up to
+    `delivery.maxMessagesPerSession` messages or `delivery.sessionIdleMs` of idleness.
+    After an error, or an `unknown` disposition, it is dropped: reuse must never turn an
+    uncertain delivery into a duplicated one. [ADR 0022](decisions/0022-session-reuse/)
+  </Card>
+  <Card title="Relay acceptance, not delivery">
+    `accepted` means the relay took responsibility for the message. There is no
+    `delivered`, `opened`, or `bounced` status, and `unknown` is never retried by the
+    library. [Error model](api/error-model/)
+  </Card>
+</CardGrid>
+
+## Read it in order
+
+<CardGrid>
+  <LinkCard
+    title="Quick start"
+    href="guide/quick-start/"
+    description="One send, and what each outcome means."
+  />
+  <LinkCard
+    title="Lifecycle and limits"
+    href="guide/lifecycle-limits/"
+    description="Close, timeouts, concurrency, hard caps."
+  />
+  <LinkCard
+    title="Addresses, MIME, attachments"
+    href="guide/addressing-mime-attachments/"
+    description="Address rules, MIME shape, the attachment opt-in."
+  />
+  <LinkCard
+    title="Errors, security, operations"
+    href="guide/errors-security-operations/"
+    description="Stable codes, redaction, relay outages."
+  />
+  <LinkCard
+    title="Public API"
+    href="api/public-api/"
+    description="Options, message shape, results, close, state."
+  />
+  <LinkCard
+    title="Decisions"
+    href="decisions/0001-two-crates/"
+    description="Every architecture decision, 0001 to 0022."
+  />
+  <LinkCard
+    title="The Sendust story"
+    href="releases/story/"
+    description="From an empty folder to 1.0.1."
+  />
+</CardGrid>
+
+## Where this comes from
+
+These pages are rendered from the documentation in the Sendust repository at a
+tagged ref — the footer names the exact one. The source of truth for every page
+is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs);
+corrections belong there.
