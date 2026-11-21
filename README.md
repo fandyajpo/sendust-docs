@@ -106,14 +106,21 @@ published — `api/`, `decisions/` — is deleted on the next sync.
 
 ## Theme and motion
 
-Dark first: a near-black page, off-white text, one sand accent, tabular numbers
-in tables, generous line-height. Both palettes are defined, so the theme toggle
+Glass morphism over a dark base: near-black with two ambient gradients behind
+it, and every surface — header, sidebar, cards, code frames, pagination, the
+search dialog — translucent with `backdrop-filter: blur(18px) saturate(150%)`,
+a hairline border and an inset sheen. One sand accent, tabular numbers in
+tables, generous line-height. Both palettes are defined, so the theme toggle
 still works, but a first visit lands on dark.
 
+The voice is casual on the pages this repository writes — the landing page, the
+sidebar labels, the footer — and strictly verbatim on everything the sync
+copies: the guides say what Sendust's own docs say, word for word.
+
 Motion is quiet and never layout: Astro's `ClientRouter` for client-side
-navigation, a 200 ms fade-and-rise when the page content mounts, and 120–200 ms
-hovers on links, sidebar items and cards. Nothing runs longer than 250 ms, and
-every effect is switched off under `prefers-reduced-motion: reduce`.
+navigation, a 200 ms fade-and-rise when the page content mounts, 120–200 ms
+hovers, and a 2 px lift on cards. Nothing runs longer than 250 ms, and every
+effect is switched off under `prefers-reduced-motion: reduce`.
 
 ## Deployment
 

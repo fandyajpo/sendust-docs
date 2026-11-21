@@ -1,8 +1,8 @@
-/* Sendust docs theme.
+/* Sendust docs theme — glass edition.
  *
- * One palette: near-black paper, off-white ink, a single sand accent.
- * Motion is quiet — 120-200 ms, never layout — and every effect is off under
- * prefers-reduced-motion.
+ * Near-black glass over ambient light, one sand accent, quiet motion. Every
+ * surface is translucent so what is behind it shows through; nothing moves
+ * layout, and every effect is off under prefers-reduced-motion.
  */
 
 :root {
@@ -10,7 +10,7 @@
     ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
   --sl-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sl-line-height: 1.75;
-  --sl-line-height-headings: 1.22;
+  --sl-line-height-headings: 1.2;
   --sl-content-width: 50rem;
   --sl-sidebar-width: 17.5rem;
 }
@@ -32,6 +32,16 @@
   --sl-color-hairline-light: #2a2825;
   --sl-color-hairline: #1c1b19;
   --sl-color-hairline-shade: #131211;
+
+  --sd-glass: rgb(22 22 26 / 0.55);
+  --sd-glass-strong: rgb(26 26 31 / 0.72);
+  --sd-hairline: rgb(255 255 255 / 0.09);
+  --sd-sheen: rgb(255 255 255 / 0.06);
+  --sd-code-bg: rgb(16 16 19 / 0.72);
+  --sd-glow: 0 26px 64px -34px rgb(217 160 91 / 0.5);
+  --sd-blur: blur(18px) saturate(150%);
+  --sd-ambient-1: rgb(217 160 91 / 0.16);
+  --sd-ambient-2: rgb(120 140 255 / 0.1);
 }
 
 :root[data-theme="light"] {
@@ -51,23 +61,124 @@
   --sl-color-hairline-light: #e4dccd;
   --sl-color-hairline: #eee7da;
   --sl-color-hairline-shade: #f6f1e7;
+
+  --sd-glass: rgb(255 255 255 / 0.6);
+  --sd-glass-strong: rgb(255 255 255 / 0.75);
+  --sd-hairline: rgb(23 19 15 / 0.1);
+  --sd-sheen: rgb(255 255 255 / 0.65);
+  --sd-code-bg: rgb(255 255 255 / 0.75);
+  --sd-glow: 0 26px 64px -36px rgb(164 112 31 / 0.4);
+  --sd-blur: blur(18px) saturate(140%);
+  --sd-ambient-1: rgb(217 160 91 / 0.22);
+  --sd-ambient-2: rgb(120 140 255 / 0.12);
 }
 
+/* Ambient light behind the glass. */
 body {
+  background-image:
+    radial-gradient(60rem 42rem at 12% -12%, var(--sd-ambient-1), transparent 62%),
+    radial-gradient(48rem 34rem at 90% 4%, var(--sd-ambient-2), transparent 64%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Generous line-height, tighter headings. */
+/* ---------------------------------------------------------------------------
+ * Glass surfaces
+ * ------------------------------------------------------------------------- */
+
+header.header {
+  background-color: var(--sd-glass);
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  border-bottom: 1px solid var(--sd-hairline);
+  box-shadow: inset 0 1px 0 var(--sd-sheen);
+}
+
+.sidebar-pane {
+  background-color: var(--sd-glass);
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  border-inline-end: 1px solid var(--sd-hairline);
+}
+
+#starlight__sidebar,
+.right-sidebar {
+  background-color: transparent;
+}
+
+.card,
+.pagination-links a {
+  background:
+    linear-gradient(160deg, var(--sd-sheen), transparent 55%),
+    var(--sd-glass);
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  border: 1px solid var(--sd-hairline);
+  box-shadow:
+    inset 0 1px 0 var(--sd-sheen),
+    0 18px 44px -30px rgb(0 0 0 / 0.85);
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+.pagination-links a {
+  border-radius: 0.9rem;
+}
+
+.card:hover,
+.pagination-links a:hover {
+  border-color: rgb(217 160 91 / 0.55);
+  box-shadow:
+    inset 0 1px 0 var(--sd-sheen),
+    var(--sd-glow);
+  transform: translateY(-2px);
+}
+
+/* Code blocks: the frame goes glass, the code background stays readable. */
+.expressive-code,
+.expressive-code .frame {
+  --ec-codeBg: var(--sd-code-bg);
+}
+
+.expressive-code .frame {
+  border: 1px solid var(--sd-hairline);
+  border-radius: 0.85rem;
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  box-shadow: inset 0 1px 0 var(--sd-sheen);
+  overflow: hidden;
+}
+
+/* Search dialog, when it renders one. */
+#starlight__search .dialog-frame,
+#starlight__search dialog {
+  background-color: var(--sd-glass-strong);
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  border: 1px solid var(--sd-hairline);
+  border-radius: 1rem;
+}
+
+.sl-markdown-content :not(pre) > code {
+  border: 1px solid var(--sd-hairline);
+}
+
+/* ---------------------------------------------------------------------------
+ * Type and details
+ * ------------------------------------------------------------------------- */
+
 .sl-markdown-content :is(p, li, dd) {
   line-height: var(--sl-line-height);
 }
 
 :is(h1, h2, h3, h4) {
-  letter-spacing: -0.012em;
+  letter-spacing: -0.015em;
 }
 
-/* Tables: numbers line up in columns, borders stay quiet. */
 .sl-markdown-content table {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
@@ -81,18 +192,39 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Prose links: an underline that does not shout. */
 .sl-markdown-content a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
 
+.hero h1 {
+  letter-spacing: -0.03em;
+}
+
+/* Landing-page fact chips. */
+.sd-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1.5rem 2.5rem;
+}
+
+.sd-badge {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--sd-hairline);
+  border-radius: 999px;
+  background: var(--sd-glass);
+  -webkit-backdrop-filter: var(--sd-blur);
+  backdrop-filter: var(--sd-blur);
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.02em;
+  color: var(--sl-color-text);
+  white-space: nowrap;
+}
+
 /* ---------------------------------------------------------------------------
  * Motion
- *
- * Quiet on purpose: a 200 ms rise when a page mounts, 120-200 ms hovers on
- * links, sidebar items and cards. Nothing here changes layout, and nothing
- * runs longer than 250 ms.
  * ------------------------------------------------------------------------- */
 
 @keyframes sendust-rise {
@@ -106,12 +238,10 @@ body {
   }
 }
 
-/* Re-applied on every client-side navigation: the router swaps the content. */
 .sl-markdown-content {
   animation: sendust-rise 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
-/* View transitions: a 200 ms cross-fade, never longer. */
 ::view-transition-old(root) {
   animation-duration: 120ms;
 }
@@ -131,7 +261,7 @@ summary {
 }
 
 .sidebar-content a {
-  border-radius: 0.25rem;
+  border-radius: 0.4rem;
   transition:
     color 140ms ease,
     background-color 160ms ease;
@@ -144,23 +274,12 @@ summary {
   color: var(--sl-color-text-invert);
 }
 
-.card {
+.card,
+.pagination-links a {
   transition:
     border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.card:hover {
-  border-color: var(--sl-color-accent);
-}
-
-/* Landing page: the promise, then the cards. */
-.hero h1 {
-  letter-spacing: -0.02em;
-}
-
-:where(.sl-markdown-content) .card-grid {
-  align-items: start;
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 /* ---------------------------------------------------------------------------
@@ -179,6 +298,11 @@ summary {
 
   .sl-markdown-content {
     animation: none !important;
+  }
+
+  .card:hover,
+  .pagination-links a:hover {
+    transform: none;
   }
 
   ::view-transition-old(root),

@@ -40,15 +40,15 @@ export const unpublished = [
 // Sidebar groups, in order. A page's `order` is its index inside its group.
 export const groups = [
   {
-    label: "Start here",
+    label: "start here",
     pages: ["guide/quick-start", "guide/lifecycle-limits"],
   },
   {
-    label: "Guides",
+    label: "guides",
     pages: ["guide/addressing-mime-attachments", "guide/errors-security-operations"],
   },
   {
-    label: "The story",
+    label: "the lore",
     pages: ["releases/story"],
   },
 ];
@@ -60,29 +60,29 @@ export const groups = [
 export const pages = {
   "guide/quick-start": {
     source: "docs/guides/quick-start.md",
-    label: "Quick start",
+    label: "quick start",
   },
   "guide/lifecycle-limits": {
     source: "docs/guides/lifecycle-limits.md",
-    label: "Lifecycle and limits",
+    label: "lifecycle + limits",
     description:
       "Close, concurrency, timeouts and the hard caps, with the numbers the code and the facade keep in step.",
   },
   "guide/addressing-mime-attachments": {
     source: "docs/guides/addressing-mime-attachments.md",
-    label: "Addresses, MIME, attachments",
+    label: "addresses, mime, attachments",
     description:
       "Address rules, header and MIME shape, attachment caps, and the opt-in filesystem policy.",
   },
   "guide/errors-security-operations": {
     source: "docs/guides/errors-security-operations.md",
-    label: "Errors, security, operations",
+    label: "errors, security, ops",
     description:
       "Results versus errors, the stable error codes, redaction, and what to do during a relay outage.",
   },
   "releases/story": {
     source: "docs/releases/story.md",
-    label: "The Sendust story",
+    label: "the sendust story",
     description:
       "How Sendust went from an empty folder to 1.0.1, which decisions it reversed on the way, and why.",
   },

@@ -3,83 +3,92 @@ title: Sendust
 description: A Rust SMTP delivery engine with a TypeScript face, for Node.js, Bun, and Deno.
 template: splash
 hero:
-  tagline: It sends through SMTP, reports what the relay said, and never claims a message reached a mailbox.
+  tagline: Sends your transactional mail over SMTP, tells you exactly what the relay said, and never claims a mailbox got it. no cap.
   actions:
-    - text: Quick start
+    - text: quick start
       link: guide/quick-start/
       icon: right-arrow
       variant: primary
-    - text: The story
+    - text: the lore
       link: releases/story/
       variant: minimal
 ---
 
 import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
 
-## Install
+<div class="sd-badges">
+  <span class="sd-badge">v1.0.1</span>
+  <span class="sd-badge">rust core</span>
+  <span class="sd-badge">node · bun · deno</span>
+  <span class="sd-badge">5 native targets</span>
+  <span class="sd-badge">1 transport per process</span>
+</div>
+
+## install it
 
 ```sh
 npm install @sendust/ts
 ```
 
-One transport per process. `send()` queues what you hand it, the engine keeps the
-sessions the work needs, and `close()` drains the rest. The exact runtime and
-platform requirements are in the [quick start](guide/quick-start/).
+That's the whole setup — no Rust toolchain, no build step on your side.
+
+Then it's one transport per process: `send()` queues, the engine keeps the
+sessions the work needs, `close()` drains the rest. The runtime and platform
+pins are in the [quick start](guide/quick-start/) — lowkey load-bearing, read
+them.
 
 <CardGrid>
-  <Card title="Autonomous queue and pool">
-    Concurrent `send()` calls are accepted and scheduled, up to `delivery.maxConcurrent`
-    at once over at most `delivery.maxConnections` native sessions, each running one SMTP
-    transaction at a time. The queue is bounded, so it fails with `LIMIT_QUEUE_FULL`
-    instead of exhausting memory. [Lifecycle and limits](guide/lifecycle-limits/)
+  <Card title="queue + pool, automatic">
+    Fire a hundred sends and it handles the vibe: up to `delivery.maxConcurrent`
+    at once, over at most `delivery.maxConnections` native sessions, one SMTP
+    transaction each. The queue is bounded, so the worst case is
+    `LIMIT_QUEUE_FULL` — not an OOM. [lifecycle + limits](guide/lifecycle-limits/)
   </Card>
-  <Card title="Sessions reused across messages">
-    After a definitive outcome the session is reset and kept, up to
-    `delivery.maxMessagesPerSession` messages or `delivery.sessionIdleMs` of idleness.
-    After an error, or an `unknown` disposition, it is dropped: reuse must never turn an
-    uncertain delivery into a duplicated one. [Lifecycle and limits](guide/lifecycle-limits/)
+  <Card title="sessions stay warm">
+    Definitive outcome → the session is reset and kept: up to
+    `delivery.maxMessagesPerSession` messages or `delivery.sessionIdleMs` of
+    idleness. Error or `unknown` → dropped. Reuse never turns an uncertain
+    delivery into a double send. [lifecycle + limits](guide/lifecycle-limits/)
   </Card>
-  <Card title="Relay acceptance, not delivery">
-    `accepted` means the relay took responsibility for the message. There is no
-    `delivered`, `opened`, or `bounced` status, and `unknown` is never retried by the
-    library. [Errors, security, operations](guide/errors-security-operations/)
+  <Card title="accepted ≠ delivered">
+    `accepted` means the relay took responsibility, full stop. There's no
+    `delivered`, `opened` or `bounced` status, and the lib never retries
+    `unknown` — that call is yours. [errors, security, ops](guide/errors-security-operations/)
   </Card>
 </CardGrid>
 
-## Read it in order
+## the lore, in order
 
 <CardGrid>
   <LinkCard
-    title="Quick start"
+    title="quick start"
     href="guide/quick-start/"
-    description="One send, and what each outcome means."
+    description="one send, and what each outcome actually means."
   />
   <LinkCard
-    title="Lifecycle and limits"
+    title="lifecycle + limits"
     href="guide/lifecycle-limits/"
-    description="Close, timeouts, concurrency, hard caps."
+    description="close, timeouts, concurrency, hard caps."
   />
   <LinkCard
-    title="Addresses, MIME, attachments"
+    title="addresses, mime, attachments"
     href="guide/addressing-mime-attachments/"
-    description="Address rules, MIME shape, the attachment opt-in."
+    description="who you can send to, the MIME shape that comes out, the attachment opt-in."
   />
   <LinkCard
-    title="Errors, security, operations"
+    title="errors, security, ops"
     href="guide/errors-security-operations/"
-    description="Stable codes, redaction, relay outages."
+    description="stable codes, redaction, what to do when the relay acts up."
   />
   <LinkCard
-    title="The Sendust story"
+    title="the whole story"
     href="releases/story/"
-    description="From an empty folder to 1.0.1."
+    description="empty folder → 1.0.1, including the decisions it reversed."
   />
 </CardGrid>
 
-## Where this comes from
+## where this comes from
 
-These pages are rendered from the documentation in the Sendust repository at a
-tagged ref — the footer names the exact one. The source of truth for every page
-is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs);
-corrections belong there. The architecture record — the ADRs, the contract
-baselines, the gates and the audits — stays in that repository.
+Every page here is rendered from `fandyajpo/sendust/docs` at a tagged ref — the
+footer names the exact one. The internals (ADRs, contract baselines, gates,
+audits) stay in that repository, not here. Corrections go upstream, fr.
