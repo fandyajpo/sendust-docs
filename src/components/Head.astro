@@ -1,6 +1,9 @@
 ---
 import Default from "@astrojs/starlight/components/Head.astro";
 import { ClientRouter } from "astro:transitions";
+
+// Preload only the three faces the first screen actually sets text in.
+const font = (file: string) => `${import.meta.env.BASE_URL}fonts/${file}`;
 ---
 
 {/* Dark first: Starlight reads this key before it paints, so the first visit
@@ -10,6 +13,11 @@ import { ClientRouter } from "astro:transitions";
     if (!localStorage.getItem("starlight-theme")) localStorage.setItem("starlight-theme", "dark");
   } catch {}
 </script>
+
+<link rel="preload" as="font" type="font/woff2" href={font("manrope-600.woff2")} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={font("geist-sans-400.woff2")} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={font("geist-mono-400.woff2")} crossorigin />
+<meta name="theme-color" content="#0e0f12" />
 
 <Default />
 <ClientRouter />

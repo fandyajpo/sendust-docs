@@ -102,8 +102,9 @@ check that checkout out at that ref).
 Authored: `src/content/docs/index.mdx` (the landing page), `src/content/docs/license.md`,
 `src/styles/fonts.css` and `src/styles/sendust.css`, `src/content.config.ts`
 (Starlight's `docs` collection, with extension-less ids so the sidebar slugs in the
-config resolve), `src/components/` (`BuiltInTheOpen`, `LinkGrid`, `FactList`,
-`Head`, `Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
+config resolve), `src/components/` (`BuiltInTheOpen`, `LandingHero`, `LiquidBand`,
+`Cards`, `Glyph`, `MothMark`, `SignalMoth`, `SiteTitle`, `FactList`, `Head`,
+`Footer`), `scripts/doc-map.mjs`, `scripts/sync-docs.mjs`,
 `scripts/fetch-sendust.mjs`, `astro.config.mjs`, this README, the workflow.
 
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
@@ -111,30 +112,63 @@ Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
 rendered from, which the footer displays). A directory that stops being
 published — `api/`, `decisions/` — is deleted on the next sync.
 
+## Brand, liquid, and the signal moth
+
+**The mark** (`MothMark.astro`) is a signal moth drawn in pixels: the silhouette
+sits on whole units and snaps to the pixel grid, the glints on its wings and
+antennae are half units, so at 2x it shimmers without a single soft pixel. It is
+the header mark (`SiteTitle`), the favicon, and the outline the mascot is built
+from.
+
+**The mascot** (`SignalMoth.astro`) is that moth, larger. It perches in the
+landing hero and floats in the corner of every other page; the floating one
+deletes itself when a perched one is on the page, and it fades in after 500 ms so
+that swap is never visible. Idle it bobs, its wings flutter, its lantern pulses
+and dust drifts past. It reacts: the eyes follow the pointer (clamped to about
+2 px), the wings open when the pointer comes within ~160 px, and a tap fires a
+lime ring with three signal dots. One shared set of `document` listeners is
+re-attached through `astro:page-load`, so a view transition leaves nothing
+behind. It is decoration — `aria-hidden`, never focusable, never announced.
+
+**The water** (`LiquidBand.astro`, and the hero) is the obsidian panel: three
+drifting pools of light, one static grain tile, and a two-copy SVG wave — the
+page colour eating into the water — translated by -50 % on a loop. The pools are
+plain radial gradients, not blurred elements, and they move on `transform` only,
+so nothing on a liquid layer repaints.
+
+**The components**: `Cards` (data-driven link cards with a pixel glyph and a pool
+of light on hover), `Glyph` (ten pixel icons on a 16-unit grid), `LiquidBand`,
+`LandingHero`, `FactList`, `SiteTitle`. A group with a single page in the map is
+still a plain sidebar link — a collapsible menu around one item is noise.
+
 ## Theme and motion
 
 Technical Precision: an off-white reading surface (`#F4F5F0`) with obsidian ink,
-an obsidian hero band and obsidian code blocks, one electric-lime accent
-(`#D5FF70`) used only for interaction and active state, 1px hairlines instead of
-shadows, and no blur anywhere.
+obsidian water panels, obsidian code blocks, and one electric-lime accent
+(`#D5FF70`). Because lime is a light value, anything drawn *on paper* — the
+header mark, a glyph accent — uses `--sx-glow`, the same accent darkened to
+olive; inside the obsidian panels the variable is set back to the lime, so the
+water keeps the real thing. 1px hairlines, no shadows doing a border's job.
 
 Type is three families, self-hosted from `public/fonts/` as woff2 with
 `font-display: swap`: Manrope 500/600/700/800 for display and headings, Geist Sans
 400/500 for prose and interface, Geist Mono 400/500 for code, tables and
-identifiers. No third-party font requests, no font JavaScript.
+identifiers. No third-party font requests, no font JavaScript; only the three
+faces the first screen sets are preloaded.
 
-Micro-interactions are transform, opacity and colour only: link underlines that
-saturate on hover, cards that lift 2px with a lime edge sliding in, a nav item that
-nudges 2px, table rows that tint, a lime rule that sweeps under the rotating hero
-word, and cards that arrive in order as they scroll in. A group with a single page
-in the map is rendered as a plain sidebar link — a collapsible menu around one item
-is noise.
+Micro-interactions are transform, opacity and colour only, at 120–200 ms: link
+underlines that saturate, cards that lift 2 px with a pool of light rising in
+them, glyphs that darken, facts that take a border, a nav item that nudges 2 px, a
+header hairline of signal, the brand mark tilting 6°, and a tap that settles a
+card by one pixel.
 
-Motion is entrance-only: a rotating word in the hero headline (CSS keyframes,
-12 s cycle), a transform-and-opacity rise on section headings as they scroll in
-(`animation-timeline: view()`, where supported), and 140 ms hover transitions.
-Nothing animates layout, and everything stops under
-`prefers-reduced-motion: reduce` — the headline then shows its first word.
+Motion is entrance-only: the rotating word in the hero headline with a lime rule
+sweeping under it (12 s cycle), drifting pools and waves (24–42 s), the moth's
+idle (3–7 s), a rise on section headings and cards as they scroll in
+(`animation-timeline: view()`, where supported), and 500 ms of lean on the
+floating moth. Nothing animates layout. Under `prefers-reduced-motion: reduce`
+every animation and transition is off — the headline shows its first word, the
+water holds still, and the moth is a static drawing.
 
 The voice on authored pages is editorial and plain; everything the sync copies
 stays verbatim.

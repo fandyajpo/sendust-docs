@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { REPOSITORY } from "../../scripts/doc-map.mjs";
+import SignalMoth from "./SignalMoth.astro";
 
 // Written by scripts/sync-docs.mjs. Build-time only, and optional: the site
 // still renders before the first sync.
@@ -27,6 +28,10 @@ const label = `${REPOSITORY.owner}/${REPOSITORY.name}@${ref}`;
   Every page here is rendered from <a href={source}>{label}</a> — the source of
   truth. We just make it look good; fixes go there, not here.
 </p>
+
+{/* The mascot rides along on every page. On the landing page the perched moth
+    in the hero takes over and this one steps aside. */}
+<SignalMoth variant="float" />
 
 <style>
   .sendust-source {

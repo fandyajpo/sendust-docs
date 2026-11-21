@@ -1,5 +1,5 @@
 ---
-/** A row of small technical facts: versions, targets, one-line guarantees. */
+/** A strip of small technical facts: versions, targets, one-line guarantees. */
 interface Props {
   items: string[];
   label?: string;
@@ -8,6 +8,13 @@ interface Props {
 const { items, label = "At a glance" } = Astro.props;
 ---
 
-<ul class="tp-facts" aria-label={label}>
-  {items.map((item) => <li>{item}</li>)}
+<ul class="sx-facts" aria-label={label}>
+  {
+    items.map((item) => (
+      <li>
+        <span class="sx-facts__dot" aria-hidden="true" />
+        {item}
+      </li>
+    ))
+  }
 </ul>

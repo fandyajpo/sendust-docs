@@ -1,0 +1,136 @@
+---
+/**
+ * Pixel glyphs drawn on a 16-unit grid as rectangles, with one half-unit-ish
+ * accent rect in electric lime. `currentColor` for the body, so a glyph takes
+ * the colour of whatever holds it; the accent stays lime in both themes.
+ */
+type GlyphName =
+  | "mail"
+  | "arch"
+  | "gauge"
+  | "error"
+  | "story"
+  | "license"
+  | "queue"
+  | "session"
+  | "relay"
+  | "guide";
+
+interface Props {
+  name: GlyphName;
+  size?: number;
+}
+
+// [x, y, width, height] on a 16 × 16 grid.
+const glyphs: Record<GlyphName, { base: number[][]; accent?: number[][] }> = {
+  queue: {
+    base: [
+      [3, 4, 10, 2.5],
+      [3, 8, 10, 2.5],
+      [3, 12, 7, 2.5],
+    ],
+    accent: [[9, 4, 4, 2.5]],
+  },
+  session: {
+    base: [
+      [4, 3, 8, 2],
+      [10, 5, 2, 8],
+      [4, 11, 8, 2],
+      [4, 5, 2, 6],
+    ],
+    accent: [[3, 11, 3, 3]],
+  },
+  relay: {
+    base: [
+      [3, 7, 8, 2],
+      [9, 4.5, 2, 2],
+      [9, 9.5, 2, 2],
+    ],
+    accent: [[11, 6, 2.5, 4]],
+  },
+  mail: {
+    base: [
+      [2, 4.5, 12, 2],
+      [2, 9.5, 12, 2],
+      [2, 4.5, 2, 7],
+      [12, 4.5, 2, 7],
+      [5.5, 7, 5, 1.8],
+    ],
+    accent: [[3.5, 11.5, 2.5, 2.5]],
+  },
+  arch: {
+    base: [
+      [3, 6, 3, 7],
+      [6.5, 3, 3, 10],
+      [10, 8, 3, 5],
+      [2, 13.5, 12, 1.5],
+    ],
+  },
+  gauge: {
+    base: [
+      [3, 10, 2.5, 4],
+      [6.5, 7, 2.5, 7],
+      [10, 4, 2.5, 10],
+    ],
+    accent: [[10, 4, 2.5, 3]],
+  },
+  error: {
+    base: [
+      [7, 3, 2, 3],
+      [5.5, 6, 5, 3],
+      [4, 9, 8, 3],
+    ],
+    accent: [[7, 8, 2, 2]],
+  },
+  story: {
+    base: [
+      [3, 3, 4, 2],
+      [7, 3, 3, 2],
+      [10, 5, 3, 3],
+      [8, 8, 5, 2],
+      [4, 8, 4, 2],
+      [3, 5, 2, 4],
+      [5, 11.5, 6, 2],
+    ],
+    accent: [[3, 3, 2, 2]],
+  },
+  license: {
+    base: [
+      [3, 2.5, 10, 1.8],
+      [3, 2.5, 1.8, 11],
+      [3, 11.7, 7, 1.8],
+      [3, 6, 7, 1.5],
+      [3, 9, 5, 1.5],
+    ],
+    accent: [[10, 11.7, 3, 1.8]],
+  },
+  guide: {
+    base: [
+      [2.5, 4, 5, 8],
+      [8.5, 4, 5, 8],
+      [7.3, 4, 1.4, 8],
+    ],
+    accent: [[3.5, 6, 3, 1.4]],
+  },
+};
+
+const { name, size = 22 } = Astro.props;
+const glyph = glyphs[name] ?? glyphs.guide;
+---
+
+<svg
+  class="sx-glyph"
+  viewBox="0 0 16 16"
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+  shape-rendering="crispEdges"
+>
+  {glyph.base.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} fill="currentColor" />)}
+  {
+    (glyph.accent ?? []).map(([x, y, w, h]) => (
+      <rect x={x} y={y} width={w} height={h} fill="var(--sx-glow, #d5ff70)" />
+    ))
+  }
+</svg>

@@ -41,9 +41,12 @@ export default defineConfig({
         "Documentation for Sendust: a Rust SMTP delivery engine with a Node-API binding and a TypeScript facade for Node.js, Bun and Deno.",
       customCss: ["./src/styles/fonts.css", "./src/styles/sendust.css"],
       components: {
-        // Adds the view-transition router and defaults the theme to dark.
+        // Adds the view-transition router, font preloads and the theme meta.
         Head: "./src/components/Head.astro",
-        // States, on every page, which Sendust ref it was rendered from.
+        // The pixel moth and the wordmark in the header.
+        SiteTitle: "./src/components/SiteTitle.astro",
+        // States, on every page, which Sendust ref it was rendered from, and
+        // carries the floating signal moth.
         Footer: "./src/components/Footer.astro",
       },
       sidebar,

@@ -1,0 +1,67 @@
+---
+import SignalMoth from "./SignalMoth.astro";
+
+/**
+ * The landing hero: an obsidian pane of water, the promise in display type, and
+ * the signal moth perched beside it. Every claim in it is a fact the synced
+ * documentation states; nothing here is a promise the project has not made.
+ */
+---
+
+<section class="sx-hero" aria-labelledby="sx-hero-title">
+  <span class="sx-hero__pools" aria-hidden="true">
+    <span class="sx-liquid__pool sx-liquid__pool--a"></span>
+    <span class="sx-liquid__pool sx-liquid__pool--b"></span>
+    <span class="sx-liquid__pool sx-liquid__pool--c"></span>
+  </span>
+  <span class="sx-liquid__grain" aria-hidden="true"></span>
+
+  <div class="sx-hero__inner">
+    <div class="sx-hero__copy">
+      <p class="sx-eyebrow">
+        <span class="sx-eyebrow__dot" aria-hidden="true"></span>
+        v1.0.1 · Rust core · Node, Bun, Deno
+      </p>
+
+      <h1 class="sx-hero__title" id="sx-hero-title">
+        Email infrastructure,<br />
+        engineered for
+        <span class="sx-rotor" aria-hidden="true">
+          <span>efficiency.</span>
+          <span>reliability.</span>
+          <span>precision.</span>
+          <span>simplicity.</span>
+        </span>
+        <span class="sx-sr">efficiency, reliability, precision and simplicity.</span>
+      </h1>
+
+      <p class="sx-hero__tagline">
+        A Rust core, a Node-API addon and a typed SDK. One transport that queues, pools its
+        sessions, and reports exactly what the relay said.
+      </p>
+
+      <p class="sx-hero__actions">
+        <a class="sx-btn sx-btn--primary" href="guide/quick-start/">
+          Quick start
+          <svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true" shape-rendering="crispEdges">
+            <path d="M1 5.25 H7 V3 L11 6 L7 9 V6.75 H1 Z" fill="currentColor"></path>
+          </svg>
+        </a>
+        <a class="sx-btn sx-btn--ghost" href="architecture/overview/">Architecture</a>
+      </p>
+
+      <p class="sx-hero__note">
+        The native addon ships per platform — no Rust toolchain, no build step on your side.
+      </p>
+    </div>
+
+    <div class="sx-hero__moth"><SignalMoth variant="perch" /></div>
+  </div>
+
+  <span class="sx-hero__wave" aria-hidden="true">
+    <svg viewBox="0 0 400 20" preserveAspectRatio="none">
+      <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z"></path>
+      <path d="M0 10 C 25 0, 25 20, 50 10 S 75 0, 100 10 S 125 20, 150 10 S 175 0, 200 10 S 225 20, 250 10 S 275 0, 300 10 S 325 20, 350 10 S 375 0, 400 10 V 20 H 0 Z" transform="translate(400 0)"></path>
+    </svg>
+  </span>
+</section>

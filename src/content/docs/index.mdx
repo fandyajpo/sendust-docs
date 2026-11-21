@@ -2,24 +2,15 @@
 title: Sendust
 description: A Rust-powered email delivery engine with a TypeScript SDK for Node.js, Bun and Deno.
 template: splash
-hero:
-  title: 'Email infrastructure, engineered for <span class="tp-rotor" aria-hidden="true"><span>efficiency.</span><span>reliability.</span><span>precision.</span><span>simplicity.</span></span><span class="tp-sr">efficiency, reliability, precision and simplicity.</span>'
-  tagline: A Rust core, a Node-API addon and a typed SDK. One transport that queues, pools its sessions, and reports exactly what the relay said.
-  actions:
-    - text: Quick start
-      link: guide/quick-start/
-      icon: right-arrow
-      variant: primary
-    - text: Architecture
-      link: architecture/overview/
-      variant: minimal
 ---
 
 import { TabItem, Tabs } from "@astrojs/starlight/components";
 
 import BuiltInTheOpen from "../../components/BuiltInTheOpen.astro";
+import Cards from "../../components/Cards.astro";
 import FactList from "../../components/FactList.astro";
-import LinkGrid from "../../components/LinkGrid.astro";
+import LandingHero from "../../components/LandingHero.astro";
+import LiquidBand from "../../components/LiquidBand.astro";
 
 export const facts = [
   "v1.0.1",
@@ -29,42 +20,83 @@ export const facts = [
   "1 transport per process",
 ];
 
+export const engine = [
+  {
+    title: "Queue and pool",
+    meta: "delivery",
+    glyph: "queue",
+    description:
+      "Concurrent send() calls are scheduled: up to delivery.maxConcurrent at once over at most delivery.maxConnections sessions, one SMTP transaction per session. A full queue is LIMIT_QUEUE_FULL, not unbounded memory.",
+    href: "guide/lifecycle-limits/",
+  },
+  {
+    title: "Sessions stay warm",
+    meta: "session",
+    glyph: "session",
+    description:
+      "A definitive outcome resets the session and keeps it, up to delivery.maxMessagesPerSession messages or delivery.sessionIdleMs idle. An error or an unknown disposition drops it.",
+    href: "guide/lifecycle-limits/",
+  },
+  {
+    title: "Acceptance, not delivery",
+    meta: "result",
+    glyph: "relay",
+    description:
+      "accepted means the relay took responsibility. There is no delivered, opened or bounced status, and the library never retries unknown on its own.",
+    href: "guide/errors-security-operations/",
+  },
+];
+
 export const reads = [
   {
     title: "Quick start",
+    meta: "guide",
+    glyph: "mail",
     href: "guide/quick-start/",
     description: "One send, and what each outcome means.",
   },
   {
     title: "Architecture",
+    meta: "internals",
+    glyph: "arch",
     href: "architecture/overview/",
     description: "Two crates, one binding, a runtime-neutral facade.",
   },
   {
     title: "Performance",
+    meta: "benchmark",
+    glyph: "gauge",
     href: "performance/benchmark-nodemailer/",
     description: "The relay benchmark, with its method and configuration.",
   },
   {
     title: "Errors, security, operations",
+    meta: "guide",
+    glyph: "error",
     href: "guide/errors-security-operations/",
     description: "Stable codes, redaction, relay outages.",
   },
   {
     title: "The Sendust story",
+    meta: "lore",
+    glyph: "story",
     href: "releases/story/",
     description: "Empty folder to 1.0.1, reversals included.",
   },
   {
     title: "License",
+    meta: "legal",
+    glyph: "license",
     href: "license/",
     description: "MIT or Apache-2.0, your choice.",
   },
 ];
 
-<div class="tp-landing">
+<div class="sx-landing">
 
-<FactList items={facts} />
+<LandingHero />
+
+<FactList items={facts} label="Release facts" />
 
 ## Install
 
@@ -94,6 +126,20 @@ optional dependency, so there is no Rust toolchain and no build step on your sid
   </TabItem>
 </Tabs>
 
+<LiquidBand label="Position">
+  <p class="sx-statement">Efficiency is an engineering decision, <em>not a marketing slogan</em>.</p>
+  <p class="sx-statement__note">
+    The SMTP engine, MIME composition and address validation are Rust — compiled per platform,
+    reached through one Node-API bridge. No worker process, no JavaScript sitting between your
+    call and the socket. The <a href="architecture/overview/">architecture overview</a> says where
+    each responsibility sits.
+  </p>
+</LiquidBand>
+
+## What the engine does
+
+<Cards cards={engine} columns={3} />
+
 ## At a glance
 
 | Runtime | Version the project pins | Notes |
@@ -107,41 +153,9 @@ Anything outside those targets fails closed at `createTransport` with
 `CONFIG_NATIVE_UNAVAILABLE`, naming the package you would need. The detail lives in
 the [quick start](guide/quick-start/).
 
-## Why Rust
-
-The SMTP engine, MIME composition and validation are Rust, compiled per platform
-and reached through one Node-API bridge — no worker process, no JavaScript sitting
-between your call and the socket. The [architecture overview](architecture/overview/)
-covers the two crates, the runtime-neutral facade, and where each responsibility sits.
-
-## What the engine does for you
-
-<LinkGrid
-  links={[
-    {
-      title: "Queue and pool",
-      description:
-        "Concurrent send() calls are scheduled: up to delivery.maxConcurrent at once over at most delivery.maxConnections sessions, one SMTP transaction per session. A full queue is LIMIT_QUEUE_FULL, not unbounded memory.",
-      href: "guide/lifecycle-limits/",
-    },
-    {
-      title: "Sessions stay warm",
-      description:
-        "A definitive outcome resets the session and keeps it, up to delivery.maxMessagesPerSession messages or delivery.sessionIdleMs idle. An error or an unknown disposition drops it.",
-      href: "guide/lifecycle-limits/",
-    },
-    {
-      title: "Acceptance, not delivery",
-      description:
-        "accepted means the relay took responsibility. There is no delivered, opened or bounced status, and the library never retries unknown on its own.",
-      href: "guide/errors-security-operations/",
-    },
-  ]}
-/>
-
 ## Start reading
 
-<LinkGrid links={reads} />
+<Cards cards={reads} columns={3} />
 
 <BuiltInTheOpen />
 

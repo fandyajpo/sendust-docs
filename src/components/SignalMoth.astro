@@ -1,0 +1,162 @@
+---
+/**
+ * The signal moth — the site's mascot.
+ *
+ * Pixel-drawn on a 48-unit grid, with half-unit glints on the wing edges. It
+ * perches in the landing hero and floats in the corner of every other page;
+ * the floating one steps aside when a perched one is on the page.
+ *
+ * Idle motion is CSS. The script adds presence only: eyes that follow the
+ * pointer, wings that open as it comes near, and a signal flash on a tap.
+ * Nothing here is announced to assistive technology — it is decoration.
+ */
+interface Props {
+  variant?: "perch" | "float";
+}
+
+const { variant = "float" } = Astro.props;
+const uid = Math.random().toString(36).slice(2, 8);
+const haloId = `sx-moth-halo-${uid}`;
+---
+
+<span class:list={["sx-moth", `sx-moth--${variant}`]} data-moth={variant}>
+  <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id={haloId}>
+        <stop offset="0" stop-color="#d5ff70" stop-opacity="0.5"></stop>
+        <stop offset="1" stop-color="#d5ff70" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <circle class="sx-moth__halo" cx="24" cy="39" r="14" fill={`url(#${haloId})`}></circle>
+
+    <g class="sx-moth__flap sx-moth__flap--l">
+      <path class="sx-moth__wing sx-moth__hind sx-moth__hind--l" d="M21 31 L12 30.5 L7 35 L8 41 L15 44 L21 41 Z"></path>
+      <path class="sx-moth__wing sx-moth__wing--l" d="M21 20 L15 16.5 L8 12.5 L3.5 17 L4 24 L9 28 L21 29 Z"></path>
+      <path class="sx-moth__vein" d="M20 22.5 L9 17.5"></path>
+      <path class="sx-moth__vein" d="M20 25.5 L11 22.5"></path>
+    </g>
+
+    <g class="sx-moth__flap sx-moth__flap--r">
+      <path class="sx-moth__wing sx-moth__hind sx-moth__hind--r" d="M27 31 L36 30.5 L41 35 L40 41 L33 44 L27 41 Z"></path>
+      <path class="sx-moth__wing sx-moth__wing--r" d="M27 20 L33 16.5 L40 12.5 L44.5 17 L44 24 L39 28 L27 29 Z"></path>
+      <path class="sx-moth__vein" d="M28 22.5 L39 17.5"></path>
+      <path class="sx-moth__vein" d="M28 25.5 L37 22.5"></path>
+    </g>
+
+    <rect class="sx-moth__body" x="21" y="19" width="6" height="21" rx="1"></rect>
+    <rect class="sx-moth__segment" x="22" y="26" width="4" height="1"></rect>
+    <rect class="sx-moth__segment" x="22" y="30" width="4" height="1"></rect>
+    <rect class="sx-moth__segment" x="22" y="34" width="4" height="1"></rect>
+    <rect class="sx-moth__head" x="19" y="13" width="10" height="7" rx="1.5"></rect>
+
+    <g class="sx-moth__eyes">
+      <rect x="20.8" y="15.6" width="3" height="2.4" fill="var(--sx-glow)"></rect>
+      <rect x="24.2" y="15.6" width="3" height="2.4" fill="var(--sx-glow)"></rect>
+    </g>
+
+    <g class="sx-moth__antennae">
+      <path class="sx-moth__antenna" d="M19.5 13.5 L16 9 L11.5 6.5 L7.5 5"></path>
+      <path class="sx-moth__antenna" d="M28.5 13.5 L32 9 L36.5 6.5 L40.5 5"></path>
+      <rect class="sx-moth__tip" x="6" y="3.6" width="2.4" height="2.4"></rect>
+      <rect class="sx-moth__tip" x="39.6" y="3.6" width="2.4" height="2.4"></rect>
+    </g>
+
+    <circle class="sx-moth__lantern" cx="24" cy="39.5" r="2.6" fill="var(--sx-glow)"></circle>
+
+    <g class="sx-moth__signal">
+      <rect x="33" y="30.5" width="1.8" height="1.8"></rect>
+      <rect x="36.2" y="26.5" width="1.8" height="1.8"></rect>
+      <rect x="39.4" y="22.5" width="1.8" height="1.8"></rect>
+    </g>
+
+    <circle class="sx-moth__ring" cx="24" cy="26" r="17"></circle>
+
+    <g class="sx-moth__dust">
+      <rect x="8" y="9" width="1.2" height="1.2"></rect>
+      <rect x="42" y="34" width="1.2" height="1.2"></rect>
+      <rect x="34" y="45" width="1" height="1"></rect>
+    </g>
+  </svg>
+</span>
+
+<script>
+  // One shared listener set for the whole document, so a page transition never
+  // leaves anything behind: the mascot is looked up again after each swap.
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  let moth: HTMLElement | null = null;
+  let scheduled = false;
+  let near = false;
+  let pointerX = -1000;
+  let pointerY = -1000;
+  let signalTimer = 0;
+
+  function pick(): void {
+    // A moth perched in the hero is the mascot on that page.
+    if (document.querySelector('[data-moth="perch"]')) {
+      for (const float of document.querySelectorAll('[data-moth="float"]')) float.remove();
+    }
+    moth = document.querySelector<HTMLElement>("[data-moth]");
+    near = false;
+  }
+
+  function paint(): void {
+    scheduled = false;
+    if (!moth || !moth.isConnected) return;
+
+    const box = moth.getBoundingClientRect();
+    if (box.width === 0) return;
+
+    const dx = pointerX - (box.left + box.width / 2);
+    const dy = pointerY - (box.top + box.height / 2);
+    const close = Math.hypot(dx, dy) < Math.max(box.width, 160) * 1.5;
+
+    if (close !== near) {
+      near = close;
+      moth.classList.toggle("is-near", close);
+    }
+
+    if (calm.matches) return;
+
+    const clamp = (value: number): number => Math.max(-1, Math.min(1, value));
+    moth.style.setProperty("--moth-eye-x", `${(clamp(dx / 180) * 2).toFixed(2)}px`);
+    moth.style.setProperty("--moth-eye-y", `${(clamp(dy / 180) * 1.6).toFixed(2)}px`);
+
+    if (moth.dataset.moth === "float") {
+      moth.style.setProperty("--moth-lean-x", `${(clamp(dx / 240) * 6).toFixed(2)}px`);
+      moth.style.setProperty("--moth-lean-y", `${(clamp(dy / 240) * 6).toFixed(2)}px`);
+    }
+  }
+
+  function onMove(event: PointerEvent): void {
+    if (event.pointerType === "touch") return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(paint);
+    }
+  }
+
+  function signal(): void {
+    if (!moth) return;
+    moth.classList.remove("is-signal");
+    // Force a reflow so the flash can restart on a repeated tap.
+    void moth.offsetWidth;
+    moth.classList.add("is-signal");
+    window.clearTimeout(signalTimer);
+    signalTimer = window.setTimeout(() => moth?.classList.remove("is-signal"), 1200);
+  }
+
+  pick();
+  document.addEventListener("pointermove", onMove, { passive: true });
+  document.addEventListener("pointerdown", (event) => {
+    const target = event.target as Element | null;
+    if (target?.closest("[data-moth]")) signal();
+  });
+  document.addEventListener("astro:page-load", () => {
+    window.clearTimeout(signalTimer);
+    pick();
+  });
+</script>

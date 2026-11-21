@@ -1,18 +1,30 @@
-/* Sendust — Technical Precision.
+/* Sendust — Technical Precision, revamped.
  *
- * Off-white documentation surface, obsidian hero and code, one electric-lime
- * accent used sparingly. Thin borders, precise spacing, no blur.
+ * An off-white reading surface with obsidian ink; obsidian "water" panels that
+ * hold the hero and the position statement; one electric-lime accent, spent
+ * only on interaction and on the signal moth's eyes and lantern.
+ *
+ * Motion is transform, opacity and colour only, 120–200 ms on hover, entrance
+ * animations that never move layout, and everything off under
+ * prefers-reduced-motion. No animation library, no filter on a moving layer.
  */
 
 :root {
-  --tp-obsidian: #101114;
-  --tp-surface: #1b1d22;
-  --tp-lime: #d5ff70;
-  --tp-offwhite: #f4f5f0;
-  --tp-muted: #a3a6ad;
-  --tp-slate: #64748b;
-  --tp-border: #e2e5de;
-  --tp-border-dark: rgb(244 245 240 / 0.12);
+  --sx-lime: #d5ff70;
+  --sx-tide: #b8ecdf;
+  --sx-ink: #0e0f12;
+  --sx-paper: #f4f5f0;
+  --sx-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --sx-radius: 12px;
+  --sx-radius-sm: 8px;
+
+  /* The lime is a light value: on paper it is darkened to olive so a mark or a
+     glyph accent still reads. On obsidian it is the lime itself. */
+  --sx-glow: #6f7f2c;
+  --sx-liquid-bg: var(--sx-ink);
+  --sx-liquid-grain: 0.16;
+
+  --tp-display: "Manrope", "Geist Sans", ui-sans-serif, system-ui, sans-serif;
 
   --sl-font: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
   --sl-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -20,49 +32,50 @@
   --sl-line-height-headings: 1.15;
   --sl-content-width: 48rem;
   --sl-sidebar-width: 17rem;
-
-  --tp-display: "Manrope", "Geist Sans", sans-serif;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --sl-color-bg: var(--tp-offwhite);
-  --sl-color-bg-nav: var(--tp-offwhite);
-  --sl-color-bg-sidebar: var(--tp-offwhite);
+  --sl-color-bg: var(--sx-paper);
+  --sl-color-bg-nav: var(--sx-paper);
+  --sl-color-bg-sidebar: var(--sx-paper);
   --sl-color-bg-inline-code: #e8ebe2;
-  --sl-color-bg-accent: var(--tp-obsidian);
-  --sl-color-text: var(--tp-obsidian);
-  --sl-color-text-accent: var(--tp-obsidian);
-  --sl-color-text-invert: var(--tp-offwhite);
-  --sl-color-white: var(--tp-obsidian);
+  --sl-color-bg-accent: var(--sx-ink);
+  --sl-color-text: var(--sx-ink);
+  --sl-color-text-accent: var(--sx-ink);
+  --sl-color-text-invert: var(--sx-paper);
+  --sl-color-white: var(--sx-ink);
   --sl-color-accent-low: #eef7d6;
-  --sl-color-accent: var(--tp-obsidian);
-  --sl-color-accent-high: var(--tp-obsidian);
+  --sl-color-accent: var(--sx-ink);
+  --sl-color-accent-high: var(--sx-ink);
   --sl-color-hairline-light: #ecefe7;
-  --sl-color-hairline: var(--tp-border);
+  --sl-color-hairline: #e2e5de;
   --sl-color-hairline-shade: #f0f2ec;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --sl-color-bg: var(--tp-obsidian);
-  --sl-color-bg-nav: var(--tp-obsidian);
-  --sl-color-bg-sidebar: var(--tp-obsidian);
-  --sl-color-bg-inline-code: var(--tp-surface);
-  --sl-color-bg-accent: var(--tp-lime);
-  --sl-color-text: var(--tp-offwhite);
-  --sl-color-text-accent: var(--tp-lime);
-  --sl-color-text-invert: var(--tp-obsidian);
-  --sl-color-white: var(--tp-offwhite);
+  --sx-glow: var(--sx-lime);
+  --sx-liquid-bg: #15171c;
+
+  --sl-color-bg: #0b0c0e;
+  --sl-color-bg-nav: #0b0c0e;
+  --sl-color-bg-sidebar: #0b0c0e;
+  --sl-color-bg-inline-code: #17191e;
+  --sl-color-bg-accent: var(--sx-lime);
+  --sl-color-text: var(--sx-paper);
+  --sl-color-text-accent: var(--sx-lime);
+  --sl-color-text-invert: var(--sx-ink);
+  --sl-color-white: var(--sx-paper);
   --sl-color-gray-1: #e9ebe4;
   --sl-color-gray-2: #c9ccc4;
-  --sl-color-gray-3: var(--tp-muted);
+  --sl-color-gray-3: #a3a6ad;
   --sl-color-gray-4: #767a82;
   --sl-color-gray-5: #2c2f36;
-  --sl-color-gray-6: var(--tp-surface);
-  --sl-color-black: var(--tp-obsidian);
+  --sl-color-gray-6: #17191e;
+  --sl-color-black: var(--sx-ink);
   --sl-color-accent-low: #23281a;
-  --sl-color-accent: var(--tp-lime);
+  --sl-color-accent: var(--sx-lime);
   --sl-color-accent-high: #eaffb8;
   --sl-color-hairline-light: #2c2f36;
   --sl-color-hairline: #22252b;
@@ -80,7 +93,7 @@ body {
 
 :is(h1, h2, h3, h4) {
   font-family: var(--tp-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .sl-markdown-content :is(p, li, dd) {
@@ -121,15 +134,41 @@ body {
 .sl-markdown-content a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition:
+    text-decoration-color 160ms ease,
+    color 140ms ease;
+}
+
+.sl-markdown-content a:hover {
+  text-decoration-color: currentColor;
 }
 
 /* ---------------------------------------------------------------------------
- * Chrome: hairlines, no blur
+ * Chrome
  * ------------------------------------------------------------------------- */
 
 header.header {
   background-color: var(--sl-color-bg);
   border-bottom: 1px solid var(--sl-color-hairline);
+  position: relative;
+}
+
+/* A hairline of signal under the header, brightest in the middle. */
+header.header::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--sx-glow) 55%, transparent) 35%,
+    color-mix(in srgb, var(--sx-glow) 55%, transparent) 65%,
+    transparent
+  );
+  pointer-events: none;
 }
 
 .sidebar-pane {
@@ -142,34 +181,84 @@ header.header {
   background-color: transparent;
 }
 
-.site-title {
+/* Brand ------------------------------------------------------------------- */
+
+.sx-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--tp-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--sl-color-text);
+  text-decoration: none;
 }
+
+.sx-brand:hover {
+  color: var(--sl-color-text);
+}
+
+.sx-brand__mark {
+  display: grid;
+  place-items: center;
+  color: currentColor;
+  transition:
+    transform 240ms var(--sx-ease),
+    color 180ms ease;
+}
+
+.sx-brand:hover .sx-brand__mark {
+  transform: translateY(-1px) rotate(-6deg);
+  color: var(--sx-glow);
+}
+
+.sx-brand__word {
+  font-size: var(--sl-text-lg);
+}
+
+.sx-brand__tag {
+  font-family: var(--sl-font-mono);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 4px;
+  padding: 0.05rem 0.3rem 0.1rem;
+  transition: border-color 160ms ease;
+}
+
+.sx-brand:hover .sx-brand__tag {
+  border-color: color-mix(in srgb, var(--sl-color-text) 28%, transparent);
+}
+
+/* Navigation ------------------------------------------------------------- */
 
 .sidebar-content a {
   border-radius: 4px;
   border-inline-start: 2px solid transparent;
   transition:
+    transform 160ms ease,
     color 140ms ease,
-    border-color 140ms ease,
+    border-color 160ms ease,
     background-color 140ms ease;
 }
 
 .sidebar-content a:hover {
   background-color: var(--sl-color-hairline-shade);
+  transform: translateX(2px);
 }
 
 .sidebar-content a[aria-current="page"] {
-  border-inline-start-color: var(--tp-lime);
+  border-inline-start-color: var(--sx-glow);
   background-color: transparent;
   color: var(--sl-color-text-accent);
   font-weight: 500;
 }
 
 :root[data-theme="light"] .sidebar-content a[aria-current="page"] {
-  border-inline-start-color: var(--tp-obsidian);
+  border-inline-start-color: var(--sx-ink);
 }
 
 .sidebar-content summary {
@@ -178,6 +267,7 @@ header.header {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sl-color-gray-3);
+  transition: color 140ms ease;
 }
 
 .right-sidebar {
@@ -189,75 +279,862 @@ header.header {
   border-inline-start: 1px solid var(--sl-color-hairline);
   padding-inline-start: 0.75rem;
   margin-inline-start: -1px;
+  transition:
+    color 140ms ease,
+    border-color 160ms ease;
+}
+
+#starlight__on-this-page a:hover {
+  color: var(--sl-color-text);
 }
 
 #starlight__on-this-page a[aria-current="true"] {
-  border-inline-start-color: var(--tp-lime);
+  border-inline-start-color: var(--sx-glow);
   color: var(--sl-color-text-accent);
 }
 
+/* Blocks ------------------------------------------------------------------ */
+
+.card,
+.sl-link-card {
+  background: var(--sl-color-bg);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--sx-radius-sm);
+  box-shadow: none;
+}
+
+.card .title,
+.sl-link-card .title {
+  font-family: var(--tp-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.pagination-links a {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--sx-radius-sm);
+  background: var(--sl-color-bg);
+  box-shadow: none;
+}
+
+/* Callouts: a left rule, not a pastel box. */
+.starlight-aside {
+  border: 1px solid var(--sl-color-hairline);
+  border-inline-start-width: 2px;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Code: obsidian in both themes. */
+.expressive-code .frame {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--sx-radius-sm);
+  box-shadow: none;
+}
+
+.expressive-code figcaption {
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.02em;
+}
+
+#starlight__search .dialog-frame,
+#starlight__search dialog {
+  background: var(--sl-color-bg);
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--sx-radius);
+  box-shadow: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sx-glow);
+  outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------------------
- * Hero: an obsidian band above a light documentation surface
+ * Liquid: obsidian water in a clipped frame
  * ------------------------------------------------------------------------- */
 
-.hero {
-  box-sizing: border-box;
-  margin-inline: calc(50% - 50vw);
-  padding-inline: calc(50vw - 50%);
-  padding-block: clamp(3rem, 8vmin, 6.5rem) clamp(2.5rem, 6vmin, 4.5rem);
-  background: var(--tp-obsidian);
-  border-bottom: 1px solid var(--tp-border-dark);
-  color: var(--tp-offwhite);
+.sl-markdown-content .sx-liquid,
+.sl-markdown-content .sx-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: 16px;
+  background-color: var(--sx-liquid-bg);
+  color: var(--sx-paper);
+  /* These panels are obsidian in both themes, so the lime is the lime again —
+     not the olive it becomes for a mark sitting on paper. */
+  --sx-glow: var(--sx-lime);
 }
 
-.hero h1 {
+.sl-markdown-content .sx-liquid {
+  margin-block: 2.5rem;
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.25rem);
+}
+
+.sx-liquid__pools,
+.sx-hero__pools {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sx-liquid__pool {
+  position: absolute;
+  inline-size: 62%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.85;
+  will-change: transform;
+}
+
+.sx-liquid__pool--a {
+  inset-block-start: -28%;
+  inset-inline-start: -12%;
+  background: radial-gradient(closest-side, rgb(213 255 112 / 0.22), transparent 72%);
+  animation: sx-drift-a 26s var(--sx-ease) infinite alternate;
+}
+
+.sx-liquid__pool--b {
+  inset-block-end: -42%;
+  inset-inline-end: -14%;
+  background: radial-gradient(closest-side, rgb(184 236 223 / 0.18), transparent 70%);
+  animation: sx-drift-b 34s var(--sx-ease) infinite alternate;
+}
+
+.sx-liquid__pool--c {
+  inset-block-start: 12%;
+  inset-inline-end: 22%;
+  inline-size: 38%;
+  background: radial-gradient(closest-side, rgb(244 245 240 / 0.1), transparent 68%);
+  animation: sx-drift-c 42s var(--sx-ease) infinite alternate;
+}
+
+/* One static noise tile: texture without a repaint while the pools move. */
+.sx-liquid__grain,
+.sx-hero__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--sx-liquid-grain);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* The page colour eating into the water: the meniscus. */
+.sx-liquid__wave,
+.sx-hero__wave {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  block-size: clamp(18px, 2.6vw, 34px);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sx-liquid__wave--top {
+  inset-block-start: -1px;
+  transform: scaleY(-1);
+}
+
+.sx-liquid__wave--bottom,
+.sx-hero__wave {
+  inset-block-end: -1px;
+}
+
+.sx-liquid__wave svg,
+.sx-hero__wave svg {
+  display: block;
+  inline-size: 200%;
+  block-size: 100%;
+  animation: sx-wave-shift 24s linear infinite;
+}
+
+.sx-liquid__wave path,
+.sx-hero__wave path {
+  fill: var(--sl-color-bg);
+}
+
+.sx-liquid__inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------------------------------------------------------------------------
+ * Landing hero
+ * ------------------------------------------------------------------------- */
+
+.sl-markdown-content .sx-hero {
+  margin-block: 0 2rem;
+  padding: clamp(1.75rem, 3.6vw, 3rem);
+}
+
+.sx-hero__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+}
+
+@media (min-width: 860px) {
+  .sx-hero__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(160px, 230px);
+  }
+}
+
+.sx-hero__copy {
+  min-width: 0;
+}
+
+.sx-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--sx-paper) 62%, transparent);
+}
+
+.sx-eyebrow__dot {
+  inline-size: 5px;
+  block-size: 5px;
+  background: var(--sx-lime);
+  animation: sx-pulse-dot 3.4s var(--sx-ease) infinite;
+}
+
+.sx-hero .sx-hero__title {
+  margin: 0.9rem 0 0;
   font-family: var(--tp-display);
-  font-weight: 600;
-  font-size: clamp(2.25rem, 4.6vw, 3.6rem);
-  line-height: 1.06;
-  max-width: 22ch;
-  color: var(--tp-offwhite);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.038em;
+  color: var(--sx-paper);
+  max-width: 20ch;
 }
 
-.hero .tagline {
-  max-width: 56ch;
-  margin-block-start: 1.25rem;
-  font-size: clamp(1rem, 1.4vw, 1.125rem);
-  color: var(--tp-muted);
+.sx-hero .sx-hero__tagline {
+  max-width: 54ch;
+  margin: 1.1rem 0 0;
+  font-size: clamp(0.98rem, 1.3vw, 1.1rem);
+  line-height: 1.62;
+  color: color-mix(in srgb, var(--sx-paper) 74%, transparent);
+}
+
+.sx-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.5rem 0 0;
+}
+
+.sx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.05rem;
+  border-radius: 999px;
+  font-family: var(--sl-font);
+  font-size: var(--sl-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    transform 160ms var(--sx-ease),
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.sx-btn svg {
+  transition: transform 180ms var(--sx-ease);
+}
+
+.sx-btn:hover svg {
+  transform: translateX(3px);
+}
+
+.sx-btn--primary {
+  background: var(--sx-lime);
+  color: var(--sx-ink);
+}
+
+.sx-btn--primary:hover {
+  background: #e2ff9e;
+  transform: translateY(-1px);
+}
+
+.sx-btn--ghost {
+  border-color: color-mix(in srgb, var(--sx-paper) 26%, transparent);
+  color: var(--sx-paper);
+}
+
+.sx-btn--ghost:hover {
+  border-color: color-mix(in srgb, var(--sx-paper) 50%, transparent);
+  transform: translateY(-1px);
+}
+
+.sx-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.sx-hero .sx-hero__note {
+  margin: 1rem 0 0;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  color: color-mix(in srgb, var(--sx-paper) 52%, transparent);
+}
+
+.sx-hero__moth {
+  justify-self: center;
+  order: -1;
+}
+
+@media (min-width: 860px) {
+  .sx-hero__moth {
+    order: 0;
+    justify-self: end;
+  }
 }
 
 /* The rotating word in the headline. */
-.tp-rotor {
+.sx-rotor {
   position: relative;
   display: inline-block;
-  color: var(--tp-lime);
-  min-width: 6.5ch;
+  min-width: 6.4ch;
+  color: var(--sx-lime);
   vertical-align: bottom;
 }
 
-.tp-rotor > span {
+.sx-rotor > span {
   position: absolute;
   inset-inline-start: 0;
   inset-block-start: 0;
   opacity: 0;
-  animation: tp-rotate 12s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  animation: sx-rotate 12s var(--sx-ease) infinite;
 }
 
-.tp-rotor > span:nth-child(1) {
+.sx-rotor > span:nth-child(1) {
   position: relative;
   animation-delay: 0s;
 }
-.tp-rotor > span:nth-child(2) {
+
+.sx-rotor > span:nth-child(2) {
   animation-delay: 3s;
 }
-.tp-rotor > span:nth-child(3) {
+
+.sx-rotor > span:nth-child(3) {
   animation-delay: 6s;
 }
-.tp-rotor > span:nth-child(4) {
+
+.sx-rotor > span:nth-child(4) {
   animation-delay: 9s;
 }
 
-@keyframes tp-rotate {
+/* A lime rule sweeps under the word as it lands. */
+.sx-rotor::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.08em;
+  block-size: 2px;
+  background: var(--sx-lime);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: sx-sweep 3s var(--sx-ease) infinite;
+}
+
+.sx-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Statement band
+ * ------------------------------------------------------------------------- */
+
+.sl-markdown-content .sx-statement {
+  margin: 0;
+  font-family: var(--tp-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.1vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: var(--sx-paper);
+  max-width: 24ch;
+}
+
+.sx-statement em {
+  font-style: normal;
+  color: var(--sx-lime);
+}
+
+.sl-markdown-content .sx-statement__note {
+  margin: 1.1rem 0 0;
+  max-width: 56ch;
+  font-size: var(--sl-text-sm);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--sx-paper) 66%, transparent);
+}
+
+.sx-statement__note a {
+  color: var(--sx-paper);
+  text-decoration-color: color-mix(in srgb, var(--sx-lime) 60%, transparent);
+  transition:
+    text-decoration-color 160ms ease,
+    color 140ms ease;
+}
+
+.sx-statement__note a:hover {
+  color: var(--sx-lime);
+  text-decoration-color: var(--sx-lime);
+}
+
+/* ---------------------------------------------------------------------------
+ * Facts and cards
+ * ------------------------------------------------------------------------- */
+
+.sl-markdown-content .sx-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sl-markdown-content .sx-facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.65rem;
+  margin: 0;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 999px;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  line-height: 1.4;
+  color: var(--sl-color-gray-3);
+  transition:
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.sl-markdown-content .sx-facts li:hover {
+  border-color: color-mix(in srgb, var(--sl-color-text) 24%, transparent);
+  color: var(--sl-color-text);
+}
+
+.sx-facts__dot {
+  inline-size: 4px;
+  block-size: 4px;
+  background: var(--sx-glow);
+}
+
+.sl-markdown-content .sx-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.8rem;
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .sl-markdown-content .sx-cards {
+    grid-template-columns: repeat(var(--sx-cols, 3), minmax(0, 1fr));
+  }
+}
+
+.sl-markdown-content .sx-card {
+  margin: 0;
+}
+
+.sx-card__link {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  block-size: 100%;
+  padding: 1.05rem 1.1rem 1.15rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: var(--sx-radius);
+  background: var(--sl-color-bg);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    transform 180ms var(--sx-ease),
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+/* A pool of light that rises in the card on hover, under the words. */
+.sx-card__link::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -40% -20% auto;
+  block-size: 70%;
+  background: radial-gradient(
+    50% 60% at 30% 0%,
+    color-mix(in srgb, var(--sx-glow) 16%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.sx-card__link:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--sl-color-text) 26%, transparent);
+  box-shadow: 0 16px 30px -26px rgb(14 15 18 / 0.55);
+}
+
+.sx-card__link:hover::after {
+  opacity: 1;
+}
+
+.sx-card__link:active {
+  transform: translateY(0) scale(0.996);
+}
+
+.sx-card__glyph {
+  display: block;
+  color: var(--sl-color-gray-3);
+  transition: color 180ms ease;
+}
+
+.sx-card__link:hover .sx-card__glyph {
+  color: var(--sl-color-text);
+}
+
+.sx-card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sx-card__title {
+  font-family: var(--tp-display);
+  font-weight: 600;
+  font-size: var(--sl-text-base);
+  letter-spacing: -0.015em;
+  color: var(--sl-color-text);
+}
+
+.sx-card__meta {
+  flex: none;
+  font-family: var(--sl-font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+.sx-card__desc {
+  font-size: var(--sl-text-sm);
+  line-height: 1.6;
+  color: var(--sl-color-gray-3);
+}
+
+.sx-card__cue {
+  position: absolute;
+  inset-block-end: 1rem;
+  inset-inline-end: 1rem;
+  color: var(--sl-color-gray-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms var(--sx-ease),
+    color 180ms ease;
+}
+
+.sx-card__link:hover .sx-card__cue {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--sl-color-text);
+}
+
+.sl-markdown-content .sx-card__link {
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Signal moth
+ * ------------------------------------------------------------------------- */
+
+.sx-moth {
+  --moth-eye-x: 0px;
+  --moth-eye-y: 0px;
+  --moth-lean-x: 0px;
+  --moth-lean-y: 0px;
+  display: block;
+  color: var(--sx-paper);
+  translate: var(--moth-lean-x) var(--moth-lean-y);
+  transition:
+    translate 500ms var(--sx-ease),
+    scale 200ms var(--sx-ease);
+}
+
+.sx-moth svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  overflow: visible;
+}
+
+.sx-moth__wing,
+.sx-moth__hind,
+.sx-moth__body,
+.sx-moth__head {
+  fill: currentColor;
+}
+
+.sx-moth__hind {
+  opacity: 0.72;
+}
+
+.sx-moth__segment {
+  fill: var(--sx-liquid-bg);
+  opacity: 0.25;
+}
+
+.sx-moth__vein,
+.sx-moth__antenna {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.sx-moth__antenna {
+  stroke-width: 1.4;
+  opacity: 0.75;
+}
+
+.sx-moth__tip,
+.sx-moth__signal rect {
+  fill: var(--sx-lime);
+}
+
+.sx-moth__flap {
+  transform-box: fill-box;
+}
+
+.sx-moth__flap--l {
+  transform-origin: 100% 55%;
+  animation: sx-flutter-l 5.4s var(--sx-ease) infinite;
+}
+
+.sx-moth__flap--r {
+  transform-origin: 0% 55%;
+  animation: sx-flutter-r 5.4s var(--sx-ease) infinite;
+}
+
+.sx-moth__wing {
+  transform-box: fill-box;
+  transition: transform 220ms var(--sx-ease);
+}
+
+.sx-moth__wing--l {
+  transform-origin: 100% 55%;
+}
+
+.sx-moth__wing--r {
+  transform-origin: 0% 55%;
+}
+
+.sx-moth.is-near .sx-moth__wing--l {
+  transform: rotate(-3.5deg) scaleX(1.03);
+}
+
+.sx-moth.is-near .sx-moth__wing--r {
+  transform: rotate(3.5deg) scaleX(1.03);
+}
+
+.sx-moth__eyes {
+  transform: translate(var(--moth-eye-x), var(--moth-eye-y));
+  transition: transform 220ms ease-out;
+}
+
+.sx-moth__lantern {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sx-lantern 3s var(--sx-ease) infinite;
+}
+
+.sx-moth__halo {
+  opacity: 0.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 220ms ease;
+}
+
+.sx-moth.is-near .sx-moth__halo {
+  opacity: 0.95;
+}
+
+.sx-moth__ring {
+  fill: none;
+  stroke: var(--sx-lime);
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.sx-moth.is-signal .sx-moth__ring {
+  animation: sx-ring 1s ease-out;
+}
+
+.sx-moth__signal rect {
+  opacity: 0;
+}
+
+.sx-moth.is-signal .sx-moth__signal rect {
+  animation: sx-signal 1s ease-out;
+}
+
+.sx-moth.is-signal .sx-moth__signal rect:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.sx-moth.is-signal .sx-moth__signal rect:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.sx-moth__dust rect {
+  fill: var(--sx-lime);
+  opacity: 0.5;
+  animation: sx-dust 7s var(--sx-ease) infinite;
+}
+
+.sx-moth__dust rect:nth-child(2) {
+  animation-delay: 1.6s;
+}
+
+.sx-moth__dust rect:nth-child(3) {
+  animation-delay: 3.1s;
+}
+
+/* Perched in the hero. */
+.sx-moth--perch {
+  inline-size: clamp(96px, 22vw, 190px);
+  animation: sx-bob 6.5s var(--sx-ease) infinite;
+}
+
+/* Floating on every other page. */
+.sx-moth--float {
+  position: fixed;
+  inset-block-end: 1.15rem;
+  inset-inline-end: 1.15rem;
+  z-index: 2;
+  inline-size: 54px;
+  /* The float sits on the page, not in a hero: ink on paper, paper on ink. */
+  color: var(--sl-color-text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: sx-moth-in 700ms var(--sx-ease) 500ms backwards;
+}
+
+.sx-moth--float:hover,
+.sx-moth--float.is-near {
+  scale: 1.06;
+}
+
+@media (max-width: 600px) {
+  .sx-moth--float {
+    inline-size: 46px;
+    inset-block-end: 0.9rem;
+    inset-inline-end: 0.9rem;
+  }
+}
+
+@media print {
+  .sx-moth--float {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Landing page frame
+ * ------------------------------------------------------------------------- */
+
+.sl-markdown-content .sx-landing {
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
+.sl-markdown-content .sx-landing > p {
+  max-width: 62ch;
+}
+
+.sl-markdown-content .sx-landing > h2 {
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  letter-spacing: -0.03em;
+  margin-block-start: 3rem;
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion: entrance only, transform and opacity, never layout
+ * ------------------------------------------------------------------------- */
+
+@keyframes sx-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8%, 6%, 0) scale(1.12);
+  }
+}
+
+@keyframes sx-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.06);
+  }
+  to {
+    transform: translate3d(-7%, -5%, 0) scale(0.94);
+  }
+}
+
+@keyframes sx-drift-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.96);
+  }
+  to {
+    transform: translate3d(-4%, 7%, 0) scale(1.08);
+  }
+}
+
+@keyframes sx-wave-shift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes sx-rotate {
   0%,
   22% {
     opacity: 1;
@@ -275,255 +1152,7 @@ header.header {
   }
 }
 
-.tp-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/* ---------------------------------------------------------------------------
- * Blocks
- * ------------------------------------------------------------------------- */
-
-.card,
-.sl-link-card {
-  background: var(--sl-color-bg);
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-.card:hover,
-.sl-link-card:hover {
-  border-color: var(--sl-color-gray-4);
-}
-
-.card .title,
-.sl-link-card .title {
-  font-family: var(--tp-display);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.pagination-links a {
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: 8px;
-  background: var(--sl-color-bg);
-  box-shadow: none;
-}
-
-/* Callouts: a left rule, not a pastel box. */
-.starlight-aside {
-  border: 1px solid var(--sl-color-hairline);
-  border-inline-start-width: 2px;
-  border-radius: 0;
-  background: transparent;
-}
-
-/* Code: obsidian in both themes. */
-.expressive-code .frame {
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-.expressive-code figcaption {
-  font-family: var(--sl-font-mono);
-  font-size: var(--sl-text-xs);
-  letter-spacing: 0.02em;
-}
-
-#starlight__search .dialog-frame,
-#starlight__search dialog {
-  background: var(--sl-color-bg);
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--tp-lime);
-  outline-offset: 2px;
-}
-
-:root[data-theme="light"] :focus-visible {
-  outline-color: var(--tp-obsidian);
-}
-
-/* ---------------------------------------------------------------------------
- * Landing-page pieces
- * ------------------------------------------------------------------------- */
-
-.tp-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-block: 1.75rem 2.5rem;
-  padding: 0;
-  list-style: none;
-}
-
-.tp-facts li {
-  padding: 0.3rem 0.65rem;
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: 4px;
-  font-family: var(--sl-font-mono);
-  font-size: var(--sl-text-xs);
-  color: var(--sl-color-gray-3);
-}
-
-.tp-landing {
-  max-width: 52rem;
-  margin-inline: auto;
-}
-
-.tp-landing > p {
-  max-width: 62ch;
-}
-
-/* ---------------------------------------------------------------------------
- * Motion: entrance only, transform and opacity, never layout
- * ------------------------------------------------------------------------- */
-
-@keyframes tp-rise {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 10px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .sl-markdown-content > h2 {
-    animation: tp-rise both;
-    animation-timeline: view();
-    animation-range: entry 5% cover 26%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .tp-rotor > span {
-    opacity: 0;
-  }
-
-  .tp-rotor > span:nth-child(1) {
-    opacity: 1;
-  }
-}
-
-
-/* ---------------------------------------------------------------------------
- * Micro-interactions
- * ------------------------------------------------------------------------- */
-
-/* Links: the underline saturates instead of appearing. */
-.sl-markdown-content a {
-  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
-  transition:
-    text-decoration-color 160ms ease,
-    color 140ms ease;
-}
-
-.sl-markdown-content a:hover {
-  text-decoration-color: currentColor;
-}
-
-/* Cards: lift, hairline shift, and a lime edge that slides in. */
-.card,
-.sl-link-card {
-  position: relative;
-  transition:
-    border-color 180ms ease,
-    transform 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.card:hover,
-.sl-link-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -24px rgb(16 17 20 / 0.6);
-}
-
-.card::before,
-.sl-link-card::before {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inline-size: 2px;
-  background: var(--tp-lime);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  pointer-events: none;
-}
-
-.card:hover::before,
-.sl-link-card:hover::before {
-  transform: scaleY(1);
-}
-
-/* Nav: the item nudges; the active marker is already a lime rule. */
-.sidebar-content a {
-  transition:
-    transform 160ms ease,
-    color 140ms ease,
-    border-color 160ms ease;
-}
-
-.sidebar-content a:hover {
-  transform: translateX(2px);
-}
-
-/* Table rows. */
-.sl-markdown-content tbody tr {
-  transition: background-color 140ms ease;
-}
-
-.sl-markdown-content tbody tr:hover {
-  background-color: var(--sl-color-hairline-shade);
-}
-
-/* Hero actions. */
-.hero a {
-  transition:
-    transform 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
-}
-
-.hero a:hover {
-  transform: translateY(-1px);
-}
-
-/* The rotating word gets a lime rule that sweeps under it. */
-.tp-rotor::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: -0.1em;
-  block-size: 2px;
-  background: var(--tp-lime);
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: tp-sweep 3s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-}
-
-@keyframes tp-sweep {
+@keyframes sx-sweep {
   0%,
   8% {
     transform: scaleX(0);
@@ -537,23 +1166,139 @@ header.header {
   }
 }
 
-/* Cards arrive in order as they enter the viewport. */
+@keyframes sx-pulse-dot {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes sx-bob {
+  0%,
+  100% {
+    translate: 0 -3px;
+  }
+  50% {
+    translate: 0 4px;
+  }
+}
+
+@keyframes sx-flutter-l {
+  0%,
+  100% {
+    transform: rotate(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(-2.2deg) scaleX(0.97);
+  }
+}
+
+@keyframes sx-flutter-r {
+  0%,
+  100% {
+    transform: rotate(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(2.2deg) scaleX(0.97);
+  }
+}
+
+@keyframes sx-lantern {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes sx-dust {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translate3d(0, 2px, 0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+@keyframes sx-ring {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.45);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes sx-signal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 3px, 0);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(3px, -6px, 0);
+  }
+}
+
+@keyframes sx-moth-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes sx-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @supports (animation-timeline: view()) {
-  .sl-markdown-content .card-grid > * {
-    animation: tp-rise both;
+  .sl-markdown-content > h2 {
+    animation: sx-rise both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 26%;
+  }
+
+  .sl-markdown-content .sx-cards > * {
+    animation: sx-rise both;
     animation-timeline: view();
     animation-range: entry 0% cover 20%;
   }
 
-  .sl-markdown-content .card-grid > :nth-child(2) {
+  .sl-markdown-content .sx-cards > :nth-child(2) {
     animation-range: entry 3% cover 23%;
   }
 
-  .sl-markdown-content .card-grid > :nth-child(3) {
+  .sl-markdown-content .sx-cards > :nth-child(3) {
     animation-range: entry 6% cover 26%;
   }
 
-  .sl-markdown-content .card-grid > :nth-child(n + 4) {
+  .sl-markdown-content .sx-cards > :nth-child(n + 4) {
     animation-range: entry 9% cover 29%;
   }
 }
@@ -563,4 +1308,31 @@ header.header {
 .sl-link-card:active,
 .pagination-links a:active {
   transform: translateY(0) scale(0.995);
+}
+
+/* ---------------------------------------------------------------------------
+ * Everything off, for anyone who asked for less motion
+ * ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .sx-rotor > span {
+    opacity: 0;
+  }
+
+  .sx-rotor > span:nth-child(1) {
+    opacity: 1;
+  }
+
+  .sx-moth__signal rect,
+  .sx-moth__ring {
+    display: none;
+  }
 }

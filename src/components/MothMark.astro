@@ -1,0 +1,62 @@
+---
+/**
+ * The brand mark: a signal moth drawn in pixels. The silhouette sits on whole
+ * units and snaps to the pixel grid; the glints on its wings and antennae are
+ * half units, so at 2x the mark shimmers without a single pixel being soft.
+ * Everything is `currentColor` except the lime signal.
+ */
+interface Props {
+  size?: number;
+  label?: string;
+}
+
+const { size = 24, label } = Astro.props;
+---
+
+<svg
+  class="sx-mothmark"
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  role={label ? "img" : "presentation"}
+  aria-label={label ?? undefined}
+  aria-hidden={label ? undefined : "true"}
+  focusable="false"
+  shape-rendering="crispEdges"
+>
+  <!-- forewings, back hindwings -->
+  <g fill="currentColor">
+    <path d="M10 9 L5 7 L2.5 9.5 L3.5 13 L10 13.5 Z" opacity="0.55" />
+    <path d="M14 9 L19 7 L21.5 9.5 L20.5 13 L14 13.5 Z" opacity="0.55" />
+    <path d="M10 9 L4.5 5.5 L1.5 8.5 L3 12.5 L10 12 Z" />
+    <path d="M14 9 L19.5 5.5 L22.5 8.5 L21 12.5 L14 12 Z" />
+    <!-- hindwings -->
+    <path d="M10 15 L6 15.5 L4.5 18.5 L6.5 20.5 L10 19 Z" opacity="0.8" />
+    <path d="M14 15 L18 15.5 L19.5 18.5 L17.5 20.5 L14 19 Z" opacity="0.8" />
+  </g>
+
+  <!-- wing glints: half-unit pixels -->
+  <g fill="currentColor" opacity="0.45">
+    <rect x="5" y="8.5" width="0.5" height="1.5" />
+    <rect x="7.5" y="9.5" width="0.5" height="1.5" />
+    <rect x="18.5" y="8.5" width="0.5" height="1.5" />
+    <rect x="16" y="9.5" width="0.5" height="1.5" />
+  </g>
+
+  <!-- body, head, antennae -->
+  <rect x="10.75" y="8" width="2.5" height="13" rx="1" fill="currentColor" />
+  <rect x="10" y="6" width="4" height="3.5" rx="1" fill="currentColor" />
+  <g stroke="currentColor" stroke-width="1" fill="none">
+    <path d="M10 6.5 L8 4.5 L6.5 4" />
+    <path d="M14 6.5 L16 4.5 L17.5 4" />
+  </g>
+
+  <!-- the signal: eyes and lantern -->
+  <g fill="var(--sx-glow, #d5ff70)">
+    <rect x="10" y="7" width="1.5" height="1.5" />
+    <rect x="12.5" y="7" width="1.5" height="1.5" />
+    <rect x="11" y="19.5" width="2" height="2" />
+    <rect x="6" y="3.5" width="1.5" height="1.5" />
+    <rect x="16.5" y="3.5" width="1.5" height="1.5" />
+  </g>
+</svg>

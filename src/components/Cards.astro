@@ -1,0 +1,63 @@
+---
+import Glyph from "./Glyph.astro";
+
+/**
+ * A grid of link cards fed by data, so a page never repeats the markup.
+ * A glyph is optional and decorative; the title carries the meaning.
+ */
+const GLYPHS = [
+  "mail",
+  "arch",
+  "gauge",
+  "error",
+  "story",
+  "license",
+  "queue",
+  "session",
+  "relay",
+  "guide",
+] as const;
+
+type GlyphName = (typeof GLYPHS)[number];
+
+interface CardItem {
+  title: string;
+  href: string;
+  description: string;
+  meta?: string;
+  glyph?: GlyphName;
+}
+
+interface Props {
+  cards: CardItem[];
+  columns?: 2 | 3;
+}
+
+const { cards, columns = 3 } = Astro.props;
+---
+
+<ul class="sx-cards" style={`--sx-cols:${columns}`}>
+  {
+    cards.map((card) => (
+      <li class="sx-card">
+        <a class="sx-card__link" href={card.href}>
+          {card.glyph && (
+            <span class="sx-card__glyph">
+              <Glyph name={card.glyph} />
+            </span>
+          )}
+          <span class="sx-card__top">
+            <span class="sx-card__title">{card.title}</span>
+            {card.meta && <span class="sx-card__meta">{card.meta}</span>}
+          </span>
+          <span class="sx-card__desc">{card.description}</span>
+          <span class="sx-card__cue" aria-hidden="true">
+            <svg viewBox="0 0 12 12" width="12" height="12" shape-rendering="crispEdges">
+              <path d="M1 5.25 H7 V3 L11 6 L7 9 V6.75 H1 Z" fill="currentColor" />
+            </svg>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
