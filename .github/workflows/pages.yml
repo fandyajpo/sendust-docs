@@ -81,13 +81,6 @@ jobs:
             npm install --package-lock-only --no-audit --no-fund
           fi
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Creates the Pages site on the first run, so no manual click in
-          # Settings is needed for the deploy step to find it.
-          enablement: true
-
       - name: Build and upload the site
         uses: withastro/action@v3
         env:
