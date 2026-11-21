@@ -453,24 +453,32 @@ header.header::after {
    No mask here — fading a light shape over obsidian turns it grey, which read
    as a wedge cut into the panel's corners. The water simply reaches both edges,
    where the panel is already page colour, so nothing has to fade. */
-.sx-liquid__wave,
-.sx-hero__wave {
-  position: absolute;
-  inset-inline: 0;
-  z-index: 1;
-  block-size: clamp(30px, 4.4vw, 56px);
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.sx-liquid__wave--top {
-  inset-block-start: -1px;
-  transform: scaleY(-1);
-}
-
-.sx-liquid__wave--bottom,
-.sx-hero__wave {
-  inset-block-end: -1px;
+/* The waterline is the panel's own edge, not a strip laid over it. A repeating
+   wave mask cuts the bottom of the panel, so the curve and the corner radius are
+   one shape: there is no page-colour band to line up with anything, and nothing
+   can be clipped into a straight line at the ends. */
+.sx-hero,
+.sx-liquid {
+  --sx-wave-h: clamp(26px, 3.4vw, 46px);
+  --sx-wave-tile: url("/wave.svg");
+  -webkit-mask-image: linear-gradient(#000 0 0), var(--sx-wave-tile);
+  mask-image: linear-gradient(#000 0 0), var(--sx-wave-tile);
+  -webkit-mask-size:
+    100% calc(100% - var(--sx-wave-h)),
+    240px var(--sx-wave-h);
+  mask-size:
+    100% calc(100% - var(--sx-wave-h)),
+    240px var(--sx-wave-h);
+  -webkit-mask-position:
+    top left,
+    bottom left;
+  mask-position:
+    top left,
+    bottom left;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
 
 .sx-wave {
@@ -1905,6 +1913,51 @@ starlight-menu-button,
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Starlight's mobile "On this page" is a <details>, so it is styled here into
+   the same control language as the rest: a pill on the closed bar, the panel
+   tokens when open. */
+#starlight__mobile-toc .toggle {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 999px;
+  padding-block: 0.4rem;
+  padding-inline: 0.7rem;
+  background: var(--sx-surface-2);
+  color: var(--sl-color-text);
+  font-family: var(--sl-font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+#starlight__mobile-toc .toggle:hover,
+#starlight__mobile-toc[open] .toggle {
+  border-color: var(--sx-hair-strong);
+  background: var(--sl-surface-hover, var(--sl-color-hairline-shade));
+  color: var(--sl-color-text);
+}
+
+#starlight__mobile-toc .caret {
+  color: var(--sl-color-gray-3);
+  transition: transform 160ms var(--sx-ease);
+}
+
+#starlight__mobile-toc .display-current {
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font);
+  font-size: var(--sl-text-xs);
+}
+
+#starlight__mobile-toc .dropdown {
+  border: 1px solid var(--sx-border);
+  border-block-start-color: var(--sx-border);
+  background: var(--sx-surface);
+  box-shadow: var(--sx-shadow);
 }
 
 /* ---------------------------------------------------------------------------

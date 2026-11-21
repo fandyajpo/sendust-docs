@@ -1,19 +1,18 @@
 ---
-import Wave from "./Wave.astro";
-
 /**
- * A liquid panel: obsidian water held in a clipped, rounded frame.
+ * A liquid panel: obsidian water held in a frame whose bottom edge is a
+ * waterline rather than a straight line.
  *
  * The light pools are plain radial gradients — no blur filters to pay for —
- * drifting on transforms only. The edges are the page colour eating into the
- * water, drawn by Wave.astro.
+ * drifting on transforms only. The wavy bottom edge is a mask, applied by
+ * `.sx-liquid` in src/styles/sendust.css, so the curve is the panel's own shape
+ * and no overlay has to be lined up with it.
  */
 interface Props {
   label?: string;
-  edges?: "bottom" | "both" | "none";
 }
 
-const { label, edges = "both" } = Astro.props;
+const { label } = Astro.props;
 ---
 
 <section class="sx-liquid" aria-label={label}>
@@ -24,21 +23,5 @@ const { label, edges = "both" } = Astro.props;
   </span>
   <span class="sx-liquid__grain" aria-hidden="true"></span>
 
-  {
-    edges !== "bottom" && edges !== "none" && (
-      <span class="sx-liquid__wave sx-liquid__wave--top" aria-hidden="true">
-        <Wave />
-      </span>
-    )
-  }
-
   <div class="sx-liquid__inner"><slot /></div>
-
-  {
-    edges !== "none" && (
-      <span class="sx-liquid__wave sx-liquid__wave--bottom" aria-hidden="true">
-        <Wave />
-      </span>
-    )
-  }
 </section>
