@@ -1,8 +1,9 @@
 # sendust-docs
 
-The documentation site for [Sendust](https://github.com/fandyajpo/sendust): an
-[Astro 5](https://astro.build) + [Starlight](https://starlight.astro.build)
-site, static output, TypeScript, Pagefind search, no analytics.
+The user-facing documentation site for [Sendust](https://github.com/fandyajpo/sendust):
+how to use `@sendust/ts`, and the story of how it got here. An
+[Astro 5](https://astro.build) + [Starlight](https://starlight.astro.build) site,
+static output, TypeScript, Pagefind search, no analytics.
 
 > **NOTICE — the source of truth is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs).**
 > Nothing published here is written here. The guides, the API contract, the ADRs
@@ -19,10 +20,9 @@ Starlight content collection.
 
 | In `fandyajpo/sendust` | Lands at | Sidebar group |
 | --- | --- | --- |
-| `docs/guides/*.md` | `src/content/docs/guide/` | Start here, Guides |
-| `docs/architecture/public-api.md`, `error-model.md` | `src/content/docs/api/` | API |
-| `docs/architecture/decisions/00*.md` | `src/content/docs/decisions/` | Decisions |
-| `docs/releases/story.md`, `docs/releases/1.0.1.md` | `src/content/docs/releases/` | Releases |
+| `docs/guides/quick-start.md`, `lifecycle-limits.md` | `src/content/docs/guide/` | Start here |
+| `docs/guides/addressing-mime-attachments.md`, `errors-security-operations.md` | `src/content/docs/guide/` | Guides |
+| `docs/releases/story.md` | `src/content/docs/releases/` | The story |
 
 It does five things, in this order.
 
@@ -49,9 +49,14 @@ It does five things, in this order.
 
 ### What is deliberately not published
 
-Gates, phases, audits, planning, qa, research, security, discovery, engineering,
-product, and `docs/README.md` stay out of the site. They are the design and
-evidence record, and the README links to them from the repository.
+The site is for people using the package, so the architecture and evidence
+record stays in the repository: the ADRs (`docs/architecture/decisions/`), the
+contract baselines (`public-api.md`, `error-model.md`), the maintainer guide,
+the release-engineering notes, and `gates/`, `phases/`, `audits/`, `planning/`,
+`qa/`, `research/`, `security/`, `discovery/`, `engineering/`, `product/` and
+`docs/README.md`. Links to any of them become GitHub permalinks at the same ref.
+`scripts/doc-map.mjs`'s `unpublished` list is the record of that decision; move
+a document into `pages` to include it.
 
 ### `scripts/doc-map.mjs`
 

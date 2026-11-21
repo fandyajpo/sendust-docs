@@ -9,8 +9,8 @@ hero:
       link: guide/quick-start/
       icon: right-arrow
       variant: primary
-    - text: What a result means
-      link: api/error-model/
+    - text: The story
+      link: releases/story/
       variant: minimal
 ---
 
@@ -37,12 +37,12 @@ platform requirements are in the [quick start](guide/quick-start/).
     After a definitive outcome the session is reset and kept, up to
     `delivery.maxMessagesPerSession` messages or `delivery.sessionIdleMs` of idleness.
     After an error, or an `unknown` disposition, it is dropped: reuse must never turn an
-    uncertain delivery into a duplicated one. [ADR 0022](decisions/0022-session-reuse/)
+    uncertain delivery into a duplicated one. [Lifecycle and limits](guide/lifecycle-limits/)
   </Card>
   <Card title="Relay acceptance, not delivery">
     `accepted` means the relay took responsibility for the message. There is no
     `delivered`, `opened`, or `bounced` status, and `unknown` is never retried by the
-    library. [Error model](api/error-model/)
+    library. [Errors, security, operations](guide/errors-security-operations/)
   </Card>
 </CardGrid>
 
@@ -70,16 +70,6 @@ platform requirements are in the [quick start](guide/quick-start/).
     description="Stable codes, redaction, relay outages."
   />
   <LinkCard
-    title="Public API"
-    href="api/public-api/"
-    description="Options, message shape, results, close, state."
-  />
-  <LinkCard
-    title="Decisions"
-    href="decisions/0001-two-crates/"
-    description="Every architecture decision, 0001 to 0022."
-  />
-  <LinkCard
     title="The Sendust story"
     href="releases/story/"
     description="From an empty folder to 1.0.1."
@@ -91,4 +81,5 @@ platform requirements are in the [quick start](guide/quick-start/).
 These pages are rendered from the documentation in the Sendust repository at a
 tagged ref — the footer names the exact one. The source of truth for every page
 is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs);
-corrections belong there.
+corrections belong there. The architecture record — the ADRs, the contract
+baselines, the gates and the audits — stays in that repository.

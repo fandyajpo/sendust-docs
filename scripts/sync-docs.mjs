@@ -255,10 +255,19 @@ const shortCommit = commit ? commit.slice(0, 8) : ref;
 /** Directories under src/content/docs that only ever hold generated Markdown. */
 const generatedDirs = new Set(["guide", "api", "decisions", "releases"]);
 
-/** New files are picked up here even before the map lists them. */
+/**
+ * New guides are noticed here, but this site is curated: `skip` names the
+ * documents that exist upstream and stay out of it. Only the published set
+ * carries the frontmatter the sidebar uses.
+ */
 const discovery = [
-  { directory: "docs/guides", target: "guide", prefix: "", group: "Guides" },
-  { directory: "docs/architecture/decisions", target: "decisions", prefix: "00", group: "Decisions" },
+  {
+    directory: "docs/guides",
+    target: "guide",
+    prefix: "",
+    group: "Guides",
+    skip: ["docs/guides/maintainer.md"],
+  },
 ];
 
 const entries = [];
@@ -312,6 +321,7 @@ for (const rule of discovery) {
     .sort();
   for (const file of files) {
     const source = `${rule.directory}/${file}`;
+    if (rule.skip?.includes(source)) continue;
     const absolute = path.join(checkout, source);
     if (bySource.has(absolute)) continue;
     const entry = {
