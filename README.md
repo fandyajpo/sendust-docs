@@ -135,6 +135,10 @@ commit one so the build is reproducible.
 
 ### Vercel
 
+Live at <https://sendust-docs.vercel.app>. The project is connected to this
+repository, so a push to `main` builds and promotes to production on its own;
+other branches get preview deployments.
+
 `vercel.json` builds with `npm run build:vercel`, which downloads the pinned
 Sendust tag into `.sendust/` before syncing: a Vercel build has no sibling
 repository to read. A tarball of the tag is that ref by construction, the fetch
