@@ -1,12 +1,8 @@
 ---
 /**
- * A liquid panel: obsidian water held in a frame whose bottom edge is a
- * waterline rather than a straight line.
- *
- * The light pools are plain radial gradients — no blur filters to pay for —
- * drifting on transforms only. The wavy bottom edge is a mask, applied by
- * `.sx-liquid` in src/styles/sendust.css, so the curve is the panel's own shape
- * and no overlay has to be lined up with it.
+ * The statement band: the one raised surface on the landing page. It is a
+ * hairline panel on the canvas now — no pools, no grain, no waterline. The
+ * component keeps its name because the prose it carries is still a statement.
  */
 interface Props {
   label?: string;
@@ -16,12 +12,5 @@ const { label } = Astro.props;
 ---
 
 <section class="sx-liquid" aria-label={label}>
-  <span class="sx-liquid__pools" aria-hidden="true">
-    <span class="sx-liquid__pool sx-liquid__pool--a"></span>
-    <span class="sx-liquid__pool sx-liquid__pool--b"></span>
-    <span class="sx-liquid__pool sx-liquid__pool--c"></span>
-  </span>
-  <span class="sx-liquid__grain" aria-hidden="true"></span>
-
   <div class="sx-liquid__inner"><slot /></div>
 </section>

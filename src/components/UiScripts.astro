@@ -20,6 +20,16 @@
     doc.body.style.overflow = value;
   }
 
+  /* The page behind a modal is inert, not merely covered: a keyboard or a
+     screen reader must not reach it. The header itself stays live, because both
+     the drawer and the search dialog are rendered inside it. */
+  function setBackgroundInert(inert: boolean): void {
+    for (const el of doc.querySelectorAll("main, #starlight__sidebar")) {
+      if (inert) el.setAttribute("inert", "");
+      else el.removeAttribute("inert");
+    }
+  }
+
   /* ------------------------------------------------------------- open state */
 
   function closeMenus(): void {
@@ -46,9 +56,14 @@
     if (!drawer?.hasAttribute("data-open")) return;
     // A select left open inside the drawer would keep its chevron flipped.
     closeSelects();
+    const inside = drawer.contains(doc.activeElement);
     drawer.removeAttribute("data-open");
     lockScroll(false);
-    doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "false");
+    setBackgroundInert(false);
+    const burger = doc.querySelector<HTMLElement>("[data-drawer-open]");
+    burger?.setAttribute("aria-expanded", "false");
+    // Escape and the close button hand the keyboard back to what opened it.
+    if (inside) burger?.focus();
   }
 
   function openDrawer(): void {
@@ -61,15 +76,20 @@
     if (panel) panel.scrollTop = 0;
     drawer.setAttribute("data-open", "");
     lockScroll(true);
+    setBackgroundInert(true);
     doc.querySelector("[data-drawer-open]")?.setAttribute("aria-expanded", "true");
-    drawer.querySelector<HTMLElement>("[data-drawer-close]")?.focus();
+    // The close button, not the scrim: the scrim is not focusable.
+    drawer.querySelector<HTMLElement>(".sx-drawer__close")?.focus();
   }
 
   function closeSearch(): void {
     const dialog = doc.querySelector("[data-search-dialog]");
     if (!dialog?.hasAttribute("data-open")) return;
+    const inside = dialog.contains(doc.activeElement);
     dialog.removeAttribute("data-open");
     lockScroll(false);
+    setBackgroundInert(false);
+    if (inside) doc.querySelector<HTMLElement>("[data-search-open]")?.focus();
   }
 
   function closeEverything(): void {
@@ -150,9 +170,9 @@
       if (stored === "" || stored === "auto") return "auto";
       if (stored === "light" || stored === "dark") return stored;
     } catch {
-      /* storage can be blocked; dark is the site's default anyway */
+      /* storage can be blocked; the canvas is the site's default anyway */
     }
-    return "dark";
+    return "light";
   }
 
   function applyTheme(mode: string): void {
@@ -253,6 +273,7 @@
     closeDrawer();
     dialog.setAttribute("data-open", "");
     lockScroll(true);
+    setBackgroundInert(true);
     const input = dialog.querySelector<HTMLInputElement>("input");
     input?.focus();
     if (input && input.value.trim().length > 1) void runSearch(input.value);

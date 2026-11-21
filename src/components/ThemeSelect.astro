@@ -7,10 +7,10 @@ import Select from "./Select.astro";
  * head script still applies the stored choice before the first paint.
  */
 const options = [
-  { value: "dark", label: "Dark", hint: "Default" },
-  { value: "light", label: "Light" },
+  { value: "light", label: "Light", hint: "Default" },
+  { value: "dark", label: "Dark" },
   { value: "auto", label: "System" },
 ];
 ---
 
-<Select name="theme" label="Colour theme" options={options} value="dark" compact />
+<Select name="theme" label="Colour theme" options={options} value="light" compact />

@@ -1,12 +1,18 @@
-/* Sendust — Technical Precision, revamped.
+/* Sendust — the CANVAS design system.
  *
- * An off-white reading surface with obsidian ink; obsidian "water" panels that
- * hold the hero and the position statement; one electric-lime accent, spent
- * only on interaction and on the signal moth's eyes and lantern.
+ * A white (and in dark, near-black) canvas, near-black ink, one violet accent,
+ * and a soft gradient mesh behind the hero. Flat geometry, 1px hairlines, no
+ * water, no wave: the page is a document, and the hero is the only place that
+ * performs.
+ *
+ * The older "Technical Precision" layers still live below — the tokens, the
+ * chrome, the moth, the prose — but every panel, button and heading that used
+ * to be obsidian or lime now reads its colour from the canvas tokens at the
+ * bottom of this file.
  *
  * Motion is transform, opacity and colour only, 120–200 ms on hover, entrance
  * animations that never move layout, and everything off under
- * prefers-reduced-motion. No animation library, no filter on a moving layer.
+ * prefers-reduced-motion.
  */
 
 :root {
@@ -31,7 +37,7 @@
   --sx-hair-strong: color-mix(in srgb, #0e0f12 20%, transparent);
   --sx-shadow: 0 18px 40px -30px rgb(16 17 20 / 0.42);
 
-  --tp-display: "Manrope", "Geist Sans", ui-sans-serif, system-ui, sans-serif;
+  --tp-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
 
   --sl-font: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --sl-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -370,150 +376,35 @@ header.header::after {
  * Liquid: obsidian water in a clipped frame
  * ------------------------------------------------------------------------- */
 
-.sl-markdown-content .sx-liquid,
+/* The two panels in the landing flow. The hero is the canvas itself; the
+   statement band is the one raised surface on the page. Neither is obsidian,
+   neither is water: the metaphor left with the old identity. */
 .sl-markdown-content .sx-hero {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  border-radius: 16px;
-  background-color: var(--sx-liquid-bg);
-  color: var(--sx-paper);
-  /* These panels are obsidian in both themes, so the lime is the lime again —
-     not the olive it becomes for a mark sitting on paper. */
-  --sx-glow: var(--sx-lime);
+  background-color: var(--cvx-canvas);
+  color: var(--sl-color-text);
+  /* Inside a panel the signal colour is the accent, not the old lime. */
+  --sx-glow: var(--cvx-accent);
 }
 
 .sl-markdown-content .sx-liquid {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   margin-block: 2.5rem;
   padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.25rem);
+  background-color: var(--cvx-panel);
+  border: 1px solid var(--cvx-line);
+  border-radius: var(--cvx-radius);
+  color: var(--sl-color-text);
+  --sx-glow: var(--cvx-accent);
 }
 
-/* In the dark palette the page and the water are close in value, so the panel
-   needs an edge of its own and a touch more lift. */
-:root[data-theme="dark"] .sl-markdown-content .sx-liquid,
-:root[data-theme="dark"] .sl-markdown-content .sx-hero {
-  --sx-liquid-bg: #171a20;
-  box-shadow: inset 0 0 0 1px rgb(244 245 240 / 0.07);
-}
-
-.sx-liquid__pools,
-.sx-hero__pools {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.sx-liquid__pool {
-  position: absolute;
-  inline-size: 62%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0.85;
-  will-change: transform;
-}
-
-.sx-liquid__pool--a {
-  inset-block-start: -28%;
-  inset-inline-start: -12%;
-  background: radial-gradient(closest-side, rgb(213 255 112 / 0.22), transparent 72%);
-  animation: sx-drift-a 26s var(--sx-ease) infinite alternate;
-}
-
-.sx-liquid__pool--b {
-  inset-block-end: -42%;
-  inset-inline-end: -14%;
-  background: radial-gradient(closest-side, rgb(184 236 223 / 0.18), transparent 70%);
-  animation: sx-drift-b 34s var(--sx-ease) infinite alternate;
-}
-
-.sx-liquid__pool--c {
-  inset-block-start: 12%;
-  inset-inline-end: 22%;
-  inline-size: 38%;
-  background: radial-gradient(closest-side, rgb(244 245 240 / 0.1), transparent 68%);
-  animation: sx-drift-c 42s var(--sx-ease) infinite alternate;
-}
-
-/* One static noise tile: texture without a repaint while the pools move. */
-.sx-liquid__grain,
-.sx-hero__grain {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: var(--sx-liquid-grain);
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
-
-/* The page colour eating into the water: the meniscus.
-   No mask here — fading a light shape over obsidian turns it grey, which read
-   as a wedge cut into the panel's corners. The water simply reaches both edges,
-   where the panel is already page colour, so nothing has to fade. */
-/* The waterline is the panel's own edge, not a strip laid over it. A repeating
-   wave mask cuts the bottom of the panel, so the curve and the corner radius are
-   one shape: there is no page-colour band to line up with anything, and nothing
-   can be clipped into a straight line at the ends. */
-.sx-hero,
-.sx-liquid {
-  --sx-wave-h: clamp(26px, 3.4vw, 46px);
-  --sx-wave-tile: url("/wave.svg");
-  -webkit-mask-image: linear-gradient(#000 0 0), var(--sx-wave-tile);
-  mask-image: linear-gradient(#000 0 0), var(--sx-wave-tile);
-  -webkit-mask-size:
-    100% calc(100% - var(--sx-wave-h)),
-    240px var(--sx-wave-h);
-  mask-size:
-    100% calc(100% - var(--sx-wave-h)),
-    240px var(--sx-wave-h);
-  -webkit-mask-position:
-    top left,
-    bottom left;
-  mask-position:
-    top left,
-    bottom left;
-  -webkit-mask-repeat: no-repeat, repeat-x;
-  mask-repeat: no-repeat, repeat-x;
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
-}
-
-.sx-wave {
-  position: absolute;
-  inset: 0;
-  display: block;
-}
-
-.sx-wave svg {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline-start: 0;
-  display: block;
-  width: 200%;
-  height: 100%;
-}
-
-.sx-wave path {
-  fill: var(--sl-color-bg);
-}
-
-/* The crest riding with the wave: a haze of light on the water, on its own
-   slow loop and out of phase with the water beneath it, so the two crests
-   separate and rejoin instead of stacking. */
-.sx-wave-back {
-  animation: sx-wave-shift 40s linear -9s infinite reverse;
-}
-
-.sx-wave-back path {
-  fill: rgb(244 245 240 / 0.1);
-}
-
-.sx-wave-front {
-  animation: sx-wave-shift 26s linear infinite;
-}
+/* The drifting pools, the grain tile and the wave mask are gone with the water:
+   the hero's only texture is the mesh gradient, and both panels have straight
+   edges and a hairline. */
 
 .sx-liquid__inner {
   position: relative;
@@ -524,10 +415,8 @@ header.header::after {
  * Landing hero
  * ------------------------------------------------------------------------- */
 
-.sl-markdown-content .sx-hero {
-  margin-block: 0 2rem;
-  padding: clamp(1.75rem, 3.6vw, 3rem);
-}
+/* The hero's own box — full-bleed width and gutter — is set once, in the canvas
+   layer at the end of this file. Nothing here may re-box it. */
 
 .sx-hero__inner {
   position: relative;
@@ -557,7 +446,7 @@ header.header::after {
   font-size: var(--sl-text-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--sx-paper) 62%, transparent);
+  color: var(--cvx-muted);
 }
 
 .sx-eyebrow__dot {
@@ -565,7 +454,7 @@ header.header::after {
   inline-size: 5px;
   block-size: 5px;
   margin-block-start: 0.44em;
-  background: var(--sx-lime);
+  background: var(--cvx-accent);
   animation: sx-pulse-dot 3.4s var(--sx-ease) infinite;
 }
 
@@ -579,20 +468,20 @@ header.header::after {
 .sx-hero .sx-hero__title {
   margin: 0.9rem 0 0;
   font-family: var(--tp-display);
-  font-weight: 700;
-  font-size: clamp(2rem, 4.4vw, 3.4rem);
-  line-height: 1.04;
-  letter-spacing: -0.038em;
-  color: var(--sx-paper);
-  max-width: 20ch;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  color: var(--sl-color-text);
+  max-width: 18ch;
 }
 
 .sx-hero .sx-hero__tagline {
-  max-width: 54ch;
-  margin: 1.1rem 0 0;
-  font-size: clamp(0.98rem, 1.3vw, 1.1rem);
-  line-height: 1.62;
-  color: color-mix(in srgb, var(--sx-paper) 74%, transparent);
+  max-width: 52ch;
+  margin: 1.5rem 0 0;
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--cvx-muted);
 }
 
 .sx-hero__actions {
@@ -629,22 +518,21 @@ header.header::after {
 }
 
 .sx-btn--primary {
-  background: var(--sx-lime);
-  color: var(--sx-ink);
+  background: var(--cvx-ink);
+  color: var(--cvx-canvas);
 }
 
 .sx-btn--primary:hover {
-  background: #e2ff9e;
   transform: translateY(-1px);
 }
 
 .sx-btn--ghost {
-  border-color: color-mix(in srgb, var(--sx-paper) 26%, transparent);
-  color: var(--sx-paper);
+  border-color: var(--cvx-line);
+  color: var(--sl-color-text);
 }
 
 .sx-btn--ghost:hover {
-  border-color: color-mix(in srgb, var(--sx-paper) 50%, transparent);
+  border-color: var(--cvx-muted);
   transform: translateY(-1px);
 }
 
@@ -656,7 +544,7 @@ header.header::after {
   margin: 1rem 0 0;
   font-family: var(--sl-font-mono);
   font-size: var(--sl-text-xs);
-  color: color-mix(in srgb, var(--sx-paper) 52%, transparent);
+  color: var(--cvx-muted);
 }
 
 .sx-hero__moth {
@@ -676,7 +564,7 @@ header.header::after {
   position: relative;
   display: inline-block;
   min-width: 6.4ch;
-  color: var(--sx-lime);
+  color: var(--cvx-accent);
   vertical-align: bottom;
 }
 
@@ -705,14 +593,14 @@ header.header::after {
   animation-delay: 9s;
 }
 
-/* A lime rule sweeps under the word as it lands. */
+/* An accent rule sweeps under the word as it lands. */
 .sx-rotor::after {
   content: "";
   position: absolute;
   inset-inline: 0;
   inset-block-end: -0.08em;
   block-size: 2px;
-  background: var(--sx-lime);
+  background: var(--cvx-accent);
   transform: scaleX(0);
   transform-origin: left;
   animation: sx-sweep 3s var(--sx-ease) infinite;
@@ -738,13 +626,13 @@ header.header::after {
   font-size: clamp(1.5rem, 3.1vw, 2.5rem);
   line-height: 1.12;
   letter-spacing: -0.035em;
-  color: var(--sx-paper);
+  color: var(--sl-color-text);
   max-width: 24ch;
 }
 
 .sx-statement em {
   font-style: normal;
-  color: var(--sx-lime);
+  color: var(--cvx-accent);
 }
 
 .sl-markdown-content .sx-statement__note {
@@ -752,20 +640,20 @@ header.header::after {
   max-width: 56ch;
   font-size: var(--sl-text-sm);
   line-height: 1.7;
-  color: color-mix(in srgb, var(--sx-paper) 66%, transparent);
+  color: var(--cvx-muted);
 }
 
 .sl-markdown-content .sx-statement__note a {
-  color: var(--sx-paper);
-  text-decoration-color: color-mix(in srgb, var(--sx-lime) 60%, transparent);
+  color: var(--cvx-accent);
+  text-decoration-color: color-mix(in srgb, var(--cvx-accent) 50%, transparent);
   transition:
     text-decoration-color 160ms ease,
     color 140ms ease;
 }
 
 .sl-markdown-content .sx-statement__note a:hover {
-  color: var(--sx-lime);
-  text-decoration-color: var(--sx-lime);
+  color: var(--cvx-accent);
+  text-decoration-color: var(--cvx-accent);
 }
 
 /* ---------------------------------------------------------------------------
@@ -908,10 +796,10 @@ header.header::after {
 .sx-card__meta {
   flex: none;
   font-family: var(--sl-font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.08em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--sl-color-gray-3);
+  color: var(--cvx-muted);
 }
 
 .sx-card__desc {
@@ -953,7 +841,7 @@ header.header::after {
   --moth-lean-x: 0px;
   --moth-lean-y: 0px;
   display: block;
-  color: var(--sx-paper);
+  color: var(--sl-color-text);
   translate: var(--moth-lean-x) var(--moth-lean-y);
   transition:
     translate 500ms var(--sx-ease),
@@ -998,7 +886,7 @@ header.header::after {
 
 .sx-moth__tip,
 .sx-moth__signal rect {
-  fill: var(--sx-lime);
+  fill: var(--sx-glow);
 }
 
 .sx-moth__flap {
@@ -1060,7 +948,7 @@ header.header::after {
 
 .sx-moth__ring {
   fill: none;
-  stroke: var(--sx-lime);
+  stroke: var(--sx-glow);
   stroke-width: 1;
   opacity: 0;
   transform-box: fill-box;
@@ -1088,7 +976,7 @@ header.header::after {
 }
 
 .sx-moth__dust rect {
-  fill: var(--sx-lime);
+  fill: var(--sx-glow);
   opacity: 0.5;
   animation: sx-dust 7s var(--sx-ease) infinite;
 }
@@ -1964,42 +1852,6 @@ starlight-menu-button,
  * Motion: entrance only, transform and opacity, never layout
  * ------------------------------------------------------------------------- */
 
-@keyframes sx-drift-a {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(8%, 6%, 0) scale(1.12);
-  }
-}
-
-@keyframes sx-drift-b {
-  from {
-    transform: translate3d(0, 0, 0) scale(1.06);
-  }
-  to {
-    transform: translate3d(-7%, -5%, 0) scale(0.94);
-  }
-}
-
-@keyframes sx-drift-c {
-  from {
-    transform: translate3d(0, 0, 0) scale(0.96);
-  }
-  to {
-    transform: translate3d(-4%, 7%, 0) scale(1.08);
-  }
-}
-
-@keyframes sx-wave-shift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 @keyframes sx-rotate {
   0%,
   22% {
@@ -2244,14 +2096,15 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
   will-change: opacity, transform;
 }
 
-/* The reading line. */
+/* The reading line. It sits on the header's lower edge, not over it: the bar is
+   fixed and opaque, so a line at the very top of the viewport never showed. */
 [data-motion-progress] {
   position: fixed;
-  inset-block-start: 0;
+  inset-block-start: 4rem;
   inset-inline: 0;
-  z-index: 90;
+  z-index: 9;
   block-size: 2px;
-  background: var(--sx-glow);
+  background: var(--cvx-accent);
   transform: scaleX(0);
   transform-origin: 0 50%;
   pointer-events: none;
@@ -2562,11 +2415,13 @@ header.header {
   border-inline-end: 1px solid var(--cvx-line);
 }
 
-/* Hero: the one place with a mesh, a wash of accent, and large type. */
+/* Hero: the one place with a mesh, a wash of accent, and large type. It bleeds
+   to both viewport edges, and its copy lines up with the page's content column
+   rather than a gutter of its own. */
 .sx-hero {
   position: relative;
   margin-inline: calc(50% - 50vw);
-  padding-inline: max(1.5rem, calc(50vw - 34rem));
+  padding-inline: max(1.5rem, calc(50vw - 32rem));
   padding-block: clamp(4rem, 9vmin, 7.5rem) clamp(3rem, 7vmin, 5.5rem);
   background-color: var(--cvx-canvas);
   background-image: var(--cvx-mesh);
@@ -2692,11 +2547,11 @@ header.header {
   color: var(--cvx-muted);
 }
 
-/* Cards: white, hairline, a shadow that only appears on hover. */
+/* Cards: the panel tint, a hairline, a shadow that only appears on hover. */
 .card,
 .sl-link-card,
 .sx-card {
-  background: var(--cvx-canvas);
+  background: var(--cvx-panel);
   border: 1px solid var(--cvx-line);
   border-radius: var(--cvx-radius);
   box-shadow: none;
@@ -2705,7 +2560,7 @@ header.header {
 .card:hover,
 .sl-link-card:hover,
 .sx-card:hover {
-  border-color: #cfcfcf;
+  border-color: var(--cvx-muted);
   box-shadow: var(--cvx-shadow);
   transform: translateY(-1px);
 }
@@ -2799,89 +2654,30 @@ header.header {
   color: var(--cvx-accent);
 }
 
-/* The reading line takes the accent. */
-[data-motion-progress] {
-  background: var(--cvx-accent);
-}
-
-
 /* ---------------------------------------------------------------------------
- * The two panels that still carried the old identity
+ * Buttons that are links
  *
- * The hero and the statement band were obsidian slabs with a dark, rounded,
- * inset-box look; the brief for this design is a light canvas with the mesh on
- * it. Their earlier rules win on specificity, so these few properties are
- * stated with weight rather than fought selector by selector.
+ * On the landing page the buttons are anchors inside the markdown content, so
+ * the prose link colour won on specificity and a label came out violet on a
+ * white fill — about 2.4:1. The button's own colours decide, not the prose's.
  * ------------------------------------------------------------------------- */
 
-.sx-hero,
-.sx-landing .sx-hero {
-  background-color: var(--cvx-canvas) !important;
-  background-image: var(--cvx-mesh) !important;
-  background-repeat: no-repeat !important;
-  border: 0 !important;
-  border-bottom: 1px solid var(--cvx-line) !important;
-  border-radius: 0 !important;
-  margin-inline: calc(50% - 50vw) !important;
-  padding-inline: max(1.5rem, calc(50vw - 34rem)) !important;
-  padding-block: clamp(4rem, 9vmin, 7rem) clamp(3rem, 6vmin, 5rem) !important;
-  box-shadow: none !important;
+.sl-markdown-content a.sx-btn {
+  text-decoration: none;
 }
 
-/* Inside a light hero the primary control is ink on paper. */
-.sx-hero .sx-btn--primary {
-  background: var(--cvx-ink) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
+.sl-markdown-content a.sx-btn--primary,
+.sl-markdown-content a.sx-btn--primary:hover {
+  color: var(--cvx-canvas);
 }
 
-:root[data-theme="dark"] .sx-hero .sx-btn--primary {
-  background: #ffffff !important;
-  color: #0a0a0a !important;
+.sl-markdown-content a.sx-btn--ghost,
+.sl-markdown-content a.sx-btn--ghost:hover {
+  color: var(--sl-color-text);
+  border-color: var(--cvx-line);
 }
 
-.sx-hero .sx-btn--ghost {
-  background: transparent !important;
-  color: var(--sl-color-text) !important;
-  border-color: var(--cvx-line) !important;
+.sl-markdown-content a.sx-btn--ghost:hover {
+  border-color: var(--cvx-muted);
 }
 
-/* The rotating word takes the accent, and its underline stops being lime. */
-.sx-hero .sx-rotor {
-  color: var(--cvx-accent) !important;
-}
-
-.sx-rotor::after,
-.sx-hero .sx-rotor::after {
-  background: var(--cvx-accent) !important;
-}
-
-/* The statement band: a hairline panel, not a black plate. */
-.sx-liquid,
-.sx-landing .sx-liquid {
-  background: var(--cvx-panel) !important;
-  background-image: none !important;
-  border: 1px solid var(--cvx-line) !important;
-  border-radius: var(--cvx-radius) !important;
-  box-shadow: none !important;
-  color: var(--sl-color-text) !important;
-}
-
-.sx-liquid .sx-statement,
-.sx-liquid .sx-statement__note {
-  color: var(--sl-color-text) !important;
-}
-
-.sx-liquid .sx-statement__note {
-  color: var(--cvx-muted) !important;
-}
-
-.sx-liquid .sx-statement em {
-  color: var(--cvx-accent) !important;
-}
-
-/* The floating mascot was dark-on-dark; give it a light ground so it reads. */
-:root[data-theme="dark"] .sx-moth--float,
-:root[data-theme="dark"] [class*="sx-moth"] {
-  filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.35));
-}

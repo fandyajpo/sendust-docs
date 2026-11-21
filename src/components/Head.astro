@@ -2,26 +2,27 @@
 import Default from "@astrojs/starlight/components/Head.astro";
 import { ClientRouter } from "astro:transitions";
 
-// Preload only the three faces the first screen actually sets text in.
+// Preload the three faces the first screen sets text in, and only those.
 const font = (file: string) => `${import.meta.env.BASE_URL}fonts/${file}`;
 ---
 
-{/* Dark first: Starlight reads this key before it paints, so the first visit
-    lands on the dark palette and the toggle still works afterwards. */}
+{/* Light first: this is a light-canvas design, and Starlight reads this key
+    before it paints. From then on the picker's stored choice wins. */}
 <script is:inline>
   try {
     // Only when nothing has been chosen: an empty string is the reader's
     // "follow the system", and must not be overwritten on the next visit.
     if (localStorage.getItem("starlight-theme") === null) {
-      localStorage.setItem("starlight-theme", "dark");
+      localStorage.setItem("starlight-theme", "light");
     }
   } catch {}
 </script>
 
-<link rel="preload" as="font" type="font/woff2" href={font("manrope-600.woff2")} crossorigin />
-<link rel="preload" as="font" type="font/woff2" href={font("geist-sans-400.woff2")} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={font("poppins-600.woff2")} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={font("poppins-400.woff2")} crossorigin />
 <link rel="preload" as="font" type="font/woff2" href={font("geist-mono-400.woff2")} crossorigin />
-<meta name="theme-color" content="#0e0f12" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)" />
 
 <Default />
 <ClientRouter />
