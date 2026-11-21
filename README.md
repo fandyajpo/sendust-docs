@@ -114,7 +114,7 @@ Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
 rendered from, which the footer displays). A directory that stops being
 published — `api/`, `decisions/` — is deleted on the next sync.
 
-## Brand, liquid, and the signal moth
+## Brand and the signal moth
 
 **The mark** (`MothMark.astro`) is a signal moth drawn in pixels: the silhouette
 sits on whole units and snaps to the pixel grid, the glints on its wings and
@@ -127,26 +127,20 @@ landing hero and floats in the corner of every other page; the floating one
 deletes itself when a perched one is on the page, and it fades in after 500 ms so
 that swap is never visible. Idle it bobs, its wings flutter, its lantern pulses
 and dust drifts past. It reacts: the eyes follow the pointer (clamped to about
-2 px), the wings open when the pointer comes within ~160 px, and a tap fires a
-lime ring with three signal dots. One shared set of `document` listeners is
+2 px), the wings open when the pointer comes within ~160 px, and a tap fires an
+accent ring with three signal dots. One shared set of `document` listeners is
 re-attached through `astro:page-load`, so a view transition leaves nothing
-behind. It is decoration — `aria-hidden`, never focusable, never announced.
+behind. It is decoration — `aria-hidden`, never focusable, never announced. Its
+lantern, eyes and halo all read `--sx-glow`, so in this design they are the
+accent, not the old lime.
 
-**The water** (`LiquidBand.astro`, and the hero) is the obsidian panel: three
-drifting pools of light, one static grain tile, and a bottom edge that is a
-waterline rather than a straight line. The edge is a `mask-image` built from
-`public/wave.svg` (a 240×36 tile, C1-continuous at the seam so repeats are
-invisible), composited over a solid layer — so the curve and the corner radius
-are one shape, with no page-colour band laid on top to line up or clip. The pools
-are plain radial gradients, not blurred elements, and they move on `transform`
-only, so nothing on a liquid layer repaints.
-
-**The components**: `Cards` (data-driven link cards with a pixel glyph and a pool
-of light on hover), `Glyph` (ten pixel icons on a 16-unit grid), `LiquidBand`,
-`LandingHero`, `FactList`, `SiteTitle`. `PageTitle` drops Starlight's page title
-where the splash hero already supplies the `<h1>` — one page, one `<h1>`. A group
-with a single page in the map is still a plain sidebar link — a collapsible menu
-around one item is noise.
+**The components**: `Cards` (data-driven link cards with a pixel glyph), `Glyph`
+(ten pixel icons on a 16-unit grid), `LiquidBand` (the statement panel — the
+name is historical: it is a hairline surface on the canvas now), `LandingHero`,
+`FactList`, `SiteTitle`. `PageTitle` drops Starlight's page title where the
+splash hero already supplies the `<h1>` — one page, one `<h1>`. A group with a
+single page in the map is still a plain sidebar link — a collapsible menu around
+one item is noise.
 
 ## Custom controls and navigation
 
@@ -164,15 +158,18 @@ transition never orphans a listener:
   again in the drawer.
 - **Search** — a trigger that looks like the site's own input, and a dialog with
   an `Input` that queries the Pagefind index this build produced. Results are
-  rendered here, matches highlighted with a lime `mark`; the excerpt is stripped
-  of every tag except `<mark>`. ⌘K / Ctrl-K opens it. Search stays in the browser.
+  rendered here, matches highlighted with an accent `mark`; the excerpt is
+  stripped of every tag except `<mark>`. ⌘K / Ctrl-K opens it. Search stays in
+  the browser.
 - **`Nav`** — the compact desktop navigation: four top-level entries, each a
   dropdown of pages, opened by click or by hover where a real pointer exists,
   and walked with the arrow keys.
 - **`NavDrawer`** — the mobile menu: the sidebar's own groups and wording in a
   drawer, opened from the burger on **every** page, including the landing page,
-  which has no sidebar. Focus moves into it, Tab is trapped, Escape and the
-  scrim close it, and the page behind it does not scroll.
+  which has no sidebar. Focus moves to its close button, Tab is trapped, Escape
+  and the scrim close it and hand focus back to the burger, the page behind it
+  does not scroll, and `<main>` and the sidebar are `inert` while it is open.
+  The search dialog does the same and returns focus to the search trigger.
 
 `src/lib/navigation.ts` is the only place that decides what those three menus
 contain: `navGroups()` folds the `nav` export in `scripts/doc-map.mjs` into the
@@ -184,39 +181,40 @@ grade together in both palettes.
 
 ## Theme and motion
 
-Technical Precision: an off-white reading surface (`#F4F5F0`) with obsidian ink,
-obsidian water panels, obsidian code blocks, and one electric-lime accent
-(`#D5FF70`). Because lime is a light value, anything drawn *on paper* — the
-header mark, a glyph accent — uses `--sx-glow`, the same accent darkened to
-olive; inside the obsidian panels the variable is set back to the lime, so the
-water keeps the real thing. 1px hairlines, no shadows doing a border's job.
+One canvas, two palettes. The light palette is a white canvas (`--cvx-canvas`
+`#FFFFFF`), near-black ink (`#0A0A0A`), a single violet accent (`#635BFF`) and a
+soft three-stop mesh behind the hero; the dark palette is the same system on
+`#080808` with the accent lifted to `#8F8AFF`. Panels are `--cvx-panel`, edges are
+1px `--cvx-line` hairlines, radii are 10px, and no shadow does a border's job.
+The `--sx-*` tokens from the earlier layers still exist, but every panel, button
+and heading that used to be obsidian or lime now reads the canvas tokens.
+Light is the default for a first visit, and the choice is stored in
+`localStorage["starlight-theme"]` — `""` means "follow the system" — and
+re-applied on every page load, so a view transition cannot reset it.
 
-Type is three families, self-hosted from `public/fonts/` as woff2 with
-`font-display: swap`: Manrope 500/600/700/800 for display and headings, Geist Sans
-400/500 for prose and interface, Geist Mono 400/500 for code, tables and
-identifiers. No third-party font requests, no font JavaScript; only the three
-faces the first screen sets are preloaded.
+Type is two self-hosted families from `public/fonts/` as woff2 with
+`font-display: swap`: Poppins 400/500/600/700 for display, headings, prose and
+interface, and Geist Mono 400/500 for code, tables and identifiers. No
+third-party font requests, no font JavaScript; only the three faces the first
+screen sets are preloaded.
 
 Micro-interactions are transform, opacity and colour only, at 120–200 ms: link
-underlines that saturate, cards that lift 2 px with a pool of light rising in
-them, glyphs that darken, facts that take a border, a nav item that nudges 2 px, a
-header hairline of signal, the brand mark tilting 6°, and a tap that settles a
-card by one pixel.
+underlines that saturate, cards that lift 1px, a nav item that nudges, the accent
+hairline under the header, the brand mark tilting, and a tap that settles a card.
 
 Motion happens in two places, on purpose. **CSS** owns state changes that need no
-sequencing — the rotating word with its lime sweep (12 s), drifting pools and
-waves (24–42 s), the moth's idle (3–7 s), hover, press, colour. **Motion** owns
-what CSS cannot express: the reading line, driven by `scroll()` + `clamp()`, and
-grouped reveals that arrive in order through `inView()` + `stagger()` +
-`animate()`.
+sequencing — the rotating word with its accent sweep (12 s), the moth's idle
+(3–7 s), hover, press, colour. **Motion** owns what CSS cannot express: the
+reading line under the header, driven by `scroll()` + `clamp()`, and grouped
+reveals that arrive in order through `inView()` + `stagger()` + `animate()`.
 
 The layer is additive. Items are hidden only under `html[data-motion="on"]`,
 which the module sets after it boots — so a reduced-motion visitor, or anyone
 whose module never loads, sees a complete static page rather than a page waiting
 to animate. It reboots on `astro:page-load` and on a change to the
 reduced-motion preference. Under `prefers-reduced-motion: reduce` every CSS
-animation and transition is off too: the headline shows its first word, the
-water holds still, and the moth is a static drawing.
+animation and transition is off too: the headline shows its first word, and the
+moth is a static drawing.
 
 The voice on authored pages is editorial and plain; everything the sync copies
 stays verbatim.
