@@ -182,7 +182,13 @@
           ? "dark"
           : "light"
         : mode;
+    // One frame with no transitions, so the new palette lands in one step
+    // instead of each element animating from the colour it is leaving.
+    root.setAttribute("data-theme-snap", "");
     root.dataset.theme = resolved;
+    // Read layout so the new colours are committed before transitions return.
+    void root.offsetHeight;
+    requestAnimationFrame(() => root.removeAttribute("data-theme-snap"));
     try {
       // "" is how Starlight records "follow the system".
       localStorage.setItem("starlight-theme", mode === "auto" ? "" : mode);

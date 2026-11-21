@@ -2401,6 +2401,18 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
   --sx-glow: var(--cvx-accent);
 }
 
+/* A theme switch repaints the whole page. Every element that transitions its
+   colour would otherwise run that transition from the old palette to the new
+   one, and for ~150 ms a button can show its label in the colour it is leaving —
+   a dark label on a fill that has already gone dark. For the one frame of the
+   switch, transitions are off, so the palette lands in a single step. */
+:root[data-theme-snap],
+:root[data-theme-snap] *,
+:root[data-theme-snap] *::before,
+:root[data-theme-snap] *::after {
+  transition: none !important;
+}
+
 /* Chrome: flat, hairline, no tint. */
 header.header {
   background-color: var(--cvx-canvas);
