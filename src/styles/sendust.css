@@ -1031,15 +1031,16 @@ header.header::after {
   margin-inline: auto;
 }
 
-/* Starlight reserves the mobile table-of-contents height above the content on
-   every page. The landing has no such control, so it gives that space back
-   instead of leaving an empty band under the header. */
-body:has(.sx-landing) {
-  --sl-mobile-toc-height: 0px;
+/* Starlight renders a content panel around the page title. The landing has no
+   page title — the hero is its <h1> — so that first panel is an empty box with
+   24px of padding and a hairline under it, sitting between the header and the
+   hero. On the landing, the panel that does not hold the hero goes. */
+body:has(.sx-landing) .content-panel:not(:has(.sx-hero)) {
+  display: none;
 }
 
-body:has(.sx-landing) #starlight__mobile-toc {
-  display: none;
+body:has(.sx-landing) .content-panel {
+  padding-block-start: 0;
 }
 
 @media (max-width: 700px) {
