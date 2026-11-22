@@ -2159,15 +2159,19 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
 }
 
 /* Tables keep their columns on a phone and scroll sideways, instead of
-   squeezing every cell to one word per line. The minimum width is what makes
-   the sideways scroll happen at all: a block-level table would otherwise shrink
-   to the container and wrap anyway. */
+   squeezing every cell to one word per line. The floor is on the cells, so the
+   table's content outgrows the scroller: the table box itself stays the width
+   of the page and only its insides scroll. */
 @media (max-width: 50rem) {
   .sl-markdown-content table {
     display: block;
-    min-inline-size: 40rem;
+    inline-size: 100%;
     overflow-x: auto;
     overscroll-behavior-x: contain;
+  }
+
+  .sl-markdown-content :is(th, td) {
+    min-inline-size: 9rem;
   }
 }
 
