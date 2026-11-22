@@ -62,11 +62,19 @@ const pad = (value: number): string => String(value + 1).padStart(2, "0");
       or walk the whole run.
     </p>
 
-    <button class="sx-btn sx-btn--ghost sx-path__run" type="button" data-path-run aria-live="off">
+    <button class="sx-btn sx-btn--ghost sx-path__run" type="button" data-path-run aria-pressed="false">
       <span data-path-run-label>Walk the run</span>
-      <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" shape-rendering="crispEdges">
+      <svg
+        class="sx-path__run-play"
+        viewBox="0 0 12 12"
+        width="10"
+        height="10"
+        aria-hidden="true"
+        shape-rendering="crispEdges"
+      >
         <path d="M1 5.25 H7 V3 L11 6 L7 9 V6.75 H1 Z" fill="currentColor"></path>
       </svg>
+      <span class="sx-path__run-stop" aria-hidden="true"></span>
     </button>
   </div>
 
@@ -86,7 +94,6 @@ const pad = (value: number): string => String(value + 1).padStart(2, "0");
           <span class="sx-stage__dot" aria-hidden="true" />
           <span class="sx-stage__index">{pad(index)}</span>
           <span class="sx-stage__label">{stage.label}</span>
-          <span class="sx-stage__short">{stage.short}</span>
         </button>
       ))
     }
@@ -103,6 +110,7 @@ const pad = (value: number): string => String(value + 1).padStart(2, "0");
           data-stage-panel={index}
           hidden={index !== 0}
         >
+          <p class="sx-panel__kicker">{stage.short}</p>
           <p class="sx-panel__body">{stage.body}</p>
           <ul class="sx-panel__facts">
             {stage.facts.map((fact) => (

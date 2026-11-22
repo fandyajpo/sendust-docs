@@ -2865,30 +2865,54 @@ body *::-webkit-scrollbar {
 }
 
 .sx-header__actions {
-  gap: 0.4rem;
+  gap: 0.55rem;
 }
 
 .sx-header__social ul {
   display: flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* The glyphs sit flush with the row, so the gap a reader sees is the gap the
+   flex row sets. The hover plate is drawn outside the flow and never widens it. */
 .sx-header__actions .sx-header__social a,
 .sx-header .sx-header__icon {
+  position: relative;
   display: inline-grid;
   place-items: center;
-  inline-size: 2.25rem;
+  inline-size: auto;
   block-size: 2.25rem;
-  border-radius: var(--cvx-radius);
+  padding-inline: 0;
+  border-radius: var(--cvx-radius-xs);
   color: var(--cvx-muted);
   text-decoration: none;
-  transition:
-    color 140ms ease,
-    background-color 140ms ease;
+  transition: color 140ms ease;
+}
+
+.sx-header__actions .sx-header__social a::before,
+.sx-header .sx-header__icon::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.25rem;
+  inset-inline: -0.5rem;
+  border-radius: var(--cvx-radius-xs);
+  background: transparent;
+  transition: background-color 140ms ease;
+}
+
+.sx-header__actions .sx-header__social a:hover::before,
+.sx-header .sx-header__icon:hover::before,
+.sx-header .sx-header__icon:focus-visible::before {
+  background: var(--cvx-panel);
+}
+
+.sx-header__actions .sx-header__social a svg,
+.sx-header .sx-header__icon svg {
+  position: relative;
 }
 
 /* The npm package is a desktop neighbour of GitHub; the drawer carries it on a
@@ -2937,18 +2961,16 @@ body *::-webkit-scrollbar {
   overflow-wrap: anywhere;
 }
 
-/* One tone for the header's icon set, and one gap around it. */
+/* One tone for the header's icon set. */
 .sx-header__actions .sx-header__social svg,
 .sx-header .sx-header__icon svg {
   fill: currentColor;
 }
 
-.sx-header__actions {
-  gap: 0.5rem;
-}
-
+/* The theme control is a label, not a box: its text sits on the same rhythm as
+   the glyphs, so every gap in the row measures the same. */
 .sx-header__theme .sx-select__trigger {
-  padding-inline: 0.55rem;
+  padding-inline: 0;
 }
 
 .sx-header__social a:hover,
@@ -2982,25 +3004,50 @@ body *::-webkit-scrollbar {
   position: fixed;
   inset: 0;
   z-index: 200;
+  display: grid;
+  place-items: center;
   overflow: hidden;
   pointer-events: none;
-  background: var(--cvx-canvas);
-  animation: sx-intro-lift 1150ms cubic-bezier(0.72, 0, 0.24, 1) 380ms forwards;
+  background-color: var(--cvx-ink);
+  animation: sx-intro-lift 900ms cubic-bezier(0.72, 0, 0.24, 1) 620ms forwards;
 }
 
 .sx-intro__pour {
   position: absolute;
-  inset: -18% -12%;
-  filter: blur(48px) saturate(1.1);
+  inset: -22% -14%;
+  filter: blur(60px) saturate(1.25);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+/* The mark holds the sheet while the colour moves behind it. */
+.sx-intro__mark {
+  position: relative;
+  z-index: 1;
+  color: var(--cvx-canvas);
+  opacity: 0;
+  animation: sx-intro-mark 1100ms var(--sx-ease) 80ms both;
+}
+
+@keyframes sx-intro-mark {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.94);
+  }
+  40%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .sx-intro__blob {
   position: absolute;
   display: block;
-  inline-size: 62vmax;
+  inline-size: 56vmax;
   aspect-ratio: 1;
   border-radius: 50%;
-  opacity: 0.92;
+  opacity: 0.8;
   will-change: transform;
 }
 
@@ -3034,7 +3081,7 @@ body *::-webkit-scrollbar {
 
 @keyframes sx-intro-pour-a {
   from {
-    transform: translate3d(-28%, -18%, 0) scale(0.55);
+    transform: translate3d(-26%, -16%, 0) scale(0.6);
   }
   to {
     transform: translate3d(0, 0, 0) scale(1);
@@ -3043,7 +3090,7 @@ body *::-webkit-scrollbar {
 
 @keyframes sx-intro-pour-b {
   from {
-    transform: scale(0.4);
+    transform: scale(0.45);
   }
   to {
     transform: scale(1.05);
@@ -3052,12 +3099,12 @@ body *::-webkit-scrollbar {
 
 @keyframes sx-intro-pour-c {
   from {
-    transform: translate3d(18%, 14%, 0) scale(0.3);
-    opacity: 0.2;
+    transform: translate3d(20%, 16%, 0) scale(0.35);
+    opacity: 0.25;
   }
   to {
     transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.85;
+    opacity: 0.8;
   }
 }
 
@@ -3128,6 +3175,8 @@ html[data-motion="on"] .sx-journey {
 
 .sx-path {
   margin-block: clamp(3.5rem, 8vmin, 6rem);
+  /* A fixed bar covers the top of anything it is scrolled to. */
+  scroll-margin-block-start: calc(4rem + 1.5rem);
 }
 
 .sx-path__head {
@@ -3162,8 +3211,25 @@ html[data-motion="on"] .sx-journey {
 }
 
 .sx-path__run[aria-pressed="true"] {
-  border-color: var(--cvx-accent);
+  border-color: color-mix(in srgb, var(--cvx-accent) 45%, transparent);
+  background-color: color-mix(in srgb, var(--cvx-accent) 10%, transparent);
   color: var(--cvx-accent);
+}
+
+.sx-path__run-stop {
+  display: none;
+  inline-size: 9px;
+  block-size: 9px;
+  border-radius: 2px;
+  background-color: currentColor;
+}
+
+.sx-path__run[aria-pressed="true"] .sx-path__run-play {
+  display: none;
+}
+
+.sx-path__run[aria-pressed="true"] .sx-path__run-stop {
+  display: block;
 }
 
 /* The rail. Six columns, no gap, so the segment borders join into one line. */
@@ -3179,7 +3245,7 @@ html[data-motion="on"] .sx-journey {
   align-content: start;
   gap: 0.3rem;
   margin: 0;
-  padding: 1.4rem 1rem 0.9rem 0;
+  padding: 1.4rem 0.9rem 0.85rem 0;
   border: 0;
   border-block-start: 1px solid var(--cvx-line);
   background: none;
@@ -3230,15 +3296,9 @@ html[data-motion="on"] .sx-journey {
 .sx-stage__label {
   font-family: var(--tp-display);
   font-weight: 600;
-  font-size: 0.9375rem;
-  letter-spacing: -0.01em;
+  font-size: 0.875rem;
+  letter-spacing: -0.005em;
   color: var(--sl-color-text);
-}
-
-.sx-stage__short {
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: var(--cvx-muted);
 }
 
 .sx-stage:hover .sx-stage__label,
@@ -3269,7 +3329,17 @@ html[data-motion="on"] .sx-journey {
 }
 
 .sx-panel.is-active {
-  animation: sx-panel-in 300ms var(--sx-ease) both;
+  animation: sx-panel-in 300ms var(--sx-ease);
+}
+
+.sx-panel__kicker {
+  margin: 0 0 0.6rem;
+  font-family: var(--tp-display);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--sl-color-text);
 }
 
 @keyframes sx-panel-in {

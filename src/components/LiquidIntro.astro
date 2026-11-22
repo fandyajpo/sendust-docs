@@ -1,7 +1,9 @@
 ---
+import MothMark from "./MothMark.astro";
+
 /**
- * The opening: a sheet of liquid colour pours across the page, holds for a
- * breath, then lifts away and hands the screen to the hero.
+ * The opening: the brand mark holds a dark sheet of liquid colour for a breath,
+ * then the sheet lifts and hands the screen to the hero.
  *
  * It runs once per session, on the landing page only, and never for a visitor
  * who asked for less motion. The overlay takes no pointer events, so the page
@@ -16,6 +18,7 @@
     <span class="sx-intro__blob sx-intro__blob--b"></span>
     <span class="sx-intro__blob sx-intro__blob--c"></span>
   </div>
+  <div class="sx-intro__mark"><MothMark size={52} /></div>
 </div>
 
 <script is:inline>
