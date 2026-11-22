@@ -535,6 +535,212 @@
 
 <script>
   /**
+   * The benchmark chart.
+   *
+   * The performance page carries its measurements as a table, rendered by the
+   * sync from Sendust's own QA record. This reads that table and draws it as
+   * bars above it: no number is written twice, so the picture cannot drift from
+   * the data, and a page served without JavaScript keeps the table untouched.
+   */
+  const doc = document;
+
+  interface BenchRow {
+    label: string;
+    detail: string;
+    sendust: number;
+    nodemailer: number;
+  }
+
+  function cellsOf(row: HTMLTableRowElement): HTMLTableCellElement[] {
+    return Array.from(row.cells);
+  }
+
+  function numeric(text: string | null | undefined): number {
+    const value = Number((text ?? "").replace(/[^0-9.]/g, ""));
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function readRows(table: HTMLTableElement): BenchRow[] | null {
+    const head = table.tHead?.rows[0];
+    if (!head) return null;
+
+    const labels = cellsOf(head).map((cell) => (cell.textContent ?? "").trim().toLowerCase());
+    const sendust = labels.findIndex((label) => label.includes("sendust msg/s"));
+    const nodemailer = labels.findIndex((label) => label.includes("nodemailer msg/s"));
+    if (sendust < 0 || nodemailer < 0) return null;
+
+    const concurrency = labels.findIndex((label) => label.startsWith("concurrency"));
+    const messages = labels.findIndex((label) => label === "messages");
+    const body = table.tBodies[0];
+    if (!body) return null;
+
+    const rows: BenchRow[] = [];
+    for (const row of Array.from(body.rows)) {
+      const values = cellsOf(row);
+      const sendustValue = numeric(values[sendust]?.textContent);
+      if (sendustValue <= 0) continue;
+
+      const parts: string[] = [];
+      if (concurrency >= 0) {
+        parts.push(`${numeric(values[concurrency]?.textContent)} in flight`);
+      }
+      if (messages >= 0) {
+        parts.push(`${numeric(values[messages]?.textContent).toLocaleString()} messages`);
+      }
+
+      rows.push({
+        label: (values[0]?.textContent ?? "").trim(),
+        detail: parts.join(", "),
+        sendust: sendustValue,
+        nodemailer: numeric(values[nodemailer]?.textContent),
+      });
+    }
+
+    return rows.length > 0 ? rows : null;
+  }
+
+  function format(value: number): string {
+    return Math.round(value).toLocaleString();
+  }
+
+  function bar(kind: string, value: number, max: number): HTMLElement {
+    const line = doc.createElement("div");
+    line.className = `sx-bench__bar sx-bench__bar--${kind}`;
+
+    const track = doc.createElement("span");
+    track.className = "sx-bench__track";
+
+    const fill = doc.createElement("span");
+    fill.className = "sx-bench__fill";
+    fill.style.setProperty("--w", `${((value / max) * 100).toFixed(2)}%`);
+    track.append(fill);
+
+    const number = doc.createElement("span");
+    number.className = "sx-bench__num";
+    number.textContent = "0";
+    number.dataset.value = String(value);
+
+    line.append(track, number);
+    return line;
+  }
+
+  function build(rows: BenchRow[]): HTMLElement {
+    const max = Math.max(...rows.flatMap((row) => [row.sendust, row.nodemailer]));
+
+    const figure = doc.createElement("figure");
+    figure.className = "sx-bench";
+    figure.dataset.sxBench = "";
+
+    const head = doc.createElement("div");
+    head.className = "sx-bench__head";
+
+    const title = doc.createElement("p");
+    title.className = "sx-bench__title";
+    title.textContent = "Accepted messages per second";
+
+    const legend = doc.createElement("p");
+    legend.className = "sx-bench__legend";
+    for (const [kind, label] of [
+      ["sendust", "Sendust"],
+      ["nodemailer", "Nodemailer"],
+    ]) {
+      const key = doc.createElement("span");
+      key.className = "sx-bench__key";
+      const dot = doc.createElement("i");
+      dot.className = `sx-bench__dot sx-bench__dot--${kind}`;
+      key.append(dot, doc.createTextNode(label));
+      legend.append(key);
+    }
+    head.append(title, legend);
+
+    const list = doc.createElement("ol");
+    list.className = "sx-bench__rows";
+
+    for (const row of rows) {
+      const item = doc.createElement("li");
+      item.className = "sx-bench__row";
+
+      const label = doc.createElement("p");
+      label.className = "sx-bench__label";
+      label.textContent = row.label;
+      if (row.detail !== "") {
+        const detail = doc.createElement("span");
+        detail.textContent = row.detail;
+        label.append(detail);
+      }
+
+      const pair = doc.createElement("div");
+      pair.className = "sx-bench__pair";
+      pair.append(bar("sendust", row.sendust, max), bar("nodemailer", row.nodemailer, max));
+
+      item.append(label, pair);
+      list.append(item);
+    }
+
+    const note = doc.createElement("p");
+    note.className = "sx-bench__note";
+    note.textContent =
+      "Drawn from the table below: accepted messages per second on one machine against a loopback relay. Relay acceptance only, not a delivery claim.";
+
+    figure.append(head, list, note);
+    return figure;
+  }
+
+  function countUp(el: HTMLElement): void {
+    const target = Number(el.dataset.value ?? "0");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = format(target);
+      return;
+    }
+
+    const start = performance.now();
+    const step = (now: number): void => {
+      const progress = Math.min(1, (now - start) / 900);
+      const eased = 1 - (1 - progress) ** 3;
+      el.textContent = format(target * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function reveal(figure: HTMLElement): void {
+    if (figure.dataset.live === "true") return;
+    figure.dataset.live = "true";
+    figure.classList.add("is-live");
+    for (const el of figure.querySelectorAll<HTMLElement>(".sx-bench__num")) countUp(el);
+  }
+
+  function boot(): void {
+    for (const table of doc.querySelectorAll<HTMLTableElement>(".sl-markdown-content table")) {
+      if (table.previousElementSibling?.matches("[data-sx-bench]")) continue;
+
+      const rows = readRows(table);
+      if (!rows) continue;
+
+      const figure = build(rows);
+      table.before(figure);
+
+      const observer = new IntersectionObserver(
+        (entries, self) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            reveal(figure);
+            self.disconnect();
+          }
+        },
+        { threshold: 0.25 },
+      );
+      observer.observe(figure);
+    }
+  }
+
+  boot();
+  doc.addEventListener("astro:page-load", boot);
+</script>
+
+
+<script>
+  /**
    * The motion layer, on Motion (motion.dev).
    *
    * It is progressive and additive: the page is complete without it. Every

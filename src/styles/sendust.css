@@ -3421,3 +3421,210 @@ html[data-motion="on"] .sx-journey {
     transition: none;
   }
 }
+
+
+/* ---------------------------------------------------------------------------
+ * The benchmark chart
+ *
+ * Drawn by the page's own script from the results table below it. The bars are
+ * the measurements, not a second copy of them: no number here is typed by hand,
+ * and the table stays the record. One radius, like every other box.
+ * ------------------------------------------------------------------------- */
+
+.sx-bench {
+  margin: 2rem 0 1.5rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--cvx-line);
+  border-radius: var(--cvx-radius);
+  background: var(--cvx-panel);
+}
+
+.sx-bench__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+  margin: 0 0 1.35rem;
+}
+
+.sx-bench__title {
+  margin: 0;
+  font-size: var(--sl-text-sm);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--sl-color-text);
+}
+
+.sx-bench__legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.04em;
+  color: var(--cvx-muted);
+}
+
+.sx-bench__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sx-bench__dot {
+  display: inline-block;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 2px;
+}
+
+.sx-bench__dot--sendust {
+  background: var(--cvx-accent);
+}
+
+.sx-bench__dot--nodemailer {
+  background: var(--cvx-faint);
+}
+
+.sx-bench__rows {
+  display: grid;
+  gap: 1.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sx-bench__row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sx-bench__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  margin: 0;
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-text);
+}
+
+.sx-bench__label span {
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  color: var(--cvx-faint);
+}
+
+.sx-bench__pair {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.sx-bench__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.25rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sx-bench__track {
+  position: relative;
+  display: block;
+  block-size: 10px;
+  border-radius: 3px;
+  background: var(--cvx-line-soft);
+  overflow: hidden;
+}
+
+.sx-bench__fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: var(--w, 0%);
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 900ms var(--sx-ease);
+}
+
+.sx-bench__bar--sendust .sx-bench__fill {
+  background: var(--cvx-accent);
+}
+
+.sx-bench__bar--nodemailer .sx-bench__fill {
+  background: var(--cvx-faint);
+  transition-delay: 90ms;
+}
+
+.sx-bench.is-live .sx-bench__fill {
+  transform: scaleX(1);
+}
+
+.sx-bench__num {
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  color: var(--cvx-muted);
+}
+
+.sx-bench__note {
+  margin: 1.35rem 0 0;
+  font-size: var(--sl-text-xs);
+  line-height: 1.6;
+  color: var(--cvx-faint);
+}
+
+/* The rows arrive one after another, like the rest of a page's blocks. */
+.sx-bench__row {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 420ms var(--sx-ease),
+    transform 420ms var(--sx-ease);
+}
+
+.sx-bench.is-live .sx-bench__row {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(1) {
+  transition-delay: 60ms;
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(2) {
+  transition-delay: 130ms;
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(3) {
+  transition-delay: 200ms;
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(4) {
+  transition-delay: 270ms;
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(5) {
+  transition-delay: 340ms;
+}
+
+.sx-bench.is-live .sx-bench__row:nth-child(6) {
+  transition-delay: 410ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-bench__row {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 30rem) {
+  .sx-bench__bar {
+    grid-template-columns: minmax(0, 1fr) 3.4rem;
+    gap: 0.5rem;
+  }
+}
