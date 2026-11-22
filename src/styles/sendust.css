@@ -3644,3 +3644,152 @@ html[data-motion="on"] .sx-journey {
 .sl-markdown-content table:has(thead th:nth-child(7)) :is(th, td) {
   white-space: nowrap;
 }
+
+
+/* ---------------------------------------------------------------------------
+ * Moving between pages
+ *
+ * Astro's router hands the swap to the browser's view transitions. The bar and
+ * the rail are lifted out of the cross-fade and hold perfectly still, and the
+ * content is the only thing that travels: a click reads as the page turning
+ * rather than the whole screen blinking. Nothing is delayed waiting for an
+ * animation, and the page is readable the moment it paints.
+ * ------------------------------------------------------------------------- */
+
+.header {
+  view-transition-name: site-header;
+}
+
+#starlight__sidebar {
+  view-transition-name: site-rail;
+}
+
+.main-pane {
+  view-transition-name: page;
+}
+
+/* The floating moth is fixed to the viewport, so it must not ride along with
+   the content group. Named on its own, it simply stays where it is. */
+.sx-moth--float {
+  view-transition-name: site-moth;
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header),
+::view-transition-old(site-rail),
+::view-transition-new(site-rail),
+::view-transition-old(site-moth),
+::view-transition-new(site-moth) {
+  animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: var(--sx-ease);
+}
+
+::view-transition-group(page) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--sx-ease);
+}
+
+::view-transition-old(page) {
+  animation: sx-route-out 150ms ease both;
+}
+
+::view-transition-new(page) {
+  animation: sx-route-in 260ms var(--sx-ease) both;
+}
+
+@keyframes sx-route-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes sx-route-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    animation: none;
+  }
+}
+
+/* Search results arrive in reading order, a beat apart. */
+@keyframes sx-result-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.sx-search__results li {
+  animation: sx-result-in 220ms var(--sx-ease) both;
+  animation-delay: calc(var(--i, 0) * 26ms);
+}
+
+/* Tabs: the rule under the selected label slides in from the left. */
+starlight-tabs [role="tab"] {
+  position: relative;
+}
+
+starlight-tabs [role="tab"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: 2px;
+  background: var(--cvx-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms var(--sx-ease);
+}
+
+starlight-tabs [role="tab"][aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+
+/* The copy control answers the press before the clipboard does. */
+.expressive-code .copy button {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms var(--sx-ease);
+}
+
+.expressive-code .copy button:hover {
+  transform: translateY(-1px);
+}
+
+.expressive-code .copy button:active {
+  transform: translateY(0) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-search__results li {
+    animation: none;
+  }
+
+  starlight-tabs [role="tab"]::after,
+  .expressive-code .copy button {
+    transition: none;
+  }
+}

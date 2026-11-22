@@ -247,8 +247,11 @@
 
       status(`${items.length} result${items.length === 1 ? "" : "s"} for “${q}”`, "");
 
+      let index = 0;
       for (const item of items) {
         const li = doc.createElement("li");
+        // The list arrives in order; the stylesheet turns the index into a delay.
+        li.style.setProperty("--i", String(index++));
         const link = doc.createElement("a");
         link.href = String(item.url ?? "#");
         link.className = "sx-search__result";
