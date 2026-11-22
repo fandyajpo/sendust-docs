@@ -824,6 +824,11 @@
     ].filter((block) => !block.matches("[data-intro]") && block.offsetHeight > 140);
 
     for (const block of journey) {
+      // A block on the first screen paints as it is. Holding it at zero opacity
+      // until a frame runs would leave the top of the page blank in a tab that
+      // is not on screen yet, and the hero must never wait to be revealed.
+      if (block.getBoundingClientRect().top < window.innerHeight) continue;
+
       block.classList.add("sx-journey");
       block.style.opacity = String(FROM.opacity);
       block.style.transform = FROM.transform;
@@ -834,13 +839,6 @@
           ease: EASE,
         });
       };
-
-      // A block already on screen when the layer boots arrives at once. The hero
-      // must never wait to be told it is visible.
-      if (block.getBoundingClientRect().top < window.innerHeight) {
-        arrive();
-        continue;
-      }
 
       let stop = (): void => {};
       stop = inView(
