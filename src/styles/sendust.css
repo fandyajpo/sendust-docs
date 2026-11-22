@@ -2779,8 +2779,6 @@ body *::-webkit-scrollbar {
 :root {
   --sx-radius: var(--cvx-radius);
   --sx-radius-sm: var(--cvx-radius);
-  /* A little more room to read, now that the bar spans the window. */
-  --sl-content-width: 52rem;
 }
 
 .sx-btn,
@@ -2905,10 +2903,39 @@ body *::-webkit-scrollbar {
   }
 }
 
-/* A table is a block of the page: it spans the column like every other block,
-   instead of shrinking to the width of its longest cell. */
-.sl-markdown-content table {
-  inline-size: 100%;
+/* A table is a block of the page: above the phone layout it is a real table
+   again, so its columns share the reading column instead of shrink-wrapping to
+   the longest cell. Below that width the block-and-scroll rule above takes over. */
+@media (min-width: 50.01rem) {
+  .sl-markdown-content table {
+    display: table;
+    inline-size: 100%;
+  }
+}
+
+/* The table of contents column is the one that gives way when a long heading
+   label would otherwise push the page sideways. */
+.right-sidebar,
+.right-sidebar * {
+  min-inline-size: 0;
+}
+
+.right-sidebar a {
+  overflow-wrap: anywhere;
+}
+
+/* One tone for the header's icon set, and one gap around it. */
+.sx-header__actions .sx-header__social svg,
+.sx-header .sx-header__icon svg {
+  fill: currentColor;
+}
+
+.sx-header__actions {
+  gap: 0.5rem;
+}
+
+.sx-header__theme .sx-select__trigger {
+  padding-inline: 0.55rem;
 }
 
 .sx-header__social a:hover,
