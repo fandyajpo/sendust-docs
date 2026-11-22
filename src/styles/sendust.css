@@ -3514,7 +3514,7 @@ html[data-motion="on"] .sx-journey {
 .sx-bench__label span {
   font-family: var(--sl-font-mono);
   font-size: var(--sl-text-xs);
-  color: var(--cvx-faint);
+  color: var(--cvx-muted);
 }
 
 .sx-bench__pair {
@@ -3574,7 +3574,7 @@ html[data-motion="on"] .sx-journey {
   margin: 1.35rem 0 0;
   font-size: var(--sl-text-xs);
   line-height: 1.6;
-  color: var(--cvx-faint);
+  color: var(--cvx-muted);
 }
 
 /* The rows arrive one after another, like the rest of a page's blocks. */
@@ -3627,4 +3627,20 @@ html[data-motion="on"] .sx-journey {
     grid-template-columns: minmax(0, 1fr) 3.4rem;
     gap: 0.5rem;
   }
+}
+
+
+/* A table with too many columns for the column it sits in scrolls inside its
+   own box, and its headers keep their words whole. Only tables that are
+   genuinely wide do this, so a three-column table still fills the column.
+   `:has()` counts the header cells: seven is where a table stops fitting. */
+.sl-markdown-content table:has(thead th:nth-child(7)) {
+  display: block;
+  inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.sl-markdown-content table:has(thead th:nth-child(7)) :is(th, td) {
+  white-space: nowrap;
 }
