@@ -3,7 +3,7 @@ dist/
 .astro/
 
 # Written by scripts/sync-docs.mjs on every run. The source of truth for all of
-# it is fandyajpo/sendust/docs — never edit these files here.
+# it is fandyajpo/sendust/docs, never edit these files here.
 src/content/docs/guide/
 src/content/docs/api/
 src/content/docs/decisions/

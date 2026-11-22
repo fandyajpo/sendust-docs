@@ -1,12 +1,12 @@
-/* Sendust — the CANVAS design system.
+/* Sendust, the CANVAS design system.
  *
  * A white (and in dark, near-black) canvas, near-black ink, one violet accent,
  * and a soft gradient mesh behind the hero. Flat geometry, 1px hairlines, no
  * water, no wave: the page is a document, and the hero is the only place that
  * performs.
  *
- * The older "Technical Precision" layers still live below — the tokens, the
- * chrome, the moth, the prose — but every panel, button and heading that used
+ * The older "Technical Precision" layers still live below, the tokens, the
+ * chrome, the moth, the prose, but every panel, button and heading that used
  * to be obsidian or lime now reads its colour from the canvas tokens at the
  * bottom of this file.
  *
@@ -415,7 +415,7 @@ header.header::after {
  * Landing hero
  * ------------------------------------------------------------------------- */
 
-/* The hero's own box — full-bleed width and gutter — is set once, in the canvas
+/* The hero's own box, full-bleed width and gutter, is set once, in the canvas
    layer at the end of this file. Nothing here may re-box it. */
 
 .sx-hero__inner {
@@ -1032,7 +1032,7 @@ header.header::after {
 }
 
 /* Starlight renders a content panel around the page title. The landing has no
-   page title — the hero is its <h1> — so that first panel is an empty box with
+   page title, the hero is its <h1>, so that first panel is an empty box with
    24px of padding and a hairline under it, sitting between the header and the
    hero. On the landing, the panel that does not hold the hero goes. */
 body:has(.sx-landing) .content-panel:not(:has(.sx-hero)) {
@@ -2133,7 +2133,7 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
 
 /* Light palette: warm greys that belong to the paper. The light block never
    defined the grey scale, so every label borrowed Starlight's cool blue-grey
-   against a warm surface — the drawer labels and the mobile "On this page" bar
+   against a warm surface, the drawer labels and the mobile "On this page" bar
    were the most obvious. */
 :root[data-theme="light"] {
   --sl-color-gray-1: #1b1d1a;
@@ -2348,7 +2348,7 @@ html[data-motion="on"] :is(.card-grid > *, .sx-facts > *, .sl-markdown-content >
 
 
 /* ===========================================================================
- * CANVAS — the site's design system
+ * CANVAS, the site's design system
  *
  * White canvas, near-black ink, one violet accent, and a soft gradient mesh
  * behind the hero. Flat geometry, 1px hairlines, no water, no wave: the page is
@@ -2711,7 +2711,7 @@ header.header {
  *
  * On the landing page the buttons are anchors inside the markdown content, so
  * the prose link colour won on specificity and a label came out violet on a
- * white fill — about 2.4:1. The button's own colours decide, not the prose's.
+ * white fill, about 2.4:1. The button's own colours decide, not the prose's.
  * ------------------------------------------------------------------------- */
 
 .sl-markdown-content a.sx-btn {
@@ -3112,5 +3112,242 @@ html[data-motion="on"] .sx-journey {
   .sx-hero__inner {
     transform: none;
     opacity: 1;
+  }
+}
+
+
+
+/* ---------------------------------------------------------------------------
+ * The journey of one send: six stops on one rail
+ *
+ * The line is drawn by the stops themselves, so it stays continuous and needs
+ * no measuring: each stage owns the segment above it, and selecting a stage
+ * marks the segments behind it. Wide screens read left to right; below 64rem
+ * the rail stands up as a timeline, which is the same idea on its side.
+ * ------------------------------------------------------------------------- */
+
+.sx-path {
+  margin-block: clamp(3.5rem, 8vmin, 6rem);
+}
+
+.sx-path__head {
+  max-inline-size: 48rem;
+}
+
+.sx-path__eyebrow {
+  margin: 0;
+  font-family: var(--sl-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cvx-accent);
+}
+
+.sx-path__title {
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  max-inline-size: 22ch;
+}
+
+.sx-path__lede {
+  margin: 1rem 0 0;
+  max-inline-size: 56ch;
+  color: var(--cvx-muted);
+}
+
+.sx-path__run {
+  margin-block-start: 1.6rem;
+}
+
+.sx-path__run[aria-pressed="true"] {
+  border-color: var(--cvx-accent);
+  color: var(--cvx-accent);
+}
+
+/* The rail. Six columns, no gap, so the segment borders join into one line. */
+.sx-path__rail {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-block-start: clamp(2.25rem, 5vmin, 3.25rem);
+}
+
+.sx-stage {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 1.4rem 1rem 0.9rem 0;
+  border: 0;
+  border-block-start: 1px solid var(--cvx-line);
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.sx-stage.is-passed,
+.sx-stage.is-active {
+  border-block-start-color: var(--cvx-accent);
+}
+
+.sx-stage__dot {
+  position: absolute;
+  inset-block-start: -5px;
+  inset-inline-start: 0;
+  inline-size: 9px;
+  block-size: 9px;
+  border-radius: 50%;
+  background-color: var(--cvx-canvas);
+  box-shadow: inset 0 0 0 1px var(--cvx-line);
+  transition:
+    background-color 200ms ease,
+    box-shadow 240ms ease,
+    transform 240ms var(--sx-ease);
+}
+
+.sx-stage.is-passed .sx-stage__dot {
+  background-color: var(--cvx-accent);
+  box-shadow: none;
+}
+
+.sx-stage.is-active .sx-stage__dot {
+  background-color: var(--cvx-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cvx-accent) 20%, transparent);
+  transform: scale(1.1);
+}
+
+.sx-stage__index {
+  font-family: var(--sl-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--cvx-faint);
+}
+
+.sx-stage__label {
+  font-family: var(--tp-display);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  color: var(--sl-color-text);
+}
+
+.sx-stage__short {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--cvx-muted);
+}
+
+.sx-stage:hover .sx-stage__label,
+.sx-stage.is-active .sx-stage__label {
+  color: var(--cvx-accent);
+}
+
+.sx-stage:focus-visible {
+  outline: 2px solid var(--cvx-accent);
+  outline-offset: 4px;
+  border-radius: var(--cvx-radius-xs);
+}
+
+/* The panel the selected stop opens. */
+.sx-path__panels {
+  margin-block-start: 1.75rem;
+}
+
+.sx-panel {
+  border: 1px solid var(--cvx-line);
+  border-radius: var(--cvx-radius);
+  background-color: var(--cvx-panel);
+  padding: clamp(1.25rem, 3.5vmin, 2rem);
+}
+
+.sx-panel[hidden] {
+  display: none;
+}
+
+.sx-panel.is-active {
+  animation: sx-panel-in 300ms var(--sx-ease) both;
+}
+
+@keyframes sx-panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.986) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.sx-panel__body {
+  margin: 0;
+  max-inline-size: 66ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.sx-panel__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sx-panel__facts li {
+  border: 1px solid var(--cvx-line);
+  border-radius: var(--cvx-radius-xs);
+  padding: 0.32rem 0.6rem;
+  font-family: var(--sl-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  color: var(--cvx-muted);
+  background-color: var(--cvx-canvas);
+}
+
+.sx-path__foot {
+  margin: 1.25rem 0 0;
+  max-inline-size: 60ch;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--cvx-muted);
+}
+
+/* Below the wide layout the rail stands up: the same segments, on the side. */
+@media (max-width: 64rem) {
+  .sx-path__rail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sx-stage {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--cvx-line);
+    padding: 0.85rem 0 0.85rem 1.35rem;
+  }
+
+  .sx-stage.is-passed,
+  .sx-stage.is-active {
+    border-block-start-color: transparent;
+    border-inline-start-color: var(--cvx-accent);
+  }
+
+  .sx-stage__dot {
+    inset-block-start: 1.1rem;
+    inset-inline-start: -5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-panel.is-active {
+    animation: none;
+  }
+
+  .sx-stage__dot {
+    transition: none;
   }
 }

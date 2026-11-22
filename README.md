@@ -5,7 +5,7 @@ how to use `@sendust/ts`, and the story of how it got here. An
 [Astro 5](https://astro.build) + [Starlight](https://starlight.astro.build) site,
 static output, TypeScript, Pagefind search, no analytics.
 
-> **NOTICE — the source of truth is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs).**
+> **NOTICE, the source of truth is [`fandyajpo/sendust/docs`](https://github.com/fandyajpo/sendust/tree/main/docs).**
 > Nothing published here is written here. The guides, the API contract, the ADRs
 > and the release notes are authored, reviewed and validated in the Sendust
 > repository, whose own `scripts/check-docs.mjs` and `check-doc-claims.mjs`
@@ -36,7 +36,7 @@ It does six things, in this order.
 1. **Finds the checkout.** `SENDUST_PATH`, else `../sendust`, else
    `~/Documents/Personal/sendust`.
 2. **Pins the ref.** `SENDUST_REF`, default `v1.0.1`. If the checkout's `HEAD` is
-   not that ref, it stops with instructions and writes nothing — the site only
+   not that ref, it stops with instructions and writes nothing, the site only
    ever publishes a tagged tree. Uncommitted changes under `docs/` are allowed
    but warned about.
 3. **Injects frontmatter.** `title` is the document's first H1, `description` is
@@ -45,14 +45,14 @@ It does six things, in this order.
    heading, `scripts/doc-map.mjs` supplies the description), and `sidebar.label`
    plus `sidebar.order` come from that map.
 4. **Rewrites links.** A relative link whose target is published here becomes a
-   route on this site. A relative link whose target is *not* published here — a
-   gate record, an audit, a QA report, a source file, `docs/README.md` — becomes
+   route on this site. A relative link whose target is *not* published here, a
+   gate record, an audit, a QA report, a source file, `docs/README.md`, becomes
    `https://github.com/fandyajpo/sendust/blob/<ref>/…` at the same ref. Absolute
    URLs, anchors and `mailto:` links are left alone.
 5. **Fails loudly on anything that would dangle.** A link with no target in the
    checkout, one that resolves outside the repository, or an anchor that names a
    heading the target page does not have, is listed with file and line and the
-   script exits non-zero — before writing a single file.
+   script exits non-zero, before writing a single file.
 6. **Normalises one piece of punctuation.** The site's voice does not use em
    dashes, so a sentence's dash becomes a comma, a heading's becomes a colon, and
    a table cell holding nothing but a dash reads "None". Words, code, links and
@@ -117,7 +117,7 @@ config resolve), `src/lib/navigation.ts`, `src/components/` (`BuiltInTheOpen`,
 Generated, gitignored, rewritten on every run: `src/content/docs/guide/`,
 `releases/`, and `src/synced-docs.json` (the ref, commit and time the pages were
 rendered from, which the footer displays). A directory that stops being
-published — `api/`, `decisions/` — is deleted on the next sync.
+published, `api/`, `decisions/`, is deleted on the next sync.
 
 ## Brand and the signal moth
 
@@ -135,17 +135,17 @@ and dust drifts past. It reacts: the eyes follow the pointer (clamped to about
 2 px), the wings open when the pointer comes within ~160 px, and a tap fires an
 accent ring with three signal dots. One shared set of `document` listeners is
 re-attached through `astro:page-load`, so a view transition leaves nothing
-behind. It is decoration — `aria-hidden`, never focusable, never announced. Its
+behind. It is decoration, `aria-hidden`, never focusable, never announced. Its
 lantern, eyes and halo all read `--sx-glow`, so in this design they are the
 accent, not the old lime.
 
 **The components**: `Cards` (data-driven link cards with a pixel glyph), `Glyph`
-(ten pixel icons on a 16-unit grid), `LiquidBand` (the statement panel — the
+(ten pixel icons on a 16-unit grid), `LiquidBand` (the statement panel, the
 name is historical: it is a hairline surface on the canvas now), `LandingHero`,
-`FactList`, `SiteTitle`. `PageTitle` drops Starlight's page title where the
-splash hero already supplies the `<h1>` — one page, one `<h1>`. A group with a
-single page in the map is still a plain sidebar link — a collapsible menu around
-one item is noise.
+`SendPath` (the six-stop rail described below), `FactList`, `SiteTitle`.
+`PageTitle` drops Starlight's page title where the splash hero already supplies
+the `<h1>`, one page, one `<h1>`. A group with a single page in the map is still
+a plain sidebar link, a collapsible menu around one item is noise.
 
 ## Custom controls and navigation
 
@@ -154,22 +154,22 @@ Nothing in the chrome is a browser default. Every control is a component in
 from the document and re-resolves its elements on `astro:page-load`, so a view
 transition never orphans a listener:
 
-- **`Input`** — a hairline field with a pixel magnifier, a clear button, a hint
+- **`Input`**, a hairline field with a pixel magnifier, a clear button, a hint
   slot and a focus ring drawn as a ring, not an outline. It is the search field.
-- **`Select`** and **`SelectDropdown`** — a custom single-select: trigger plus
+- **`Select`** and **`SelectDropdown`**, a custom single-select: trigger plus
   listbox, `aria-expanded` / `aria-activedescendant`, arrow keys, Home/End,
   Enter/Space, Escape, Tab to leave, click-outside to dismiss, and a
   `select:change` event. It is the theme picker (`ThemeSelect`), in the header and
   again in the drawer.
-- **Search** — a trigger that looks like the site's own input, and a dialog with
+- **Search**, a trigger that looks like the site's own input, and a dialog with
   an `Input` that queries the Pagefind index this build produced. Results are
   rendered here, matches highlighted with an accent `mark`; the excerpt is
   stripped of every tag except `<mark>`. ⌘K / Ctrl-K opens it. Search stays in
   the browser.
-- **`Nav`** — the compact desktop navigation: four top-level entries, each a
+- **`Nav`**, the compact desktop navigation: four top-level entries, each a
   dropdown of pages, opened by click or by hover where a real pointer exists,
   and walked with the arrow keys.
-- **`NavDrawer`** — the mobile menu: the sidebar's own groups and wording in a
+- **`NavDrawer`**, the mobile menu: the sidebar's own groups and wording in a
   drawer, opened from the burger on **every** page, including the landing page,
   which has no sidebar. Focus moves to its close button, Tab is trapped, Escape
   and the scrim close it and hand focus back to the burger, the page behind it
@@ -181,7 +181,7 @@ contain: `navGroups()` folds the `nav` export in `scripts/doc-map.mjs` into the
 header dropdowns (anything unmentioned is appended to the last one, so a page can
 never become unreachable), and `sidebarGroups()` mirrors the sidebar for the
 drawer. Panels, the select menu, the search dialog and the drawer all take the
-same three panel tokens — `--sx-surface`, `--sx-border`, `--sx-shadow` — so they
+same three panel tokens, `--sx-surface`, `--sx-border`, `--sx-shadow`, so they
 grade together in both palettes.
 
 The header keeps one rhythm: every control on the right (search, GitHub, the npm
@@ -227,6 +227,16 @@ figure and code block in the guides, arrives with a short zoom (`scale(0.955)`
 to `1`, 620ms, once), and the hero scales down by 5% and fades as it leaves the
 top of the viewport. Blocks start where JavaScript puts them, so a visitor whose
 module never runs sees a finished page.
+
+**The journey of one send** (`SendPath.astro`) is the one place a reader can
+step through instead of reading: six stops from `createTransport` to the relay's
+answer. The line is drawn by the stops themselves, so it needs no measuring;
+each segment above a stop belongs to that stop, and choosing one fills the
+segments behind it. A stop opens the stage's own text, arrow keys walk the rail,
+and **Walk the run** steps through all six. Everything in it comes from the
+lifecycle guide and the architecture overview: the budgets, the caps, the queue,
+the crates and the SMTP sequence. The stages are buttons and panels, so the
+first one is open in the markup and the section works without JavaScript.
 
 Micro-interactions are transform, opacity and colour only, at 120–200 ms: link
 underlines that saturate, cards that lift 1px, the accent hairline under the
@@ -285,7 +295,7 @@ either with `DOCS_BASE` and `DOCS_SITE`.
 
 ## Dependencies
 
-`astro`, `@astrojs/starlight` and `motion` — nothing else. Search is Pagefind
+`astro`, `@astrojs/starlight` and `motion`, nothing else. Search is Pagefind
 (built in), MDX comes with Starlight (it registers `@astrojs/mdx` itself), code
 blocks are Expressive Code (bundled by Starlight: copy, line numbers, titles,
 tabs, highlighting), and there is no analytics, no tracking script and no icon or
@@ -293,7 +303,7 @@ UI kit. The three typefaces are self-hosted woff2 files, not a package or a CDN.
 
 `motion` (motion.dev, v14) is the one animation dependency, and it is imported by
 the motion layer in `src/components/UiScripts.astro` only, so the bundle carries
-the calls in use — `scroll`, `inView`, `stagger`, `animate`, `clamp` — not the
+the calls in use, `scroll`, `inView`, `stagger`, `animate`, `clamp`, not the
 whole library.
 
 `src/components/BuiltInTheOpen.astro` reads the creator's GitHub profile and the

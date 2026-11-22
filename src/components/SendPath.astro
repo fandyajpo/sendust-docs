@@ -1,0 +1,225 @@
+---
+/**
+ * The journey of one send: the six stages the engine actually walks, drawn as a
+ * rail the reader can step along.
+ *
+ * Every sentence and every number here is taken from the synced documentation:
+ * the lifecycle and limits guide for the budgets, caps, queue and concurrency,
+ * and the architecture overview for the crate boundaries and the protocol
+ * sequence. Nothing on this page is a capability the library does not have.
+ */
+const stages = [
+  {
+    label: "createTransport",
+    short: "Options settled before any socket exists",
+    body: "The caller names the relay, the TLS mode, the auth, the budgets and the caps. Timeout ordering is checked here: the connect and operation budgets may not exceed the total, and the close budget may not sit under it. A configuration that cannot work fails now, not after a socket exists.",
+    facts: ["TLS or STARTTLS, both verified", "connect 10 s, operation 30 s, total 120 s", "close drain 125 s"],
+  },
+  {
+    label: "send(message)",
+    short: "Queued, not tunnelled",
+    body: "A send is queued. A transport runs up to delivery.maxConcurrent sends at once over at most delivery.maxConnections native sessions, and each session runs one SMTP transaction at a time. Concurrency starts at one and grows after sustained success.",
+    facts: ["one message per send()", "a full queue rejects with LIMIT_QUEUE_FULL", "nothing is silently dropped"],
+  },
+  {
+    label: "Node-API bridge",
+    short: "The call crosses as owned memory",
+    body: "The operation is handed across the native boundary as owned memory: every buffer and string is copied before the work is scheduled, so nothing borrows JavaScript memory once send() has returned.",
+    facts: ["crates/sendust-napi", "async work on the Tokio runtime", "JS values are copied in, then owned"],
+  },
+  {
+    label: "Rust core",
+    short: "Validate, compose, enforce the caps",
+    body: "Validation runs in a deterministic order, the MIME message is composed, and the hard caps are enforced before the wire: 100 recipients, 10 MiB per attachment, 20 MiB across attachments, 30 MiB serialized.",
+    facts: ["crates/sendust-core", "validation, MIME, caps", "the wire cap is measured on the exact bytes"],
+  },
+  {
+    label: "SMTP session",
+    short: "One session, one transaction",
+    body: "One native session performs the connect, TLS or the required STARTTLS upgrade, AUTH, MAIL, one RCPT per recipient, and a single DATA transaction for the recipients the relay accepted.",
+    facts: ["certificate and hostname verified, always", "one RCPT per recipient", "one DATA per message"],
+  },
+  {
+    label: "The answer",
+    short: "accepted, rejected or unknown",
+    body: "The final observable state becomes accepted, rejected or unknown, and the session closes. Only transient failures are retried; unknown never is, because the body may already have reached the relay.",
+    facts: ["accepted means the relay took responsibility", "a 4xx reply halves concurrency", "unknown is not a retry signal"],
+  },
+];
+
+const total = stages.length;
+const pad = (value: number): string => String(value + 1).padStart(2, "0");
+---
+
+<section class="sx-path" data-send-path aria-labelledby="sx-path-title">
+  <div class="sx-path__head">
+    <p class="sx-path__eyebrow">The journey of one send</p>
+    <h2 class="sx-path__title" id="sx-path-title">
+      Six stops between your call and the relay's answer
+    </h2>
+    <p class="sx-path__lede">
+      Each stop below is a stage the engine really has. Pick one to read what happens inside it,
+      or walk the whole run.
+    </p>
+
+    <button class="sx-btn sx-btn--ghost sx-path__run" type="button" data-path-run aria-live="off">
+      <span data-path-run-label>Walk the run</span>
+      <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" shape-rendering="crispEdges">
+        <path d="M1 5.25 H7 V3 L11 6 L7 9 V6.75 H1 Z" fill="currentColor"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="sx-path__rail" role="tablist" aria-label="The stages of one send" data-path-rail>
+    {
+      stages.map((stage, index) => (
+        <button
+          class="sx-stage"
+          type="button"
+          role="tab"
+          id={`sx-stage-tab-${index}`}
+          data-stage={index}
+          aria-controls={`sx-stage-panel-${index}`}
+          aria-selected={index === 0 ? "true" : "false"}
+          tabindex={index === 0 ? 0 : -1}
+        >
+          <span class="sx-stage__dot" aria-hidden="true" />
+          <span class="sx-stage__index">{pad(index)}</span>
+          <span class="sx-stage__label">{stage.label}</span>
+          <span class="sx-stage__short">{stage.short}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="sx-path__panels">
+    {
+      stages.map((stage, index) => (
+        <div
+          class="sx-panel"
+          role="tabpanel"
+          id={`sx-stage-panel-${index}`}
+          aria-labelledby={`sx-stage-tab-${index}`}
+          data-stage-panel={index}
+          hidden={index !== 0}
+        >
+          <p class="sx-panel__body">{stage.body}</p>
+          <ul class="sx-panel__facts">
+            {stage.facts.map((fact) => (
+              <li>{fact}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="sx-path__foot">
+    {total} stages, one transaction. No worker process, no scheduler, and no persistence layer sits
+    in between; queueing beyond one transport stays the caller's job.
+  </p>
+</section>
+
+<script>
+  /**
+   * The rail: one selection at a time, arrow keys to walk it, and a run that
+   * steps through every stop. The steps are buttons and panels, so the whole
+   * thing works without this script: the first panel is open in the markup.
+   */
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function bindPath(): void {
+    const root = document.querySelector<HTMLElement>("[data-send-path]");
+    if (!root || root.dataset.bound === "on") return;
+    root.dataset.bound = "on";
+
+    const rail = root.querySelector<HTMLElement>("[data-path-rail]");
+    const stops = [...root.querySelectorAll<HTMLButtonElement>("[data-stage]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-stage-panel]")];
+    const run = root.querySelector<HTMLButtonElement>("[data-path-run]");
+    const runLabel = root.querySelector<HTMLElement>("[data-path-run-label]");
+    if (stops.length === 0) return;
+
+    let timer = 0;
+    let playing = false;
+
+    const select = (index: number, moveFocus = false): void => {
+      const at = Math.max(0, Math.min(stops.length - 1, index));
+      stops.forEach((stop, position) => {
+        const active = position === at;
+        stop.setAttribute("aria-selected", active ? "true" : "false");
+        stop.tabIndex = active ? 0 : -1;
+        stop.classList.toggle("is-active", active);
+        stop.classList.toggle("is-passed", position < at);
+      });
+      panels.forEach((panel, position) => {
+        panel.hidden = position !== at;
+        panel.classList.toggle("is-active", position === at);
+      });
+      if (moveFocus) stops[at]?.focus();
+    };
+
+    const stopRun = (): void => {
+      playing = false;
+      window.clearInterval(timer);
+      timer = 0;
+      if (runLabel) runLabel.textContent = "Walk the run";
+      run?.setAttribute("aria-pressed", "false");
+      root.classList.remove("is-running");
+    };
+
+    const startRun = (): void => {
+      playing = true;
+      root.classList.add("is-running");
+      run?.setAttribute("aria-pressed", "true");
+      if (runLabel) runLabel.textContent = "Stop";
+      select(0);
+      const step = reduce.matches ? 700 : 1050;
+      let index = 0;
+      timer = window.setInterval(() => {
+        index += 1;
+        if (index >= stops.length) {
+          stopRun();
+          return;
+        }
+        select(index);
+      }, step);
+    };
+
+    stops.forEach((stop, index) => {
+      stop.addEventListener("click", () => {
+        stopRun();
+        select(index);
+      });
+    });
+
+    rail?.addEventListener("keydown", (event) => {
+      const current = stops.findIndex((stop) => stop.getAttribute("aria-selected") === "true");
+      const key = event.key;
+      if (key !== "ArrowRight" && key !== "ArrowLeft" && key !== "Home" && key !== "End") return;
+      event.preventDefault();
+      stopRun();
+      if (key === "Home") select(0, true);
+      else if (key === "End") select(stops.length - 1, true);
+      else select(current + (key === "ArrowRight" ? 1 : -1), true);
+    });
+
+    run?.addEventListener("click", () => {
+      if (playing) stopRun();
+      else startRun();
+    });
+
+    select(0);
+  }
+
+  bindPath();
+  document.addEventListener("astro:page-load", bindPath);
+  // A run that is still stepping when the page goes away is a timer nobody can
+  // see. Stopping it on hide keeps the work tied to a visible page.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) return;
+    document
+      .querySelector<HTMLElement>("[data-send-path].is-running [data-path-run]")
+      ?.click();
+  });
+</script>
