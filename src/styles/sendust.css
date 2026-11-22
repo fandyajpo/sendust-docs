@@ -2910,6 +2910,19 @@ body *::-webkit-scrollbar {
   .sl-markdown-content table {
     display: table;
     inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  /* A cell wraps rather than pushing the table out of its column and across the
+     contents rail. */
+  .sl-markdown-content :is(th, td) {
+    overflow-wrap: anywhere;
+  }
+
+  /* A table with many columns shares the width evenly; leaving it on auto
+     layout would let nine columns claim more than the column has. */
+  .sl-markdown-content table:has(thead th:nth-child(5)) {
+    table-layout: fixed;
   }
 }
 
