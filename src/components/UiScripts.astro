@@ -605,6 +605,9 @@
     // page reads as a sequence of stops rather than one uninterrupted scroll.
     // The initial state is set here, not in CSS, so a visitor whose module never
     // runs sees a finished page instead of an empty one.
+    const FROM = { opacity: 0, transform: "scale(0.955) translateY(22px)" };
+    const TO = { opacity: 1, transform: "scale(1) translateY(0px)" };
+
     const journey = [
       ...document.querySelectorAll<HTMLElement>(
         ".sx-landing > *, .sl-markdown-content > :is(table, figure, blockquote, .expressive-code)",
@@ -613,22 +616,29 @@
 
     for (const block of journey) {
       block.classList.add("sx-journey");
-      block.style.opacity = "0";
-      block.style.transform = "scale(0.955) translateY(22px)";
+      block.style.opacity = String(FROM.opacity);
+      block.style.transform = FROM.transform;
+
+      const arrive = (): void => {
+        animate(block, { opacity: [FROM.opacity, 1], transform: [FROM.transform, TO.transform] }, {
+          duration: 0.62,
+          ease: EASE,
+        });
+      };
+
+      // A block already on screen when the layer boots arrives at once. The hero
+      // must never wait to be told it is visible.
+      if (block.getBoundingClientRect().top < window.innerHeight) {
+        arrive();
+        continue;
+      }
 
       let stop = (): void => {};
       stop = inView(
         block,
         () => {
           stop();
-          animate(
-            block,
-            {
-              opacity: [0, 1],
-              transform: ["scale(0.955) translateY(22px)", "scale(1) translateY(0px)"],
-            },
-            { duration: 0.62, ease: EASE },
-          );
+          arrive();
         },
         { amount: 0.15 },
       );

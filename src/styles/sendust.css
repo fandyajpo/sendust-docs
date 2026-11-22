@@ -2797,14 +2797,25 @@ body *::-webkit-scrollbar {
 .card,
 .sl-link-card,
 .sx-liquid,
-.sx-cta,
-.sx-metrics,
 .sx-brand__tag,
 .sx-facts li,
 .sx-drawer__panel,
 .expressive-code .frame,
 .pagination-links a {
   border-radius: var(--cvx-radius);
+}
+
+/* A rule with one visible edge must not borrow the box radius: it bends into a
+   half-drawn box instead of running straight across. */
+.sx-metrics,
+.sx-cta {
+  border-radius: 0;
+}
+
+/* The copy control is a chip on the frame: the small cut, not the frame's. */
+.expressive-code .copy button,
+.expressive-code .copy button::before {
+  border-radius: var(--cvx-radius-xs);
 }
 
 /* The drawer is a full-height sheet: only its inner edge is a corner. */
@@ -2868,8 +2879,8 @@ body *::-webkit-scrollbar {
   list-style: none;
 }
 
-.sx-header__social a,
-.sx-header__icon {
+.sx-header__actions .sx-header__social a,
+.sx-header .sx-header__icon {
   display: inline-grid;
   place-items: center;
   inline-size: 2.25rem;
@@ -2884,14 +2895,20 @@ body *::-webkit-scrollbar {
 
 /* The npm package is a desktop neighbour of GitHub; the drawer carries it on a
    phone, where the bar is down to search and the menu. */
-.sx-header__icon {
+.sx-header .sx-header__icon {
   display: none;
 }
 
 @media (min-width: 1024px) {
-  .sx-header__icon {
+  .sx-header .sx-header__icon {
     display: inline-grid;
   }
+}
+
+/* A table is a block of the page: it spans the column like every other block,
+   instead of shrinking to the width of its longest cell. */
+.sl-markdown-content table {
+  inline-size: 100%;
 }
 
 .sx-header__social a:hover,
