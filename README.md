@@ -31,7 +31,7 @@ Starlight content collection.
 license files and states the published `MIT OR Apache-2.0`), and is listed in the
 map under `manual`.
 
-It does five things, in this order.
+It does six things, in this order.
 
 1. **Finds the checkout.** `SENDUST_PATH`, else `../sendust`, else
    `~/Documents/Personal/sendust`.
@@ -53,6 +53,11 @@ It does five things, in this order.
    checkout, one that resolves outside the repository, or an anchor that names a
    heading the target page does not have, is listed with file and line and the
    script exits non-zero — before writing a single file.
+6. **Normalises one piece of punctuation.** The site's voice does not use em
+   dashes, so a sentence's dash becomes a comma, a heading's becomes a colon, and
+   a table cell holding nothing but a dash reads "None". Words, code, links and
+   claims are untouched; anchors are computed after the pass, so a link and its
+   heading always agree.
 
 ### What is deliberately not published
 
@@ -179,17 +184,30 @@ drawer. Panels, the select menu, the search dialog and the drawer all take the
 same three panel tokens — `--sx-surface`, `--sx-border`, `--sx-shadow` — so they
 grade together in both palettes.
 
-## Theme and motion
+The header keeps one rhythm: every control on the right (search, GitHub, the npm
+package, the theme picker) is a 36px box with the same radius, and the navigation
+sits at the same gap from the brand on every page.
 
-One canvas, two palettes. The light palette is a white canvas (`--cvx-canvas`
-`#FFFFFF`), near-black ink (`#0A0A0A`), a single violet accent (`#635BFF`) and a
-soft three-stop mesh behind the hero; the dark palette is the same system on
-`#080808` with the accent lifted to `#8F8AFF`. Panels are `--cvx-panel`, edges are
-1px `--cvx-line` hairlines, radii are 10px, and no shadow does a border's job.
-The `--sx-*` tokens from the earlier layers still exist, but every panel, button
-and heading that used to be obsidian or lime now reads the canvas tokens.
+## Theme, form and motion
+
+One warm canvas, two palettes. The light palette is warm paper (`#FFFDF9`),
+near-black ink (`#17120C`), one ember accent (`#C2410C`) with amber (`#D97706`)
+and a deeper red (`#B42318`) behind it, and a soft three-stop mesh of those
+colours behind the hero. The dark palette is the same system on `#0B0907` with
+the accent lifted to `#FF9046`. There is no violet on the site.
+
+**One radius.** Every box with a corner takes `--cvx-radius` (14px): cards, code
+blocks, inputs, buttons, menus, dialogs, the statement panel. Inline chips take
+`--cvx-radius-xs`, half the cut, so a chip does not read as a pill. The older
+`--sx-radius` and `--sx-radius-sm` point at the same token, which picks up every
+legacy rule that still reads them.
+
+**No scrollbars.** The page is a surface, not a window inside a window: every
+scrollbar is hidden, for the document and for any element that scrolls, while
+wheel, trackpad, touch and keyboard scrolling are untouched.
+
 Light is the default for a first visit, and the choice is stored in
-`localStorage["starlight-theme"]` — `""` means "follow the system" — and
+`localStorage["starlight-theme"]` where `""` means "follow the system", then
 re-applied on every page load, so a view transition cannot reset it.
 
 Type is two self-hosted families from `public/fonts/` as woff2 with
@@ -198,26 +216,38 @@ interface, and Geist Mono 400/500 for code, tables and identifiers. No
 third-party font requests, no font JavaScript; only the three faces the first
 screen sets are preloaded.
 
+**The opening** (`LiquidIntro.astro`) pours three blurred pools of the accent
+across the landing page, then lifts the whole sheet away: one and a half seconds,
+once per session, never under `prefers-reduced-motion`. The overlay takes no
+pointer events, so the page scrolls from the first frame and any interaction ends
+it early.
+
+**The journey.** Every substantial block of the landing page, and every table,
+figure and code block in the guides, arrives with a short zoom (`scale(0.955)`
+to `1`, 620ms, once), and the hero scales down by 5% and fades as it leaves the
+top of the viewport. Blocks start where JavaScript puts them, so a visitor whose
+module never runs sees a finished page.
+
 Micro-interactions are transform, opacity and colour only, at 120–200 ms: link
-underlines that saturate, cards that lift 1px, a nav item that nudges, the accent
-hairline under the header, the brand mark tilting, and a tap that settles a card.
+underlines that saturate, cards that lift 1px, the accent hairline under the
+header, the brand mark tilting, and a tap that settles a card.
 
-Motion happens in two places, on purpose. **CSS** owns state changes that need no
-sequencing — the rotating word with its accent sweep (12 s), the moth's idle
-(3–7 s), hover, press, colour. **Motion** owns what CSS cannot express: the
-reading line under the header, driven by `scroll()` + `clamp()`, and grouped
-reveals that arrive in order through `inView()` + `stagger()` + `animate()`.
+Motion happens in two places, on purpose. **CSS** owns what needs no sequencing:
+the liquid opening, the headline's line reveal, the rotating word with its accent
+sweep (12 s), the moth's idle (3–7 s), hover and press. **Motion** owns what CSS
+cannot express: the reading line under the header (`scroll()` + `clamp()`), the
+hero's exit zoom, and the entry zoom of each block (`inView()` + `animate()`).
 
-The layer is additive. Items are hidden only under `html[data-motion="on"]`,
-which the module sets after it boots — so a reduced-motion visitor, or anyone
-whose module never loads, sees a complete static page rather than a page waiting
-to animate. It reboots on `astro:page-load` and on a change to the
-reduced-motion preference. Under `prefers-reduced-motion: reduce` every CSS
-animation and transition is off too: the headline shows its first word, and the
-moth is a static drawing.
+The layer is additive. Nothing is hidden unless the module has booted and put the
+element in its own starting state, so a reduced-motion visitor, or anyone whose
+module never loads, sees a complete static page. Under
+`prefers-reduced-motion: reduce` every CSS animation and transition is off too:
+the opening is skipped, the headline is simply there, and the moth is a static
+drawing.
 
-The voice on authored pages is editorial and plain; everything the sync copies
-stays verbatim.
+The voice on authored pages is editorial and plain, and it does not use em
+dashes; the sync normalises them in the pages it copies, so the published text
+reads the same way.
 
 ## Deployment
 

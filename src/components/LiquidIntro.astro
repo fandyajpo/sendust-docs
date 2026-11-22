@@ -1,0 +1,57 @@
+---
+/**
+ * The opening: a sheet of liquid colour pours across the page, holds for a
+ * breath, then lifts away and hands the screen to the hero.
+ *
+ * It runs once per session, on the landing page only, and never for a visitor
+ * who asked for less motion. The overlay takes no pointer events, so the page
+ * underneath is scrollable from the first frame, and any interaction ends it
+ * early.
+ */
+---
+
+<div class="sx-intro" data-intro hidden aria-hidden="true">
+  <div class="sx-intro__pour">
+    <span class="sx-intro__blob sx-intro__blob--a"></span>
+    <span class="sx-intro__blob sx-intro__blob--b"></span>
+    <span class="sx-intro__blob sx-intro__blob--c"></span>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const intro = document.querySelector("[data-intro]");
+    if (!intro) return;
+
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem("sx-intro") === "done";
+    } catch {
+      /* storage can be blocked: the opening still plays, once per page load */
+    }
+
+    if (seen || calm.matches) {
+      intro.remove();
+      return;
+    }
+
+    intro.hidden = false;
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      try {
+        sessionStorage.setItem("sx-intro", "done");
+      } catch {
+        /* nothing to record */
+      }
+      intro.remove();
+    };
+
+    window.setTimeout(finish, 1600);
+    window.addEventListener("pointerdown", finish, { once: true, passive: true });
+    window.addEventListener("keydown", finish, { once: true });
+  })();
+</script>

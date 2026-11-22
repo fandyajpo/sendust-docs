@@ -383,7 +383,10 @@ function stripFirstHeading(markdown) {
 
 function anchorsFor(absolute) {
   if (!anchorCache.has(absolute)) {
-    anchorCache.set(absolute, headingSlugs(stripFirstHeading(readFileSync(absolute, "utf8"))));
+    anchorCache.set(
+      absolute,
+      headingSlugs(normalizeDashes(stripFirstHeading(readFileSync(absolute, "utf8")))),
+    );
   }
   return anchorCache.get(absolute);
 }
@@ -393,8 +396,29 @@ function stripFrontmatter(markdown) {
   return match ? markdown.slice(match[0].length) : markdown;
 }
 
+/**
+ * The site's voice does not use em dashes. A sentence continues with a comma, a
+ * heading separates with a colon, and a table cell that holds nothing but a dash
+ * reads "None". Punctuation only: no word, code sample, link or claim changes.
+ */
+function normalizeDashes(markdown) {
+  return markdown
+    .split("\n")
+    .map((line) => {
+      if (/^\s*\|/.test(line)) {
+        return line.replaceAll(/\|\s*—\s*(?=\|)/g, "| None ");
+      }
+      if (/^\s{0,3}#{1,6}\s/.test(line)) {
+        return line.replaceAll(" — ", ": ");
+      }
+      return line.replaceAll(" — ", ", ");
+    })
+    .join("\n")
+    .replaceAll("—", ",");
+}
+
 function parseDocument(markdown, entry) {
-  const body = stripFrontmatter(markdown).replaceAll("\r\n", "\n");
+  const body = normalizeDashes(stripFrontmatter(markdown).replaceAll("\r\n", "\n"));
   const lines = body.split("\n");
 
   let title = "";
