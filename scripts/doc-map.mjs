@@ -16,8 +16,9 @@ export const REPOSITORY = {
 };
 
 export const SITE = {
-  url: "https://fandyajpo.github.io",
-  base: "/sendust-docs",
+  // One deployment, at the root of its domain.
+  url: "https://sendust-docs.vercel.app",
+  base: "",
 };
 
 // Documents that exist upstream and are deliberately not published here: the

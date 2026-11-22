@@ -22,12 +22,13 @@ for (const page of manual) {
   sidebar.push({ label: page.label, slug: page.slug });
 }
 
-// GitHub Pages serves this repository under SITE.base; Vercel serves it at the
-// domain root. Both the canonical URL and the base are overridable per host.
+// The site is served at the root of its domain. The canonical URL follows the
+// deployment when Vercel provides one; DOCS_SITE and DOCS_BASE override it if
+// the site ever moves under a path.
 const vercelHost =
   process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() || process.env.VERCEL_URL?.trim();
 const site = process.env.DOCS_SITE?.trim() || (vercelHost ? `https://${vercelHost}` : SITE.url);
-const configuredBase = process.env.DOCS_BASE?.trim() ?? (process.env.VERCEL ? "" : SITE.base);
+const configuredBase = process.env.DOCS_BASE?.trim() ?? SITE.base;
 const base = configuredBase === "/" ? "" : configuredBase;
 
 export default defineConfig({

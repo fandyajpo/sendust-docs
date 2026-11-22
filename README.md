@@ -261,27 +261,9 @@ reads the same way.
 
 ## Deployment
 
-`.github/workflows/pages.yml` builds and publishes to GitHub Pages through
-`withastro/action` and `actions/deploy-pages`.
-
-- On a push to `main` it renders the pinned ref (currently `v1.0.1`).
-- `workflow_dispatch` takes an optional `ref` input.
-- A daily scheduled run asks GitHub for the latest Sendust release and renders
-  that tag, so the site follows releases without a commit here.
-
-The site is a project page: `site` and `base` live in `scripts/doc-map.mjs`
-(`https://fandyajpo.github.io` + `/sendust-docs`). Set the repository's Pages
-source to **GitHub Actions** once. Internal links are written relative to the
-page, so they survive the base path without a plugin.
-
-If `package-lock.json` is missing, the workflow generates it before building;
-commit one so the build is reproducible.
-
-### Vercel
-
-Live at <https://sendust-docs.vercel.app>. The project is connected to this
-repository, so a push to `main` builds and promotes to production on its own;
-other branches get preview deployments.
+Vercel builds and serves the site at <https://sendust-docs.vercel.app>. The
+project is connected to this repository, so a push to `main` builds and promotes
+to production on its own; other branches get preview deployments.
 
 `vercel.json` builds with `npm run build:vercel`, which downloads the pinned
 Sendust tag into `.sendust/` before syncing: a Vercel build has no sibling
@@ -289,9 +271,12 @@ repository to read. A tarball of the tag is that ref by construction, the fetch
 records which ref it was in `.sendust/source.json`, and the sync refuses a
 fetched tree whose recorded ref is not `SENDUST_REF`.
 
-Vercel serves the site at the domain root, so `astro.config.mjs` drops `base`
-when `VERCEL` is set and takes the canonical URL from the deployment. Override
-either with `DOCS_BASE` and `DOCS_SITE`.
+The site is served at the root of its domain, so `base` is empty. `DOCS_SITE`
+overrides the canonical URL and `DOCS_BASE` the base if the site ever moves under
+a path.
+
+There is no GitHub Pages workflow. The site has one deployment, and one place to
+look when it is down.
 
 ## Dependencies
 
