@@ -3122,11 +3122,14 @@ body *::-webkit-scrollbar {
 
 .sx-hero__line > span {
   display: block;
-  animation: sx-line-in 760ms var(--sx-ease) both;
+  /* No fill mode and no start delay: if the animation never runs, in a tab that
+     is not on screen yet, the headline is simply there instead of waiting
+     below its clip box. */
+  animation: sx-line-in 760ms var(--sx-ease);
 }
 
 .sx-hero__line:nth-child(2) > span {
-  animation-delay: 90ms;
+  animation-duration: 840ms;
 }
 
 @keyframes sx-line-in {
@@ -3779,4 +3782,37 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
   .expressive-code .copy button {
     transition: none;
   }
+}
+
+
+/* A code block whose lines are wider than its frame keeps a slim scrollbar,
+   and only while it is in use. The page itself still draws none; this is the
+   one place where a scrollbar is the honest way to say "there is more". */
+.expressive-code pre {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.expressive-code pre:hover,
+.expressive-code pre:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--cvx-muted) 55%, transparent) transparent;
+}
+
+.expressive-code pre::-webkit-scrollbar {
+  display: block;
+  inline-size: 8px;
+  block-size: 8px;
+}
+
+.expressive-code pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.expressive-code pre::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cvx-muted) 40%, transparent);
+}
+
+.expressive-code pre:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--cvx-muted) 62%, transparent);
 }
