@@ -25,7 +25,7 @@ export const SITE = {
 // design and evidence record, which belongs in the repository rather than in a
 // developer-facing library. Links to them become GitHub permalinks at the ref.
 export const unpublished = [
-  "docs/architecture/decisions/ (ADR 0001–0022)",
+  "docs/architecture/decisions/ (ADR 0001–0024)",
   "docs/architecture/public-api.md, error-model.md (P02 contract baselines)",
   "docs/architecture/system-design.md, data-flow.md, approval-matrix.md",
   "docs/releases/*.md except story.md (release engineering)",
