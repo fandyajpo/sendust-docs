@@ -3347,11 +3347,11 @@ html[data-motion="on"] .sx-journey {
 
 @keyframes sx-panel-in {
   from {
-    opacity: 0;
+    /* Transform only: a dialog that never gets its frame is still visible, just
+       a few pixels low, rather than an open dialog nobody can see. */
     transform: scale(0.986) translateY(6px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
