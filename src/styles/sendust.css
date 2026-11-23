@@ -3928,8 +3928,9 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
 
 .sx-search__results {
   grid-area: results;
-  /* Room for the close row and the field on a short phone. */
-  max-block-size: min(44vh, 22rem);
+  /* Room for the header row, the field and the colophon on any window: the list
+     takes what is left rather than pushing the panel past the bottom edge. */
+  max-block-size: min(44vh, 22rem, calc(100dvh - 21rem));
 }
 
 .sx-search__foot {
@@ -4063,8 +4064,9 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
    read as wire, and "npm" is how the package names itself. */
 .sx-header__word {
   font-family: var(--sl-font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   line-height: 1;
 }
 
