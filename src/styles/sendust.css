@@ -3995,3 +3995,47 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
   -webkit-mask-image: linear-gradient(#000 calc(100% - 2rem), transparent);
   mask-image: linear-gradient(#000 calc(100% - 2rem), transparent);
 }
+
+
+/* The dialog's own header: a label on the left, the way out on the right, so the
+   row reads as a header instead of an empty band with a button in it. */
+.sx-search__panel {
+  grid-template-areas:
+    "title close"
+    "field field"
+    "status status"
+    "results results"
+    "foot foot";
+}
+
+.sx-search__title {
+  grid-area: title;
+  align-self: center;
+  margin: 0;
+  font-family: var(--sl-font-mono);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cvx-muted);
+}
+
+/* With nothing in the list, its row leaves the grid entirely: otherwise the row
+   gap is paid twice and the hint and the footnote drift apart. */
+.sx-search__panel:not(:has(.sx-search__results:not(:empty))) {
+  grid-template-areas:
+    "title close"
+    "field field"
+    "status status"
+    "foot foot";
+}
+
+/* The key cap inside the search control is a hint, not a second border. */
+.sx-searchbtn__key {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* One weight across the bar's controls. */
+.sx-header__theme .sx-select__trigger {
+  font-weight: 400;
+}
