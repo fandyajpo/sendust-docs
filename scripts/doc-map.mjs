@@ -12,7 +12,7 @@ export const REPOSITORY = {
   owner: "fandyajpo",
   name: "sendust",
   // Every build publishes the documentation of a tagged Sendust checkout.
-  defaultRef: "v1.0.1",
+  defaultRef: "v1.2.0",
 };
 
 export const SITE = {
@@ -128,6 +128,6 @@ export const pages = {
     source: "docs/releases/story.md",
     label: "The Sendust story",
     description:
-      "How Sendust went from an empty folder to 1.0.1, which decisions it reversed on the way, and why.",
+      "How Sendust went from an empty folder to 1.2.0, which decisions it reversed on the way, and why.",
   },
 };

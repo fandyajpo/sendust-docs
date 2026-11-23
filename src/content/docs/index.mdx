@@ -16,17 +16,17 @@ import Metrics from "../../components/Metrics.astro";
 import SendPath from "../../components/SendPath.astro";
 
 export const metrics = [
-  { value: "5", label: "native targets, one install" },
+  { value: "7", label: "native targets, one install" },
   { value: "32", label: "maximum concurrent sends" },
   { value: "120 s", label: "bounded total send budget" },
   { value: "100", label: "recipients per message" },
 ];
 
 export const facts = [
-  "v1.0.1",
+  "v1.2.0",
   "Rust core",
   "Node 22.23.5 · Bun 1.4.4 · Deno 2.9.8",
-  "5 native targets",
+  "7 native targets",
   "1 transport per process",
 ];
 
@@ -54,6 +54,14 @@ export const engine = [
     description:
       "accepted means the relay took responsibility. There is no delivered, opened or bounced status, and the library never retries unknown on its own.",
     href: "guide/errors-security-operations/",
+  },
+  {
+    title: "Signed at the client",
+    meta: "dkim",
+    glyph: "mail",
+    description:
+      "Optional DKIM: rsa-sha256 with relaxed/relaxed canonicalization, signed on the composed bytes before DATA, with the body hashed in full. The key is parsed at createTransport, so an unusable one fails before any connection.",
+    href: "guide/quick-start/",
   },
 ];
 
@@ -91,7 +99,7 @@ export const reads = [
     meta: "lore",
     glyph: "story",
     href: "releases/story/",
-    description: "Empty folder to 1.0.1, reversals included.",
+    description: "Empty folder to 1.2.0, reversals included.",
   },
   {
     title: "License",
@@ -161,7 +169,7 @@ no build step, no postinstall download on your side.
 | Node.js | `>=22.23.5` | None |
 | Bun | `1.4.4` | None |
 | Deno | `2.9.8` | `--allow-ffi --allow-read`, plus `--allow-net` if your code opens sockets |
-| Native targets | five | `linux-x64-gnu`, `linux-arm64-gnu`, `macos-arm64`, `macos-x64`, `windows-x64` |
+| Native targets | seven | `linux-x64-gnu`, `linux-arm64-gnu`, `linux-x64-musl`, `linux-arm64-musl`, `macos-arm64`, `macos-x64`, `windows-x64` |
 
 Anything outside those targets fails closed at `createTransport` with
 `CONFIG_NATIVE_UNAVAILABLE`, naming the package you would need. The detail lives in

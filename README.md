@@ -35,7 +35,7 @@ It does six things, in this order.
 
 1. **Finds the checkout.** `SENDUST_PATH`, else `../sendust`, else
    `~/Documents/Personal/sendust`.
-2. **Pins the ref.** `SENDUST_REF`, default `v1.0.1`. If the checkout's `HEAD` is
+2. **Pins the ref.** `SENDUST_REF`, default `v1.2.0`. If the checkout's `HEAD` is
    not that ref, it stops with instructions and writes nothing, the site only
    ever publishes a tagged tree. Uncommitted changes under `docs/` are allowed
    but warned about.
@@ -86,7 +86,7 @@ a hard error.
 ```sh
 npm install                     # once; commits package-lock.json
 
-git -C ../sendust checkout v1.0.1   # if that checkout has moved past the tag
+git -C ../sendust checkout v1.2.0   # if that checkout has moved past the tag
 npm run sync:docs               # copy, rewrite, write src/content/docs/…
 npm run build                   # sync, then build the static site into dist/
 npm run preview                 # serve dist/
