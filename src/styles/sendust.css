@@ -3936,3 +3936,62 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
   grid-area: foot;
   margin: 0;
 }
+
+
+/* The bar's four controls carry the same hairline and the same fill, so the
+   eight pixels between them are eight pixels the eye can count instead of four
+   different optical gaps. The cluster also lines up with the content column. */
+.sx-header__inner {
+  padding-inline: max(1.5rem, calc(50vw - 32rem));
+}
+
+.sx-header__actions .sx-header__social a,
+.sx-header .sx-header__icon,
+.sx-header__theme .sx-select__trigger,
+.sx-searchbtn {
+  border: 1px solid var(--cvx-line);
+  background: var(--sx-surface-2);
+}
+
+.sx-header__actions .sx-header__social a,
+.sx-header .sx-header__icon {
+  border-radius: var(--cvx-radius-xs);
+}
+
+.sx-header__actions .sx-header__social a:hover,
+.sx-header__actions .sx-header__social a:focus-visible,
+.sx-header .sx-header__icon:hover,
+.sx-header .sx-header__icon:focus-visible,
+.sx-header__theme .sx-select__trigger:hover,
+.sx-header__theme .sx-select[data-open] .sx-select__trigger,
+.sx-searchbtn:hover {
+  background: var(--cvx-panel);
+  border-color: var(--cvx-muted);
+}
+
+/* A field's clear button is only there when there is something to clear, so the
+   dialog never shows two crosses at once. */
+.sx-field__clear {
+  transition: opacity 120ms ease;
+}
+
+.sx-field:has(.sx-input:placeholder-shown) .sx-field__clear {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The dialog's own list: no empty row, an armed result, and a fade that says
+   there is more below the edge. */
+.sx-search__results:empty {
+  display: none;
+}
+
+.sx-search__result[data-active="true"] {
+  background: var(--cvx-panel);
+  box-shadow: inset 2px 0 0 var(--cvx-accent);
+}
+
+.sx-search__results[data-scroll="more"] {
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(#000 calc(100% - 2rem), transparent);
+}

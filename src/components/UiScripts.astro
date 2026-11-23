@@ -209,6 +209,22 @@
     el.setAttribute("data-tone", tone);
   }
 
+  const SEARCH_HINT = "Type to search. Up and down to choose, Enter to open, Escape to close.";
+
+  /** Arms one result, so Enter opens it without the pointer. */
+  function setActiveResult(dialog: Element, index: number): void {
+    const results = Array.from(dialog.querySelectorAll<HTMLAnchorElement>(".sx-search__result"));
+    results.forEach((item, at) => {
+      if (at === index) item.dataset.active = "true";
+      else delete item.dataset.active;
+    });
+
+    const chosen = results[index];
+    if (!chosen) return;
+    chosen.scrollIntoView({ block: "nearest" });
+    dialog.querySelector("input")?.setAttribute("aria-activedescendant", chosen.id);
+  }
+
   function loadPagefind(): Promise<Record<string, unknown>> {
     if (!pagefind) {
       const url = `${import.meta.env.BASE_URL}pagefind/pagefind.js`;
@@ -227,7 +243,8 @@
     const q = query.trim();
     if (q.length < 2) {
       list.replaceChildren();
-      status(q ? "One more character." : "Search the guides, the architecture, the story.", "");
+      delete (list as HTMLElement).dataset.scroll;
+      status(q ? "One more character." : SEARCH_HINT, "");
       return;
     }
 
@@ -251,8 +268,10 @@
       for (const item of items) {
         const li = doc.createElement("li");
         // The list arrives in order; the stylesheet turns the index into a delay.
-        li.style.setProperty("--i", String(index++));
+        li.style.setProperty("--i", String(index));
         const link = doc.createElement("a");
+        link.id = `sx-search-result-${index}`;
+        index += 1;
         link.href = String(item.url ?? "#");
         link.className = "sx-search__result";
 
@@ -271,6 +290,15 @@
         li.append(link);
         list.append(li);
       }
+
+      // The first result is armed, so a typed query can be opened with Enter,
+      // and the list says whether there is more below its own edge.
+      const dialog = list.closest("[data-search-dialog]");
+      if (dialog) setActiveResult(dialog, 0);
+
+      const scroller = list as HTMLElement;
+      if (scroller.scrollHeight > scroller.clientHeight + 2) scroller.dataset.scroll = "more";
+      else delete scroller.dataset.scroll;
     } catch {
       status("Search is unavailable here. Every page is in the menu.", "error");
     }
@@ -288,7 +316,7 @@
     const input = dialog.querySelector<HTMLInputElement>("input");
     input?.focus();
     if (input && input.value.trim().length > 1) void runSearch(input.value);
-    else status("Search the guides, the architecture, the story.", "");
+    else status(SEARCH_HINT, "");
   }
 
   /* ------------------------------------------------------------------- focus */
@@ -427,6 +455,26 @@
 
     const openDialog = doc.querySelector("[data-search-dialog][data-open]");
     if (openDialog) {
+      const results = Array.from(openDialog.querySelectorAll<HTMLAnchorElement>(".sx-search__result"));
+
+      if (results.length > 0 && (key === "ArrowDown" || key === "ArrowUp")) {
+        event.preventDefault();
+        const delta = key === "ArrowDown" ? 1 : -1;
+        const at = results.findIndex((item) => item.dataset.active === "true");
+        const from = at < 0 ? (delta > 0 ? -1 : 0) : at;
+        setActiveResult(openDialog, (from + delta + results.length) % results.length);
+        return;
+      }
+
+      if (key === "Enter") {
+        const armed = results.find((item) => item.dataset.active === "true");
+        if (armed) {
+          event.preventDefault();
+          armed.click();
+          return;
+        }
+      }
+
       trapFocus(openDialog, event);
       return;
     }
@@ -501,6 +549,18 @@
   doc.addEventListener("keydown", handleKeydown);
   doc.addEventListener("input", handleInput);
 
+  /* The dialog and the drawer are fixed to the viewport, but Astro renders them
+     inside the fixed header, which slides away as the page scrolls and took both
+     overlays with it. Parked on the body, they stay on the screen. */
+  function parkOverlays(): void {
+    for (const selector of ["[data-search-dialog]", "#sx-drawer"]) {
+      const overlay = doc.querySelector(selector);
+      if (overlay && overlay.parentElement !== doc.body) doc.body.append(overlay);
+    }
+  }
+
+  parkOverlays();
+
   // Hover opens a dropdown where there is a real pointer; leaving the nav closes it.
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     doc.addEventListener("pointerover", (event) => {
@@ -527,6 +587,7 @@
   });
 
   doc.addEventListener("astro:page-load", () => {
+    parkOverlays();
     lockScroll(false);
     closeEverything();
     syncThemeSelects(storedTheme());
