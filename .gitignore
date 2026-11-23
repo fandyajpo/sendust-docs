@@ -16,3 +16,6 @@ src/synced-docs.json
 
 .DS_Store
 *.log
+src/content/docs/architecture/
+src/content/docs/contributing/
+src/content/docs/performance/
