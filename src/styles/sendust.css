@@ -4084,3 +4084,29 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
 .sx-search__close svg {
   display: block;
 }
+
+
+/* Starlight draws its social anchor with `padding: .5em; margin: -.5em`, so the
+   GitHub box overhangs its flex slot by eight pixels on each side and swallowed
+   the gaps either side of it: the row measured 12 / 4 / 4 instead of 12 / 12 /
+   12. The box is the box here, and its hover keeps full strength. */
+.sx-header__actions .sx-header__social a {
+  margin: 0;
+  padding: 0;
+}
+
+.sx-header__actions .sx-header__social a:hover,
+.sx-header__actions .sx-header__social a:focus-visible {
+  opacity: 1;
+}
+
+/* The npm label sits as far from its border as the theme label does. */
+.sx-header .sx-header__icon--word {
+  padding-inline: 0.7rem;
+}
+
+/* On a page with a rail, the bar starts where the rail starts, so the brand sits
+   over the sidebar it belongs to instead of 128px inside it. */
+html[data-has-sidebar] .sx-header__inner {
+  padding-inline: 1.5rem;
+}
