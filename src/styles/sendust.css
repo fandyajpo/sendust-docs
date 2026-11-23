@@ -4039,3 +4039,46 @@ starlight-tabs [role="tab"][aria-selected="true"]::after {
 .sx-header__theme .sx-select__trigger {
   font-weight: 400;
 }
+
+
+/* The dialog hangs from just under the bar rather than being centred against a
+   box whose height changes with every query: a command palette that cannot fit
+   the screen is worse than one that starts in the same place every time. */
+.sx-search[data-open] {
+  align-content: start;
+}
+
+.sx-search__panel {
+  align-self: start;
+  margin-block: max(calc(var(--sl-nav-height) + 1rem), 3rem) 0;
+}
+
+/* The dim behind the dialog is not animated: a modal that opens over a bright
+   page because its fade never got a frame is not a modal. */
+.sx-search__scrim {
+  animation: none;
+}
+
+/* The npm package is a word, not a glyph: a cube beside the solid GitHub mark
+   read as wire, and "npm" is how the package names itself. */
+.sx-header__word {
+  font-family: var(--sl-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.sx-header .sx-header__icon--word {
+  padding-inline: 0.55rem;
+  inline-size: auto;
+}
+
+/* The footnote is a colophon, not a second hint: one hairline and a little air. */
+.sx-search__foot {
+  border-block-start: 1px solid var(--cvx-line);
+  padding-block-start: 0.7rem;
+}
+
+.sx-search__close svg {
+  display: block;
+}
