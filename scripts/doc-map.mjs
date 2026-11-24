@@ -12,7 +12,7 @@ export const REPOSITORY = {
   owner: "fandyajpo",
   name: "sendust",
   // Every build publishes the documentation of a tagged Sendust checkout.
-  defaultRef: "v1.2.0",
+  defaultRef: "v1.2.1",
 };
 
 export const SITE = {
@@ -41,7 +41,7 @@ export const groups = [
   },
   {
     label: "Guides",
-    pages: ["guide/addressing-mime-attachments", "guide/errors-security-operations"],
+    pages: ["guide/addressing-mime-attachments", "guide/errors-security-operations", "guide/dkim-signing"],
   },
   {
     label: "Architecture",
@@ -105,6 +105,12 @@ export const pages = {
     label: "Errors, security, operations",
     description:
       "Results versus errors, the stable error codes, redaction, and what to do during a relay outage.",
+  },
+  "guide/dkim-signing": {
+    source: "docs/guides/dkim-signing.md",
+    label: "DKIM signing",
+    description:
+      "What Sendust signs, key creation, the _domainkey record, verifying a real message, rotation, and troubleshooting.",
   },
   "architecture/overview": {
     source: "docs/architecture/overview.md",
