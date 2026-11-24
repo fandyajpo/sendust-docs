@@ -1,22 +1,9 @@
 ---
 import Default from "@astrojs/starlight/components/Footer.astro";
-import { readFileSync } from "node:fs";
-import path from "node:path";
 
 import { REPOSITORY } from "../../scripts/doc-map.mjs";
+import { ref } from "../lib/ref";
 import SignalMoth from "./SignalMoth.astro";
-
-// Written by scripts/sync-docs.mjs. Build-time only, and optional: the site
-// still renders before the first sync.
-let ref = REPOSITORY.defaultRef;
-try {
-  const provenance = JSON.parse(
-    readFileSync(path.join(process.cwd(), "src", "synced-docs.json"), "utf8"),
-  );
-  if (typeof provenance.ref === "string" && provenance.ref !== "") ref = provenance.ref;
-} catch {
-  ref = REPOSITORY.defaultRef;
-}
 
 const source = `https://github.com/${REPOSITORY.owner}/${REPOSITORY.name}/tree/${ref}/docs`;
 const label = `${REPOSITORY.owner}/${REPOSITORY.name}@${ref}`;

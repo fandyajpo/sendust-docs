@@ -8,7 +8,8 @@
  *
  *   1. Resolve the Sendust checkout: SENDUST_PATH, then ../sendust, then
  *      ~/Documents/Personal/sendust.
- *   2. Refuse to run unless that checkout is at SENDUST_REF (default v1.0.1).
+ *   2. Refuse to run unless that checkout is at SENDUST_REF (default: the ref
+ *      in scripts/doc-map.mjs).
  *   3. Copy the documents listed in scripts/doc-map.mjs into src/content/docs/.
  *   4. Inject frontmatter: title from the first H1, description from the first
  *      paragraph, sidebar label and order from the map.
